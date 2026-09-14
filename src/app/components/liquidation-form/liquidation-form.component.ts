@@ -121,7 +121,7 @@ import { CalculatorService } from '../../services/calculator.service';
                 (ngModelChange)="onFormChange()">
                 <option value="INDEFINIDO">Término Indefinido (Art. 47 CST)</option>
                 <option value="TERMINO_FIJO">Término Fijo (Art. 46 CST)</option>
-                <option value="OBRA_LABOR">Por Duración de Obra o Labor (Art. 45 CST)</option>
+                <option value="OBRA_LABOR">Por Obra o Labor (Art. 45 CST)</option>
               </select>
               <span class="field-hint">
                 Define las reglas de indemnización del Art. 64 CST aplicables.
@@ -135,10 +135,10 @@ import { CalculatorService } from '../../services/calculator.service';
                 [(ngModel)]="formData.terminationReason" 
                 name="terminationReason" 
                 (ngModelChange)="onFormChange()">
-                <option value="DESPIDO_SIN_JUSTA_CAUSA">Despido SIN Justa Causa (Genera Indemnización Art. 64 CST)</option>
-                <option value="DESPIDO_CON_JUSTA_CAUSA">Despido CON Justa Causa (Art. 62 CST - Sin Indemnización)</option>
-                <option value="RENUNCIA_VOLUNTARIA">Renuncia Voluntaria (Sin Indemnización)</option>
-                <option value="TERMINACION_PLAZO_FIJO">Terminación Natural del Plazo Pactado (Sin Indemnización)</option>
+                <option value="DESPIDO_SIN_JUSTA_CAUSA">Despido SIN Justa Causa (Indemniza Art. 64)</option>
+                <option value="DESPIDO_CON_JUSTA_CAUSA">Despido CON Justa Causa (Art. 62 CST)</option>
+                <option value="RENUNCIA_VOLUNTARIA">Renuncia Voluntaria (Sin indemnización)</option>
+                <option value="TERMINACION_PLAZO_FIJO">Fin Natural Plazo / Obra (Sin indemnización)</option>
               </select>
               <span class="field-hint">
                 Solo el despido sin justa causa genera indemnización legal a cargo del empleador.
@@ -312,10 +312,10 @@ import { CalculatorService } from '../../services/calculator.service';
                           [(ngModel)]="formData.transportExclusionReason" 
                           name="transportExclusionReason" 
                           (ngModelChange)="onFormChange()">
-                          <option value="TELETRABAJO">Teletrabajo / Trabajo en Casa (Ley 2088 de 2020 - Sin desplazamiento físico)</option>
-                          <option value="EMPRESA_SUMINISTRA">La empresa suministra el transporte completo / ruta privada (Ley 15 de 1959 Art. 2)</option>
-                          <option value="VIVE_EN_SITIO">El trabajador reside en el mismo sitio donde presta el servicio</option>
-                          <option value="OTRA_EXCLUSION">Otra estipulación contractual válida que no cause gastos de movilidad</option>
+                          <option value="TELETRABAJO">Teletrabajo / En Casa (Ley 2088/20)</option>
+                          <option value="EMPRESA_SUMINISTRA">Empresa suministra ruta / transporte (Art. 2)</option>
+                          <option value="VIVE_EN_SITIO">Trabajador reside en sitio de labor</option>
+                          <option value="OTRA_EXCLUSION">Otra estipulación sin desplazamiento</option>
                         </select>
                       </div>
                       <p class="exclusion-cst-note">
@@ -597,18 +597,28 @@ import { CalculatorService } from '../../services/calculator.service';
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 1rem;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .grid-3 {
       display: grid;
       grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
       gap: 1rem;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 0.35rem;
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .form-group.full-width {
@@ -626,12 +636,17 @@ import { CalculatorService } from '../../services/calculator.service';
       font-size: 0.8rem;
       font-weight: 600;
       color: #334155;
+      word-break: break-word;
     }
 
     input[type="text"],
     input[type="date"],
     input[type="number"],
     select {
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
       border: 1px solid #cbd5e1;
       background: #ffffff;
       border-radius: 8px;
@@ -640,6 +655,13 @@ import { CalculatorService } from '../../services/calculator.service';
       color: #0f172a;
       outline: none;
       transition: border-color 0.2s, box-shadow 0.2s;
+    }
+
+    select {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
+      cursor: pointer;
     }
 
     input:focus, select:focus {
@@ -905,6 +927,16 @@ import { CalculatorService } from '../../services/calculator.service';
       border-radius: 10px;
       font-size: 0.8rem;
       margin-top: 0.75rem;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+      word-break: break-word;
+    }
+
+    .alert-text {
+      min-width: 0;
+      flex: 1;
+      word-break: break-word;
     }
 
     .alert-warning {
@@ -921,6 +953,7 @@ import { CalculatorService } from '../../services/calculator.service';
 
     .alert-icon {
       font-size: 1.1rem;
+      flex-shrink: 0;
     }
 
     @media (max-width: 768px) {
@@ -928,6 +961,9 @@ import { CalculatorService } from '../../services/calculator.service';
         padding: 1rem 0.75rem;
         border-radius: 12px;
         gap: 1rem;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
       }
 
       .header-top-row {
@@ -961,11 +997,18 @@ import { CalculatorService } from '../../services/calculator.service';
       .form-section {
         padding: 0.95rem 0.75rem;
         border-radius: 10px;
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+        overflow: hidden;
       }
 
       .grid-2, .grid-3 {
-        grid-template-columns: 1fr;
+        grid-template-columns: 100%;
+        width: 100%;
+        min-width: 0;
         gap: 0.85rem;
+        box-sizing: border-box;
       }
 
       .transport-choice-header {

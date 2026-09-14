@@ -63,6 +63,8 @@ h1, h2, h3, h4, h5, h6 {
 
 button, input, select, textarea {
   font-family: inherit;
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 /* Custom Scrollbars */
