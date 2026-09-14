@@ -1,0 +1,142 @@
+<div class="app-wrapper">
+  <!-- Barra de Acento Tricolor Colombiano -->
+  <div class="flag-accent">
+    <div class="stripe yellow"></div>
+    <div class="stripe blue"></div>
+    <div class="stripe red"></div>
+  </div>
+
+  <!-- Header / Barra de Navegación Principal -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-area">
+        <div class="brand-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+        </div>
+        <div class="brand-text">
+          <h1>Calculadora Laboral Colombia</h1>
+          <span class="brand-sub">Indemnizaciones (Art. 64 CST) & Liquidación Definitiva</span>
+        </div>
+      </div>
+
+      <!-- Indicadores Normativos en vivo -->
+      <div class="legal-badge-pill">
+        <span class="dot-indicator"></span>
+        <div class="pill-info">
+          <strong>CST & Ley 789 de 2002</strong>
+          <span>SMMLV: $1.423.500 &bull; Aux. Transp: $200.000</span>
+        </div>
+      </div>
+
+      <!-- Navegación por pestañas principales -->
+      <nav class="main-nav">
+        <button type="button" class="nav-tab" [class.active]="activeView() === 'calculator'"
+          (click)="activeView.set('calculator')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
+            <line x1="8" y1="6" x2="16" y2="6"></line>
+            <line x1="16" y1="14" x2="16" y2="18"></line>
+            <path d="M16 10h.01"></path>
+            <path d="M12 10h.01"></path>
+            <path d="M8 10h.01"></path>
+            <path d="M12 14h.01"></path>
+            <path d="M8 14h.01"></path>
+            <path d="M12 18h.01"></path>
+            <path d="M8 18h.01"></path>
+          </svg>
+          Calculadora & Fórmulas
+        </button>
+
+        <button type="button" class="nav-tab" [class.active]="activeView() === 'records'"
+          (click)="activeView.set('records')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          Tabla Organizacional
+          <span class="badge-count-pill">{{ storageService.savedLiquidations().length }}</span>
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- Notificación Toast -->
+  @if (toastMessage()) {
+  <div class="toast-notification">
+    <div class="toast-icon">✓</div>
+    <div class="toast-text">{{ toastMessage() }}</div>
+  </div>
+  }
+
+  <!-- Contenedor Principal de la App -->
+  <main class="app-main">
+    <!-- VISTA 1: CALCULADORA Y FÓRMULAS LATERALES -->
+    @if (activeView() === 'calculator') {
+    <div class="calculator-layout">
+      <!-- Columna Izquierda: Formulario + Tarjeta de Resumen -->
+      <div class="left-column">
+        <!-- Formulario de captura y parametrización -->
+        <app-liquidation-form [initialData]="editingInput()" (onCalculate)="onCalculationUpdated($event)">
+        </app-liquidation-form>
+
+        <!-- Resumen de resultados inmediatos -->
+        <app-results-summary [liquidation]="currentLiquidation()" (onSave)="saveLiquidation($event)"
+          (onPrint)="openPrintModal($event)">
+        </app-results-summary>
+      </div>
+
+      <!-- Columna Derecha: Panel de Fórmulas y Artículos CST -->
+      <aside class="right-column">
+        <app-formula-inspector [liquidation]="currentLiquidation()">
+        </app-formula-inspector>
+      </aside>
+    </div>
+    }
+
+    <!-- VISTA 2: TABLA ORGANIZACIONAL DE CASOS GUARDADOS -->
+    @if (activeView() === 'records') {
+    <div class="records-layout">
+      <app-records-table [activeId]="currentLiquidation()?.id || ''" (onLoadRecord)="loadRecordToForm($event)"
+        (onPrintRecord)="openPrintModal($event)">
+      </app-records-table>
+    </div>
+    }
+  </main>
+
+  <!-- Modal de Acta Imprimible / Generación de PDF -->
+  @if (printLiquidation()) {
+  <app-print-sheet [liquidation]="printLiquidation()" (onClose)="closePrintModal()">
+  </app-print-sheet>
+  }
+
+  <!-- Footer -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <p>
+        Calculadora Laboral de Colombia &bull; Actualizada bajo el
+        <strong>Código Sustantivo del Trabajo (CST)</strong>, Ley 789 de 2002, Ley 1788 de 2016 y Ley 52 de 1975.
+      </p>
+      <p class="footer-sub">
+        Herramienta de referencia técnica y jurídica para colaboradores, empleadores y profesionales de Gestión Humana.
+      </p>
+      <p class="footer-sub">
+        Esta aplicacion puede tener errores, por favor
+        <strong>valida los resultados</strong>
+        siguiendo los canales regulados por la nacion esto es meramente referencial y educativo
+      </p>
+    </div>
+  </footer>
+</div>
