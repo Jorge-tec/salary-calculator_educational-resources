@@ -59,24 +59,25 @@ export class CalculatorService {
     // 1. Obtener parámetros del año
     const yearConfig = YEAR_CONFIGS.find(y => y.year === input.smmlvYear) || YEAR_CONFIGS[0];
     const smmlv = input.customSmmlv && input.customSmmlv > 0 ? input.customSmmlv : yearConfig.smmlv;
+    const baseSalary = Number(input.baseSalary) || 0;
     
     // Regla legal del CST y Ley 15 de 1959:
     // 1. Tope legal inquebrantable: ningún trabajador que devengue más de 2 SMMLV tiene derecho.
     // 2. Si devenga hasta 2 SMMLV, es opcional según la modalidad contractual (teletrabajo, suministro de ruta, etc.).
     const twoSmmlv = smmlv * 2;
-    const qualifiesForTransport = input.baseSalary > 0 && input.baseSalary <= twoSmmlv;
+    const qualifiesForTransport = baseSalary > 0 && baseSalary <= twoSmmlv;
 
     let appliesTransport = false;
     let transportAllowance = 0;
     let transportLegalStatusText = '';
 
-    if (!input.baseSalary || input.baseSalary <= 0) {
+    if (baseSalary <= 0) {
       transportLegalStatusText = 'Salario no ingresado';
     } else if (!qualifiesForTransport) {
       // Salario > 2 SMMLV -> INHABILITADO POR LA LEY 15 DE 1959
       appliesTransport = false;
       transportAllowance = 0;
-      transportLegalStatusText = `No aplica por mandato legal: Salario > 2 SMMLV ($${input.baseSalary.toLocaleString('es-CO')} > $${twoSmmlv.toLocaleString('es-CO')})`;
+      transportLegalStatusText = `No aplica por mandato legal: Salario > 2 SMMLV ($${baseSalary.toLocaleString('es-CO')} > $${twoSmmlv.toLocaleString('es-CO')})`;
     } else {
       // Salario <= 2 SMMLV -> Cumple tope, pero es OPCIONAL según modalidad de contrato
       const isIncluded = input.includeTransportAllowance !== false; // por defecto aplica si no se desmarca
@@ -104,8 +105,8 @@ export class CalculatorService {
       }
     }
 
-    const salaryInSmmlv = Number((input.baseSalary / smmlv).toFixed(2));
-    const isHighSalary = input.baseSalary >= (10 * smmlv);
+    const salaryInSmmlv = smmlv > 0 ? Number((baseSalary / smmlv).toFixed(2)) : 0;
+    const isHighSalary = baseSalary >= (10 * smmlv);
 
     // 2. Días laborados
     const workedDaysTotal = this.calculateCommercialDays(input.startDate, input.endDate);
@@ -137,8 +138,8 @@ export class CalculatorService {
     }
 
     // 3. Cálculos de bases salariales
-    const baseWithTransport = input.baseSalary + transportAllowance;
-    const dailyBaseSalary = input.baseSalary / 30;
+    const baseWithTransport = baseSalary + transportAllowance;
+    const dailyBaseSalary = baseSalary / 30;
     const dailyBaseWithTransport = baseWithTransport / 30;
 
     // 4. Salario pendiente
@@ -177,7 +178,7 @@ export class CalculatorService {
       legalReference: 'Art. 134 del Código Sustantivo del Trabajo',
       lawBasis: 'Código Sustantivo del Trabajo (CST) - Pago de salarios acumulados devengados',
       formulaDescription: '(Salario Base + Auxilio de Transporte) ÷ 30 × Días Pendientes',
-      mathExpression: `($${input.baseSalary.toLocaleString('es-CO')} + $${transportAllowance.toLocaleString('es-CO')}) ÷ 30 × ${pendingDays} días`,
+      mathExpression: `($${baseSalary.toLocaleString('es-CO')} + $${transportAllowance.toLocaleString('es-CO')}) ÷ 30 × ${pendingDays} días`,
       subtotal: pendingSalaryAmount,
       explanation: `Remuneración ordinaria pendiente por pagar de ${pendingDays} días al momento del retiro laboral.`,
       includesTransport: appliesTransport
@@ -188,7 +189,7 @@ export class CalculatorService {
       legalReference: 'Art. 249 del Código Sustantivo del Trabajo',
       lawBasis: 'CST Art. 249 y Ley 1 de 1963 Art. 7 (Inclusión de Auxilio de Transporte)',
       formulaDescription: '(Salario Base + Auxilio Transporte) × Días Laborados en el Año ÷ 360',
-      mathExpression: `($${input.baseSalary.toLocaleString('es-CO')} + $${transportAllowance.toLocaleString('es-CO')}) × ${workedDaysCurrentYear} ÷ 360`,
+      mathExpression: `($${baseSalary.toLocaleString('es-CO')} + $${transportAllowance.toLocaleString('es-CO')}) × ${workedDaysCurrentYear} ÷ 360`,
       subtotal: cesantiasAmount,
       explanation: `Un mes de salario por cada año laborado o proporcional por fracción en el periodo anual (${workedDaysCurrentYear} días en el año en curso).`,
       includesTransport: appliesTransport
@@ -211,7 +212,7 @@ export class CalculatorService {
       legalReference: 'Art. 306 del Código Sustantivo del Trabajo',
       lawBasis: 'CST Art. 306 (Modificado por Ley 1788 de 2016 - Universalización de la Prima)',
       formulaDescription: '(Salario Base + Auxilio Transporte) × Días Laborados en el Semestre ÷ 360',
-      mathExpression: `($${input.baseSalary.toLocaleString('es-CO')} + $${transportAllowance.toLocaleString('es-CO')}) × ${workedDaysCurrentSemester} ÷ 360`,
+      mathExpression: `($${baseSalary.toLocaleString('es-CO')} + $${transportAllowance.toLocaleString('es-CO')}) × ${workedDaysCurrentSemester} ÷ 360`,
       subtotal: primaServiciosAmount,
       explanation: `15 días de salario por cada semestre trabajado o proporcionalmente por fracción (${workedDaysCurrentSemester} días en el semestre en curso).`,
       includesTransport: appliesTransport
@@ -225,8 +226,8 @@ export class CalculatorService {
         ? 'Salario Base × Total Días Laborados ÷ 720'
         : 'Salario Diario (Base ÷ 30) × Días Pendientes Reportados',
       mathExpression: input.useCalculatedVacations
-        ? `$${input.baseSalary.toLocaleString('es-CO')} × ${workedDaysTotal} ÷ 720`
-        : `($${input.baseSalary.toLocaleString('es-CO')} ÷ 30) × ${vacationDaysCalculated} días`,
+        ? `$${baseSalary.toLocaleString('es-CO')} × ${workedDaysTotal} ÷ 720`
+        : `($${baseSalary.toLocaleString('es-CO')} ÷ 30) × ${vacationDaysCalculated} días`,
       subtotal: vacacionesAmount,
       explanation: `15 días hábiles remunerados por cada año de servicios prestados (${vacationDaysCalculated} días a liquidar). Nota: Por mandato expreso del Art. 192 CST, las vacaciones se liquidan EXCLUSIVAMENTE sobre el salario ordinario, excluyendo auxilio de transporte.`,
       includesTransport: false
@@ -255,10 +256,10 @@ export class CalculatorService {
               ? '30 días de salario (Hasta 1 año de servicio)'
               : '30 días (1er año) + [ (Días adicionales ÷ 360) × 20 días ]',
             mathExpression: workedDaysTotal <= 360
-              ? `($${input.baseSalary.toLocaleString('es-CO')} ÷ 30) × 30 días`
-              : `($${input.baseSalary.toLocaleString('es-CO')} ÷ 30) × [ 30 + ((${workedDaysTotal} - 360) ÷ 360 × 20) = ${indemnityDays.toFixed(2)} días ]`,
+              ? `($${baseSalary.toLocaleString('es-CO')} ÷ 30) × 30 días`
+              : `($${baseSalary.toLocaleString('es-CO')} ÷ 30) × [ 30 + ((${workedDaysTotal} - 360) ÷ 360 × 20) = ${indemnityDays.toFixed(2)} días ]`,
             subtotal: indemnityAmount,
-            explanation: `Al ganar menos de 10 SMMLV ($${input.baseSalary.toLocaleString('es-CO')} < $${(10 * smmlv).toLocaleString('es-CO')}), la ley otorga 30 días de salario por el primer año y 20 días por cada año subsiguiente o fracción proporcional. Total días indemnizables: ${indemnityDays.toFixed(2)} días.`,
+            explanation: `Al ganar menos de 10 SMMLV ($${baseSalary.toLocaleString('es-CO')} < $${(10 * smmlv).toLocaleString('es-CO')}), la ley otorga 30 días de salario por el primer año y 20 días por cada año subsiguiente o fracción proporcional. Total días indemnizables: ${indemnityDays.toFixed(2)} días.`,
             includesTransport: false
           });
 
@@ -282,10 +283,10 @@ export class CalculatorService {
               ? '20 días de salario (Hasta 1 año de servicio)'
               : '20 días (1er año) + [ (Días adicionales ÷ 360) × 15 días ]',
             mathExpression: workedDaysTotal <= 360
-              ? `($${input.baseSalary.toLocaleString('es-CO')} ÷ 30) × 20 días`
-              : `($${input.baseSalary.toLocaleString('es-CO')} ÷ 30) × [ 20 + ((${workedDaysTotal} - 360) ÷ 360 × 15) = ${indemnityDays.toFixed(2)} días ]`,
+              ? `($${baseSalary.toLocaleString('es-CO')} ÷ 30) × 20 días`
+              : `($${baseSalary.toLocaleString('es-CO')} ÷ 30) × [ 20 + ((${workedDaysTotal} - 360) ÷ 360 × 15) = ${indemnityDays.toFixed(2)} días ]`,
             subtotal: indemnityAmount,
-            explanation: `Al devengar 10 SMMLV o más ($${input.baseSalary.toLocaleString('es-CO')} ≥ $${(10 * smmlv).toLocaleString('es-CO')}), la ley otorga 20 días de salario por el primer año y 15 días adicionales por cada año subsiguiente o fracción. Total días indemnizables: ${indemnityDays.toFixed(2)} días.`,
+            explanation: `Al devengar 10 SMMLV o más ($${baseSalary.toLocaleString('es-CO')} ≥ $${(10 * smmlv).toLocaleString('es-CO')}), la ley otorga 20 días de salario por el primer año y 15 días adicionales por cada año subsiguiente o fracción. Total días indemnizables: ${indemnityDays.toFixed(2)} días.`,
             includesTransport: false
           });
         }
@@ -298,7 +299,7 @@ export class CalculatorService {
           legalReference: 'Art. 64 del CST, numeral 3',
           lawBasis: 'Código Sustantivo del Trabajo Art. 64 Numeral 3 (Lucro cesante pactado)',
           formulaDescription: 'Salario Diario × Días Faltantes para el Vencimiento del Contrato',
-          mathExpression: `($${input.baseSalary.toLocaleString('es-CO')} ÷ 30) × ${missingContractDays} días restantes`,
+          mathExpression: `($${baseSalary.toLocaleString('es-CO')} ÷ 30) × ${missingContractDays} días restantes`,
           subtotal: indemnityAmount,
           explanation: `El empleador debe cancelar el equivalente a los salarios del tiempo que faltare para cumplir el plazo estipulado del contrato (${missingContractDays} días hasta ${input.fixedContractEndDate || 'fin de contrato'}).`,
           includesTransport: false
@@ -312,7 +313,7 @@ export class CalculatorService {
           legalReference: 'Art. 64 del CST, numeral 3',
           lawBasis: 'Código Sustantivo del Trabajo Art. 64 Numeral 3',
           formulaDescription: 'Salarios del tiempo faltante para culminar la obra (Mínimo legal de 15 días)',
-          mathExpression: `($${input.baseSalary.toLocaleString('es-CO')} ÷ 30) × ${missingContractDays} días`,
+          mathExpression: `($${baseSalary.toLocaleString('es-CO')} ÷ 30) × ${missingContractDays} días`,
           subtotal: indemnityAmount,
           explanation: `El valor de los salarios correspondientes al tiempo faltante para completar la obra o labor determinada. La ley fija un mínimo indemnizable de 15 días de salario.`,
           includesTransport: false
