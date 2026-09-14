@@ -427,6 +427,61 @@ import { LiquidationResult } from '../../models/liquidation.model';
       padding-top: 0.75rem;
     }
 
+    @media screen and (max-width: 768px) {
+      .print-overlay {
+        padding: 0.4rem;
+      }
+
+      .print-modal {
+        max-height: 98vh;
+        border-radius: 12px;
+      }
+
+      .modal-toolbar {
+        padding: 0.75rem 0.85rem;
+      }
+
+      .document-sheet {
+        padding: 1rem 0.75rem;
+      }
+
+      .doc-header {
+        flex-direction: column;
+        gap: 0.75rem;
+        align-items: flex-start;
+      }
+
+      .employee-summary-grid {
+        grid-template-columns: 1fr;
+        gap: 0.5rem;
+      }
+
+      .paper-table-wrap {
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .print-table {
+        min-width: 480px;
+      }
+
+      .signatures-box {
+        flex-direction: column;
+        gap: 2rem;
+        align-items: center;
+        margin-top: 2rem;
+      }
+
+      .signature-col {
+        width: 85%;
+      }
+
+      .fingerprint-col {
+        width: 100%;
+        justify-content: center;
+      }
+    }
+
     @media print {
       .no-print { display: none !important; }
       .print-overlay {

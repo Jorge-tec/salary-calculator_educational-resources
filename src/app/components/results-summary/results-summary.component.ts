@@ -277,11 +277,12 @@ import { LiquidationResult } from '../../models/liquidation.model';
     }
 
     .hero-amount {
-      font-size: 2.3rem;
+      font-size: clamp(1.4rem, 5.5vw, 2.3rem);
       font-weight: 800;
       letter-spacing: -0.02em;
       margin: 0 0 0.4rem 0;
       color: #ffffff;
+      word-break: normal;
     }
 
     .hero-detail {
@@ -525,6 +526,51 @@ import { LiquidationResult } from '../../models/liquidation.model';
       max-width: 480px;
       margin: 0;
       line-height: 1.5;
+    }
+
+    @media (max-width: 768px) {
+      .hero-total-card {
+        padding: 1.15rem 0.85rem;
+        border-radius: 12px;
+      }
+
+      .hero-content {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 1rem;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        width: 100%;
+      }
+
+      .btn-primary, .btn-secondary {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .metric-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+      }
+
+      .metric-card {
+        padding: 0.95rem 0.85rem;
+      }
+
+      .detailed-table-box {
+        border-radius: 10px;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .summary-table {
+        min-width: 520px;
+      }
+
+      .summary-table th, .summary-table td {
+        padding: 0.65rem 0.75rem;
+      }
     }
   `]
 })

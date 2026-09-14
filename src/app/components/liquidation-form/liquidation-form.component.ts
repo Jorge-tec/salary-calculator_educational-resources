@@ -922,6 +922,67 @@ import { CalculatorService } from '../../services/calculator.service';
     .alert-icon {
       font-size: 1.1rem;
     }
+
+    @media (max-width: 768px) {
+      .form-container-card {
+        padding: 1rem 0.75rem;
+        border-radius: 12px;
+        gap: 1rem;
+      }
+
+      .header-top-row {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.75rem;
+      }
+
+      .btn-clear-form {
+        width: 100%;
+        justify-content: center;
+      }
+
+      .test-version-banner {
+        padding: 0.65rem 0.75rem;
+      }
+
+      .test-buttons-wrap {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        padding-bottom: 0.35rem;
+        scrollbar-width: thin;
+      }
+
+      .btn-test-preset {
+        flex-shrink: 0;
+        white-space: nowrap;
+      }
+
+      .form-section {
+        padding: 0.95rem 0.75rem;
+        border-radius: 10px;
+      }
+
+      .grid-2, .grid-3 {
+        grid-template-columns: 1fr;
+        gap: 0.85rem;
+      }
+
+      .transport-choice-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 0.6rem;
+      }
+
+      .switch-container {
+        width: 100%;
+        justify-content: space-between;
+      }
+
+      .salary-meta {
+        flex-wrap: wrap;
+      }
+    }
   `]
 })
 export class LiquidationFormComponent implements OnInit, OnChanges {

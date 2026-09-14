@@ -30,10 +30,17 @@
   --card-bg: #ffffff;
 }
 
-* {
+*, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
+}
+
+html {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -41,6 +48,10 @@ body {
   background-color: var(--bg-page);
   color: var(--slate-800);
   line-height: 1.5;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+  position: relative;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }

@@ -393,7 +393,9 @@ import { LiquidationResult, FormulaStep } from '../../models/liquidation.model';
       font-family: 'Fira Code', 'Cascadia Code', monospace;
       font-size: 0.78rem;
       color: #1e293b;
-      word-break: break-all;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      white-space: pre-wrap;
     }
 
     .math-expr {
@@ -496,6 +498,36 @@ import { LiquidationResult, FormulaStep } from '../../models/liquidation.model';
       padding: 3rem 1rem;
       color: #94a3b8;
       font-size: 0.9rem;
+    }
+
+    @media (max-width: 768px) {
+      .inspector-card {
+        padding: 1rem 0.75rem;
+        border-radius: 12px;
+      }
+
+      .basis-banner {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 0.6rem;
+        padding: 0.65rem 0.75rem;
+      }
+
+      .step-top {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.35rem;
+      }
+
+      .step-result {
+        font-size: 0.95rem;
+      }
+
+      .steps-list, .normative-list {
+        max-height: none;
+        overflow-y: visible;
+        padding-right: 0;
+      }
     }
   `]
 })
