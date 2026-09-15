@@ -1,142 +1,232 @@
-<div class="app-wrapper">
-  <!-- Barra de Acento Tricolor Colombiano -->
-  <div class="flag-accent">
-    <div class="stripe yellow"></div>
-    <div class="stripe blue"></div>
-    <div class="stripe red"></div>
+<div class="enterprise-shell" [class.sidebar-is-collapsed]="sidebarCollapsed()">
+  <!-- Barra de Acento Tricolor Colombiano (Sutil) -->
+  <div class="flag-accent-bar">
+    <span class="flag-stripe yellow"></span>
+    <span class="flag-stripe blue"></span>
+    <span class="flag-stripe red"></span>
   </div>
 
-  <!-- Header / Barra de Navegación Principal -->
-  <header class="app-header">
-    <div class="header-inner">
-      <div class="brand-area">
-        <div class="brand-icon">
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-            <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
-          </svg>
+  <!-- SIDEBAR ENTERPRISE FIJO (Inspirado en referencia-front) -->
+  <aside class="enterprise-sidebar">
+    <div class="sidebar-top">
+      <!-- Marca y Logo -->
+      <div class="sidebar-brand" (click)="goToView('dashboard')">
+        <div class="brand-logo-circle">
+          <span class="material-symbols-outlined brand-icon">balance</span>
         </div>
-        <div class="brand-text">
-          <h1>Calculadora Laboral Colombia</h1>
-          <span class="brand-sub">Indemnizaciones (Art. 64 CST) & Liquidación Definitiva</span>
+        <div class="brand-info">
+          <span class="brand-name">NexusHR</span>
+          <span class="brand-edition">COLOMBIA CST</span>
         </div>
       </div>
 
-      <!-- Indicadores Normativos en vivo -->
-      <div class="legal-badge-pill">
-        <span class="dot-indicator"></span>
-        <div class="pill-info">
-          <strong>CST & Ley 789 de 2002</strong>
-          <span>SMMLV: $1.423.500 &bull; Aux. Transp: $200.000</span>
+      <!-- Selector de Régimen / Sede -->
+      <div class="jurisdiction-box">
+        <div class="jurisdiction-inner">
+          <div class="jurisdiction-title">
+            <span class="material-symbols-outlined text-primary text-[18px]">verified</span>
+            <span class="jur-text">CST &bull; Ley 789 / 2002</span>
+          </div>
+          <span class="jur-badge">2025</span>
         </div>
       </div>
 
-      <!-- Navegación por pestañas principales -->
-      <nav class="main-nav">
-        <button type="button" class="nav-tab" [class.active]="activeView() === 'calculator'"
-          (click)="activeView.set('calculator')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="2" width="16" height="20" rx="2"></rect>
-            <line x1="8" y1="6" x2="16" y2="6"></line>
-            <line x1="16" y1="14" x2="16" y2="18"></line>
-            <path d="M16 10h.01"></path>
-            <path d="M12 10h.01"></path>
-            <path d="M8 10h.01"></path>
-            <path d="M12 14h.01"></path>
-            <path d="M8 14h.01"></path>
-            <path d="M12 18h.01"></path>
-            <path d="M8 18h.01"></path>
-          </svg>
-          Calculadora & Fórmulas
-        </button>
+      <!-- Navegación Vertical Principal -->
+      <nav class="sidebar-nav">
+        <!-- 1. Dashboard -->
+        <a class="nav-item" [class.active]="activeView() === 'dashboard'" (click)="goToView('dashboard')">
+          <span class="material-symbols-outlined nav-icon">dashboard</span>
+          <span class="nav-label">Dashboard Ejecutivo</span>
+        </a>
 
-        <button type="button" class="nav-tab" [class.active]="activeView() === 'records'"
-          (click)="activeView.set('records')">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            stroke-linecap="round" stroke-linejoin="round">
-            <line x1="8" y1="6" x2="21" y2="6"></line>
-            <line x1="8" y1="12" x2="21" y2="12"></line>
-            <line x1="8" y1="18" x2="21" y2="18"></line>
-            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-          </svg>
-          Tabla Organizacional
-          <span class="badge-count-pill">{{ storageService.savedLiquidations().length }}</span>
-        </button>
+        <!-- 2. Calculadora & Certificación -->
+        <a class="nav-item" [class.active]="activeView() === 'calculator'" (click)="goToView('calculator')">
+          <span class="material-symbols-outlined nav-icon">calculate</span>
+          <span class="nav-label">Calculadora CST</span>
+          @if (currentLiquidation() && currentLiquidation()!.totalLiquidacion > 0) {
+            <span class="nav-badge-pill active-calc">Activo</span>
+          }
+        </a>
+
+        <!-- 3. Tabla Organizacional / Casos -->
+        <a class="nav-item" [class.active]="activeView() === 'records'" (click)="goToView('records')">
+          <span class="material-symbols-outlined nav-icon">folder_shared</span>
+          <span class="nav-label">Expedientes Guardados</span>
+          <span class="nav-count-badge">{{ storageService.savedLiquidations().length }}</span>
+        </a>
+
+        <!-- 4. Normativa y Artículos CST -->
+        <a class="nav-item" [class.active]="activeView() === 'normative'" (click)="goToView('normative')">
+          <span class="material-symbols-outlined nav-icon">menu_book</span>
+          <span class="nav-label">Normativa & Fórmulas</span>
+        </a>
       </nav>
     </div>
-  </header>
 
-  <!-- Notificación Toast -->
-  @if (toastMessage()) {
-  <div class="toast-notification">
-    <div class="toast-icon">✓</div>
-    <div class="toast-text">{{ toastMessage() }}</div>
-  </div>
-  }
-
-  <!-- Contenedor Principal de la App -->
-  <main class="app-main">
-    <!-- VISTA 1: CALCULADORA Y FÓRMULAS LATERALES -->
-    @if (activeView() === 'calculator') {
-    <div class="calculator-layout">
-      <!-- Columna Izquierda: Formulario + Tarjeta de Resumen -->
-      <div class="left-column">
-        <!-- Formulario de captura y parametrización -->
-        <app-liquidation-form [initialData]="editingInput()" (onCalculate)="onCalculationUpdated($event)">
-        </app-liquidation-form>
-
-        <!-- Resumen de resultados inmediatos -->
-        <app-results-summary [liquidation]="currentLiquidation()" (onSave)="saveLiquidation($event)"
-          (onPrint)="openPrintModal($event)">
-        </app-results-summary>
+    <!-- Sección Inferior del Sidebar: Indicador de Almacenamiento y Colapsar -->
+    <div class="sidebar-bottom">
+      <div class="storage-indicator-card">
+        <div class="storage-card-header">
+          <span class="storage-lbl">Base de Datos Local</span>
+          <span class="storage-pct">{{ storageService.savedLiquidations().length }} Casos</span>
+        </div>
+        <div class="storage-track">
+          <div class="storage-fill" [style.width.%]="storageService.savedLiquidations().length > 0 ? (storageService.savedLiquidations().length * 10) : 5"></div>
+        </div>
+        <div class="storage-card-footer">
+          <span>SMMLV: $1.423.500</span>
+          <span>Transp: $200.000</span>
+        </div>
       </div>
 
-      <!-- Columna Derecha: Panel de Fórmulas y Artículos CST -->
-      <aside class="right-column">
-        <app-formula-inspector [liquidation]="currentLiquidation()">
-        </app-formula-inspector>
-      </aside>
+      <button type="button" class="btn-toggle-sidebar" (click)="toggleSidebar()">
+        <span class="material-symbols-outlined">
+          {{ sidebarCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}
+        </span>
+        <span class="toggle-text">{{ sidebarCollapsed() ? 'Expandir' : 'Contraer Menú' }}</span>
+      </button>
     </div>
+  </aside>
+
+  <!-- CONTENEDOR PRINCIPAL DERECHO (pl-64) -->
+  <div class="enterprise-content-wrapper">
+    <!-- TOPBAR SUPERIOR FIJO (h-16) -->
+    <header class="enterprise-topbar">
+      <!-- Búsqueda Rápida ⌘K -->
+      <div class="topbar-search-area">
+        <div class="search-input-wrapper">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input 
+            type="text" 
+            [(ngModel)]="globalSearchQuery" 
+            placeholder="Buscar colaborador, cédula o empresa..." 
+            class="topbar-search-input"
+            (keyup.enter)="handleGlobalSearch()" />
+          <kbd class="kbd-shortcut">↵ Enter</kbd>
+        </div>
+
+        <div class="topbar-status-chip">
+          <span class="status-live-dot"></span>
+          <span class="chip-text-main">CST Colombia 2025</span>
+          <span class="chip-bullet">•</span>
+          <span class="chip-text-sub">Fórmulas Certificadas</span>
+        </div>
+      </div>
+
+      <!-- Acciones Rápidas & Perfil -->
+      <div class="topbar-actions-area">
+        <button type="button" class="btn-icon-topbar" title="Guía y Fundamentos Legales" (click)="goToView('normative')">
+          <span class="material-symbols-outlined">help</span>
+        </button>
+
+        <button type="button" class="btn-icon-topbar relative" title="Expedientes Guardados" (click)="goToView('records')">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="notif-badge">{{ storageService.savedLiquidations().length }}</span>
+        </button>
+
+        <div class="topbar-divider"></div>
+
+        <!-- Perfil Certificador / HR Specialist -->
+        <div class="user-profile-badge">
+          <div class="user-avatar-wrap">
+            <span class="avatar-initials">HR</span>
+            <span class="user-status-online"></span>
+          </div>
+          <div class="user-meta-info">
+            <span class="user-display-name">Gestión Humana</span>
+            <span class="user-role-title">Certificador Jurídico CST</span>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- NOTIFICACIÓN TOAST FLOTANTE -->
+    @if (toastMessage()) {
+      <div class="toast-popup-enterprise">
+        <span class="material-symbols-outlined toast-check">check_circle</span>
+        <span class="toast-msg">{{ toastMessage() }}</span>
+      </div>
     }
 
-    <!-- VISTA 2: TABLA ORGANIZACIONAL DE CASOS GUARDADOS -->
-    @if (activeView() === 'records') {
-    <div class="records-layout">
-      <app-records-table [activeId]="currentLiquidation()?.id || ''" (onLoadRecord)="loadRecordToForm($event)"
-        (onPrintRecord)="openPrintModal($event)">
-      </app-records-table>
-    </div>
+    <!-- ÁREA DE CONTENIDO DINÁMICO (pt-16) -->
+    <main class="enterprise-main-body">
+      <!-- VISTA 1: DASHBOARD EJECUTIVO -->
+      @if (activeView() === 'dashboard') {
+        <app-executive-dashboard 
+          (onNewLiquidation)="startNewLiquidation()"
+          (onOpenCalculator)="openWithPreset($event)"
+          (onViewAllRecords)="goToView('records')"
+          (onLoadRecord)="loadRecordToForm($event)"
+          (onPrintRecord)="openPrintModal($event)">
+        </app-executive-dashboard>
+      }
+
+      <!-- VISTA 2: CALCULADORA Y RESUMEN EN TIEMPO REAL -->
+      @if (activeView() === 'calculator') {
+        <div class="calculator-view-grid">
+          <div class="calculator-main-col">
+            <!-- Formulario Principal -->
+            <app-liquidation-form 
+              [initialData]="editingInput()" 
+              [externalPreset]="requestedPreset()"
+              (onCalculate)="onCalculationUpdated($event)">
+            </app-liquidation-form>
+
+            <!-- Resumen de Resultados -->
+            <app-results-summary 
+              [liquidation]="currentLiquidation()" 
+              (onSave)="saveLiquidation($event)"
+              (onPrint)="openPrintModal($event)">
+            </app-results-summary>
+          </div>
+
+          <!-- Inspector Lateral de Fórmulas -->
+          <aside class="calculator-side-col">
+            <app-formula-inspector [liquidation]="currentLiquidation()">
+            </app-formula-inspector>
+          </aside>
+        </div>
+      }
+
+      <!-- VISTA 3: TABLA ORGANIZACIONAL DE CASOS -->
+      @if (activeView() === 'records') {
+        <div class="records-view-wrapper">
+          <app-records-table 
+            [activeId]="currentLiquidation()?.id || ''" 
+            [externalSearch]="globalSearchQuery"
+            (onLoadRecord)="loadRecordToForm($event)"
+            (onPrintRecord)="openPrintModal($event)">
+          </app-records-table>
+        </div>
+      }
+
+      <!-- VISTA 4: COMPENDIO NORMATIVO Y FÓRMULAS -->
+      @if (activeView() === 'normative') {
+        <div class="normative-view-wrapper">
+          <app-formula-inspector [liquidation]="currentLiquidation()" [defaultToNormativa]="true">
+          </app-formula-inspector>
+        </div>
+      }
+    </main>
+
+    <!-- MODAL DE ACTA FORMAL IMPRIMIBLE / PDF -->
+    @if (printLiquidation()) {
+      <app-print-sheet 
+        [liquidation]="printLiquidation()" 
+        (onClose)="closePrintModal()">
+      </app-print-sheet>
     }
-  </main>
 
-  <!-- Modal de Acta Imprimible / Generación de PDF -->
-  @if (printLiquidation()) {
-  <app-print-sheet [liquidation]="printLiquidation()" (onClose)="closePrintModal()">
-  </app-print-sheet>
-  }
-
-  <!-- Footer -->
-  <footer class="app-footer">
-    <div class="footer-inner">
-      <p>
-        Calculadora Laboral de Colombia &bull; Actualizada bajo el
-        <strong>Código Sustantivo del Trabajo (CST)</strong>, Ley 789 de 2002, Ley 1788 de 2016 y Ley 52 de 1975.
-      </p>
-      <p class="footer-sub">
-        Herramienta de referencia técnica y jurídica para colaboradores, empleadores y profesionales de Gestión Humana.
-      </p>
-      <p class="footer-sub">
-        Esta aplicacion puede tener errores, por favor
-        <strong>valida los resultados</strong>
-        siguiendo los canales regulados por la nacion esto es meramente referencial y educativo
-      </p>
-    </div>
-  </footer>
+    <!-- FOOTER ENTERPRISE -->
+    <footer class="enterprise-footer">
+      <div class="footer-inner-content">
+        <p class="footer-copy">
+          <strong>NexusHR &bull; Calculadora de Liquidaciones e Indemnizaciones Laborales</strong> | República de Colombia
+        </p>
+        <p class="footer-disclaimer">
+          Fórmulas y directrices jurídicas sustentadas en el Código Sustantivo del Trabajo (Art. 64, 186, 249, 306 CST), Ley 789 de 2002 y Ley 15 de 1959. Herramienta con propósitos didácticos y de verificación técnica.
+        </p>
+      </div>
+    </footer>
+  </div>
 </div>

@@ -533,5 +533,10 @@ import { LiquidationResult, FormulaStep } from '../../models/liquidation.model';
 })
 export class FormulaInspectorComponent {
   @Input() liquidation: LiquidationResult | null = null;
+  @Input() set defaultToNormativa(val: boolean) {
+    if (val) {
+      this.activeTab.set('normativa');
+    }
+  }
   readonly activeTab = signal<'formulas' | 'normativa'>('formulas');
 }

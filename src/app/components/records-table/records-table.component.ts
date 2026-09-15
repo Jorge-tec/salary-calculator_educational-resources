@@ -683,6 +683,11 @@ import { StorageService } from '../../services/storage.service';
 })
 export class RecordsTableComponent {
   @Input() activeId: string = '';
+  @Input() set externalSearch(val: string) {
+    if (val !== undefined && val !== null) {
+      this.searchQuery = val;
+    }
+  }
   @Output() onLoadRecord = new EventEmitter<LiquidationResult>();
   @Output() onPrintRecord = new EventEmitter<LiquidationResult>();
 

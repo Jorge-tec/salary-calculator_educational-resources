@@ -16,15 +16,65 @@ import { CalculatorService } from '../../services/calculator.service';
   imports: [CommonModule, FormsModule],
   template: `
     <div class="form-container-card">
+      <!-- Stepper Wizard de Flujo de Certificación (Inspirado en referencia-front 3.code.html) -->
+      <div class="flow-wizard-strip">
+        <div class="wizard-header">
+          <div class="wizard-title-group">
+            <span class="material-symbols-outlined text-primary text-[20px]">timeline</span>
+            <span class="wizard-title">Flujo de Certificación CST</span>
+          </div>
+          <div class="wizard-step-progress">
+            <span class="wizard-step-text">Norma Laboral Colombiana</span>
+            <span class="wizard-progress-track">
+              <span class="wizard-progress-bar" [style.width.%]="formData.baseSalary > 0 && formData.startDate && formData.endDate ? 100 : (formData.startDate ? 50 : 25)"></span>
+            </span>
+          </div>
+        </div>
+
+        <div class="wizard-steps-grid">
+          <div class="wizard-step-box" [class.step-done]="formData.employeeName || formData.companyName">
+            <div class="step-num-circle">1</div>
+            <div class="step-meta">
+              <strong class="step-name">1. Partes</strong>
+              <span class="step-sub">{{ formData.employeeName || 'Colaborador' }}</span>
+            </div>
+          </div>
+
+          <div class="wizard-step-box" [class.step-done]="formData.startDate && formData.endDate">
+            <div class="step-num-circle">2</div>
+            <div class="step-meta">
+              <strong class="step-name">2. Fechas & Contrato</strong>
+              <span class="step-sub">{{ calculatedDays > 0 ? calculatedDays + ' días' : 'Pendiente' }}</span>
+            </div>
+          </div>
+
+          <div class="wizard-step-box" [class.step-done]="formData.baseSalary > 0">
+            <div class="step-num-circle">3</div>
+            <div class="step-meta">
+              <strong class="step-name">3. Salarios & Base</strong>
+              <span class="step-sub">{{ formData.baseSalary > 0 ? (formData.baseSalary | currency:'COP':'symbol-narrow':'1.0-0') : 'Pendiente' }}</span>
+            </div>
+          </div>
+
+          <div class="wizard-step-box" [class.step-active]="formData.baseSalary > 0 && calculatedDays > 0">
+            <div class="step-num-circle">4</div>
+            <div class="step-meta">
+              <strong class="step-name">4. Liquidación CST</strong>
+              <span class="step-sub">{{ formData.terminationReason === 'DESPIDO_SIN_JUSTA_CAUSA' ? 'Art. 64 Aplica' : 'Derechos Ciertos' }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
       <div class="form-header">
         <div class="header-top-row">
           <div class="title-wrap">
             <div class="badges-row">
-              <span class="badge-certifier">Modo Certificador / Usuario</span>
-              <span class="badge-accent">Formulario en Blanco</span>
+              <span class="badge-certifier">Certificación Laboral CST</span>
+              <span class="badge-accent">Formulario Interactivo</span>
             </div>
             <h3>Calculadora de Liquidación e Indemnización Laboral</h3>
-            <p class="subtitle">Ingresa los datos reales del colaborador o carga un escenario de prueba para evaluar el cálculo</p>
+            <p class="subtitle">Ingresa los datos reales del colaborador o selecciona un escenario preconfigurado para auditar las fórmulas</p>
           </div>
 
           <button type="button" class="btn-clear-form" (click)="resetForm()" title="Limpiar todos los campos del formulario">
@@ -32,14 +82,14 @@ import { CalculatorService } from '../../services/calculator.service';
               <path d="M3 6h18"></path>
               <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
             </svg>
-            Limpiar (Dejar en Blanco)
+            Limpiar Formulario
           </button>
         </div>
 
         <!-- Barra de Versión de Pruebas / Demostración -->
         <div class="test-version-banner">
           <div class="test-banner-title">
-            <span class="test-tag">🧪 Versión de Pruebas:</span>
+            <span class="test-tag">🧪 Escenarios Rápidos:</span>
             <span class="test-hint">Cargar caso de prueba preconfigurado:</span>
           </div>
           <div class="test-buttons-wrap">
@@ -1022,14 +1072,150 @@ import { CalculatorService } from '../../services/calculator.service';
         justify-content: space-between;
       }
 
-      .salary-meta {
-        flex-wrap: wrap;
+      /* Stepper Wizard Strip (referencia-front 3.code.html) */
+      .flow-wizard-strip {
+        background-color: var(--surface-container-low);
+        border: 1px solid var(--surface-container-high);
+        border-radius: var(--radius-lg);
+        padding: 0.875rem 1rem;
+        margin-bottom: 1.25rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+
+      .wizard-header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .wizard-title-group {
+        display: flex;
+        align-items: center;
+        gap: 0.375rem;
+      }
+
+      .wizard-title {
+        font-size: 12px;
+        font-weight: 700;
+        color: var(--on-surface);
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+
+      .wizard-step-progress {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+      }
+
+      .wizard-step-text {
+        font-size: 11px;
+        color: var(--outline);
+      }
+
+      .wizard-progress-track {
+        display: inline-block;
+        width: 80px;
+        height: 5px;
+        background-color: var(--surface-container-high);
+        border-radius: 9999px;
+        overflow: hidden;
+      }
+
+      .wizard-progress-bar {
+        display: block;
+        height: 100%;
+        background-color: var(--primary);
+        border-radius: 9999px;
+        transition: width 0.3s ease;
+      }
+
+      .wizard-steps-grid {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.5rem;
+      }
+
+      @media (min-width: 640px) {
+        .wizard-steps-grid {
+          grid-template-columns: repeat(4, 1fr);
+        }
+      }
+
+      .wizard-step-box {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.5rem 0.625rem;
+        border-radius: var(--radius-md);
+        background-color: var(--surface);
+        border: 1px solid var(--border-subtle);
+        transition: all 0.15s ease;
+      }
+
+      .wizard-step-box.step-done {
+        border-color: #10b981;
+        background-color: #f0fdf4;
+      }
+
+      .wizard-step-box.step-done .step-num-circle {
+        background-color: #10b981;
+        color: #ffffff;
+      }
+
+      .wizard-step-box.step-active {
+        border-color: var(--primary);
+        background-color: var(--surface-container-low);
+      }
+
+      .wizard-step-box.step-active .step-num-circle {
+        background-color: var(--primary);
+        color: #ffffff;
+      }
+
+      .step-num-circle {
+        width: 22px;
+        height: 22px;
+        border-radius: 50%;
+        background-color: var(--surface-container-high);
+        color: var(--on-surface-variant);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 11px;
+        font-weight: 700;
+        flex-shrink: 0;
+      }
+
+      .step-meta {
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+      }
+
+      .step-name {
+        font-size: 11px;
+        font-weight: 600;
+        color: var(--on-surface);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+      }
+
+      .step-sub {
+        font-size: 10px;
+        color: var(--outline);
+        white-space: nowrap;
+        text-overflow: ellipsis;
+        overflow: hidden;
       }
     }
   `]
 })
 export class LiquidationFormComponent implements OnInit, OnChanges {
   @Input() initialData: LiquidationFormInput | null = null;
+  @Input() externalPreset: string | null = null;
   @Output() onCalculate = new EventEmitter<LiquidationResult>();
 
   yearConfigs = YEAR_CONFIGS;
@@ -1092,6 +1278,9 @@ export class LiquidationFormComponent implements OnInit, OnChanges {
     if (changes['initialData'] && this.initialData) {
       this.formData = { ...this.initialData };
       this.onFormChange();
+    }
+    if (changes['externalPreset'] && this.externalPreset) {
+      this.applyPreset(this.externalPreset);
     }
   }
 
