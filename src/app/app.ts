@@ -11,6 +11,7 @@ import { PrintSheetComponent } from './components/print-sheet/print-sheet.compon
 import { ExecutiveDashboardComponent } from './components/executive-dashboard/executive-dashboard.component';
 import { VacationsCalendarComponent } from './components/vacations-calendar/vacations-calendar.component';
 import { PayrollProcessingComponent } from './components/payroll-processing/payroll-processing.component';
+import { EmployeeDirectoryComponent, DirectoryEmployee } from './components/employee-directory/employee-directory.component';
 
 @Component({
   selector: 'app-root',
@@ -25,7 +26,8 @@ import { PayrollProcessingComponent } from './components/payroll-processing/payr
     PrintSheetComponent,
     ExecutiveDashboardComponent,
     VacationsCalendarComponent,
-    PayrollProcessingComponent
+    PayrollProcessingComponent,
+    EmployeeDirectoryComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -34,7 +36,7 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll'>('payroll');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory'>('directory');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
@@ -48,7 +50,7 @@ export class App {
     this.sidebarCollapsed.update(v => !v);
   }
 
-  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll'): void {
+  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory'): void {
     this.activeView.set(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
@@ -56,6 +58,28 @@ export class App {
   startNewLiquidation(): void {
     this.editingInput.set(null);
     this.requestedPreset.set(null);
+    this.goToView('calculator');
+  }
+
+  openCalculatorWithEmployee(emp: DirectoryEmployee): void {
+    // Convierte el empleado del directorio en un input del formulario de liquidación CST
+    const monthlySalary = Math.round(emp.baseSalary / 12);
+    this.editingInput.set({
+      employeeName: emp.name,
+      employeeId: emp.code,
+      companyName: 'NexusHR Enterprise (' + emp.location + ')',
+      contractType: 'INDEFINIDO',
+      terminationReason: 'DESPIDO_SIN_JUSTA_CAUSA',
+      startDate: '2021-06-15',
+      endDate: '2024-10-31',
+      baseSalary: monthlySalary > 0 ? monthlySalary : 5500000,
+      includeTransportAllowance: false,
+      transportExclusionReason: 'SUPERIOR_2_SMMLV',
+      pendingSalaryDays: 0,
+      useCalculatedVacations: true,
+      smmlvYear: 2024
+    });
+    this.showToast(`Datos cargados para simulación CST: ${emp.name} (${emp.role})`);
     this.goToView('calculator');
   }
 

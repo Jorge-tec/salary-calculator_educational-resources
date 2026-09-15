@@ -1,0 +1,789 @@
+<div class="directory-container">
+  <!-- Toast Notification -->
+  @if (toastMessage()) {
+    <div class="directory-toast">
+      <span class="material-symbols-outlined text-[18px]">info</span>
+      <span>{{ toastMessage() }}</span>
+      <button type="button" class="btn-close-toast" (click)="toastMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- 1. SUB-HEADER & BREADCRUMB -->
+  <div class="sub-header-row">
+    <nav class="breadcrumb-nav">
+      <span class="breadcrumb-link">Inicio</span>
+      <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+      <span class="breadcrumb-link text-primary font-semibold">Recursos Humanos</span>
+      <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+      <span class="breadcrumb-current">Directorio de Personal</span>
+    </nav>
+    <div class="sync-status-pill">
+      <span class="sync-dot animate-pulse"></span>
+      <span>Directorio Sincronizado (LDAP &amp; Workday v4.2)</span>
+    </div>
+  </div>
+
+  <!-- 2. ENCABEZADO DE PÁGINA -->
+  <div class="page-title-row">
+    <div class="page-title-group">
+      <div class="title-with-badge">
+        <h1 class="page-h1">Directorio y Gestión de Personal</h1>
+        <span class="version-badge font-mono">v24.11</span>
+      </div>
+      <p class="page-subtitle">
+        Gestión centralizada de 1,428 colaboradores activos, contratos, compensación y estructura organizativa.
+      </p>
+    </div>
+    <div class="header-actions-group">
+      <button 
+        type="button" 
+        class="btn-export" 
+        (click)="exportDirectory()">
+        <span class="material-symbols-outlined text-[18px] text-secondary">file_download</span>
+        <span>Exportar Directorio</span>
+        <span class="btn-subtext">XLSX/CSV</span>
+      </button>
+      <button 
+        type="button" 
+        class="btn-new-employee"
+        (click)="showModalNewEmployee.set(true)">
+        <span class="material-symbols-outlined text-[19px]">person_add</span>
+        <span>+ Nuevo Empleado</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. BARRA DE KPIS OPERACIONALES (4 TARJETAS) -->
+  <section class="kpi-grid">
+    <!-- KPI 1 -->
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-labels">
+          <span class="kpi-tag">Total Empleados</span>
+          <span class="kpi-figure font-mono">1,428</span>
+        </div>
+        <div class="kpi-icon-box bg-low text-primary">
+          <span class="material-symbols-outlined text-[22px]">group</span>
+        </div>
+      </div>
+      <div class="kpi-footer-bar">
+        <div class="kpi-delta text-tertiary">
+          <span class="material-symbols-outlined text-[16px]">arrow_upward</span>
+          <span class="font-semibold">+12</span> este mes
+        </div>
+        <span class="kpi-side font-mono">98.2% activos</span>
+      </div>
+    </div>
+
+    <!-- KPI 2 -->
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-labels">
+          <span class="kpi-tag">Nuevas Incorporaciones</span>
+          <span class="kpi-figure font-mono">16</span>
+        </div>
+        <div class="kpi-icon-box bg-secondary-cont text-primary">
+          <span class="material-symbols-outlined text-[22px]">how_to_reg</span>
+        </div>
+      </div>
+      <div class="kpi-footer-bar">
+        <div class="kpi-delta text-primary">
+          <span class="material-symbols-outlined text-[15px]">timer</span>
+          <span>En fase onboarding</span>
+        </div>
+        <span class="kpi-side font-mono">8 en Sede Madrid</span>
+      </div>
+    </div>
+
+    <!-- KPI 3 -->
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-labels">
+          <span class="kpi-tag">Contratos Indefinidos</span>
+          <span class="kpi-figure font-mono">91.4%</span>
+        </div>
+        <div class="kpi-icon-box bg-high text-tertiary">
+          <span class="material-symbols-outlined text-[22px]">verified_user</span>
+        </div>
+      </div>
+      <div class="kpi-footer-bar">
+        <div class="kpi-delta text-tertiary">
+          <span class="material-symbols-outlined text-[15px]">trending_up</span>
+          <span>Ratio de estabilidad</span>
+        </div>
+        <span class="kpi-side font-mono">1,305 fijos</span>
+      </div>
+    </div>
+
+    <!-- KPI 4 -->
+    <div class="kpi-card">
+      <div class="kpi-top">
+        <div class="kpi-labels">
+          <span class="kpi-tag">Rotación Voluntaria</span>
+          <span class="kpi-figure font-mono">2.1%</span>
+        </div>
+        <div class="kpi-icon-box bg-tertiary-cont text-tertiary">
+          <span class="material-symbols-outlined text-[22px]">swap_horiz</span>
+        </div>
+      </div>
+      <div class="kpi-footer-bar">
+        <div class="kpi-delta text-tertiary">
+          <span class="material-symbols-outlined text-[15px]">check_circle</span>
+          <span>Benchmark óptimo</span>
+        </div>
+        <span class="kpi-side font-mono">-0.4% vs 2023</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. CONTROLES DE BÚSQUEDA Y FILTRADO CON TABS -->
+  <section class="controls-card">
+    <!-- Tabs rápidos -->
+    <div class="tabs-header-row">
+      <div class="tabs-pill-container">
+        <button 
+          type="button" 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'todos'"
+          (click)="activeTab.set('todos')">
+          <span>Todos</span>
+          <span class="tab-badge">1,428</span>
+        </button>
+        <button 
+          type="button" 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'activos'"
+          (click)="activeTab.set('activos')">
+          <span>Activos</span>
+          <span class="tab-badge muted">1,398</span>
+        </button>
+        <button 
+          type="button" 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'onboarding'"
+          (click)="activeTab.set('onboarding')">
+          <span>Onboarding</span>
+          <span class="tab-badge blue">16</span>
+        </button>
+        <button 
+          type="button" 
+          class="tab-btn" 
+          [class.active]="activeTab() === 'bajas'"
+          (click)="activeTab.set('bajas')">
+          <span>En Revisión / Bajas</span>
+          <span class="tab-badge red">14</span>
+        </button>
+      </div>
+
+      <div class="views-switch-group">
+        <span class="views-label">Vistas:</span>
+        <button type="button" class="view-icon-btn active" title="Vista Tabla Compacta">
+          <span class="material-symbols-outlined text-[18px]">table_rows</span>
+        </button>
+        <button type="button" class="view-icon-btn" title="Vista Organigrama">
+          <span class="material-symbols-outlined text-[18px]">account_tree</span>
+        </button>
+        <button type="button" class="view-icon-btn" title="Vista Tarjetas">
+          <span class="material-symbols-outlined text-[18px]">grid_view</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Barra de Filtros en Grid -->
+    <div class="filters-grid">
+      <!-- Input Búsqueda -->
+      <div class="search-input-wrapper">
+        <span class="material-symbols-outlined search-icon">person_search</span>
+        <input 
+          type="text" 
+          class="filter-input-search" 
+          placeholder="Buscar por nombre, cargo, email, DNI/NIE o ID..."
+          [(ngModel)]="searchQuery"/>
+        @if (searchQuery) {
+          <button type="button" class="btn-clear-search" (click)="searchQuery = ''">
+            <span class="material-symbols-outlined text-[16px]">close</span>
+          </button>
+        }
+      </div>
+
+      <!-- Dropdown Departamento -->
+      <div class="select-wrapper">
+        <select class="filter-select" [(ngModel)]="selectedDept">
+          <option value="">Departamento: Todos</option>
+          <option value="tech">Tecnología (420)</option>
+          <option value="ops">Operaciones (310)</option>
+          <option value="sales">Ventas &amp; Mkt (280)</option>
+          <option value="fin">Finanzas (140)</option>
+          <option value="hr">Recursos Humanos (78)</option>
+        </select>
+        <span class="material-symbols-outlined select-chevron">expand_more</span>
+      </div>
+
+      <!-- Dropdown Sede -->
+      <div class="select-wrapper">
+        <select class="filter-select" [(ngModel)]="selectedLocation">
+          <option value="">Sede: Todas</option>
+          <option value="madrid">Sede Madrid (Hub)</option>
+          <option value="bcn">Barcelona Tech</option>
+          <option value="val">Valencia Ops</option>
+          <option value="remoto">Remoto / Híbrido</option>
+        </select>
+        <span class="material-symbols-outlined select-chevron">expand_more</span>
+      </div>
+
+      <!-- Dropdown Contrato -->
+      <div class="select-wrapper">
+        <select class="filter-select" [(ngModel)]="selectedContract">
+          <option value="">Contrato: Todos</option>
+          <option value="indef">Indefinido (1,305)</option>
+          <option value="temp">Temporal / Circunstancial</option>
+          <option value="prac">Formativo / Prácticas</option>
+        </select>
+        <span class="material-symbols-outlined select-chevron">expand_more</span>
+      </div>
+
+      <!-- Dropdown Estado & Reset -->
+      <div class="status-and-reset">
+        <div class="select-wrapper w-full">
+          <select class="filter-select" [(ngModel)]="selectedStatus">
+            <option value="">Estado: Todos</option>
+            <option value="act">Activo</option>
+            <option value="baja">Baja médica</option>
+            <option value="exced">Excedencia</option>
+            <option value="onb">Onboarding</option>
+          </select>
+          <span class="material-symbols-outlined select-chevron">expand_more</span>
+        </div>
+        <button 
+          type="button" 
+          class="btn-reset-filters" 
+          title="Limpiar filtros"
+          (click)="resetFilters()">
+          <span class="material-symbols-outlined text-[18px]">filter_alt_off</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. ÁREA PRINCIPAL: DOS COLUMNAS (TABLA + DRAWER FICHA 360) -->
+  <div class="directory-main-layout">
+    <!-- COLUMNA IZQUIERDA: TABLA ENTERPRISE DE EMPLEADOS -->
+    <div class="table-col-wrapper">
+      <!-- Header de la tabla -->
+      <div class="table-top-bar">
+        <div class="table-title-meta">
+          <span class="table-title">Registro de Talento Activo</span>
+          <span class="dot-separator">•</span>
+          <span class="font-mono text-outline text-[12px]">Mostrando {{ filteredEmployees.length }} de 1,428</span>
+        </div>
+        <div class="table-actions-right">
+          <button type="button" class="btn-table-util">
+            <span class="material-symbols-outlined text-[15px]">view_column</span>
+            <span>Columnas (8/12)</span>
+          </button>
+          <button type="button" class="btn-table-util">
+            <span class="material-symbols-outlined text-[15px]">tune</span>
+            <span>Densidad: Compacta</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Empleados -->
+      <div class="table-scroll-container">
+        <table class="employees-table">
+          <thead>
+            <tr>
+              <th class="th-checkbox">
+                <input type="checkbox" class="cb-input"/>
+              </th>
+              <th>Colaborador / Cargo</th>
+              <th>Dpto. &amp; Sede</th>
+              <th>Contrato</th>
+              <th class="text-right">Salario Bruto</th>
+              <th class="text-center">Antigüedad</th>
+              <th class="text-center">Estado</th>
+              <th class="th-action"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (emp of filteredEmployees; track emp.id) {
+              <tr 
+                class="emp-row"
+                [class.row-selected]="selectedEmployeeId() === emp.id"
+                (click)="selectEmployee(emp)">
+                <td class="td-checkbox" (click)="$event.stopPropagation()">
+                  <input 
+                    type="checkbox" 
+                    class="cb-input" 
+                    [checked]="selectedEmployeeId() === emp.id"/>
+                </td>
+                <td>
+                  <div class="employee-cell">
+                    <div class="avatar-wrapper">
+                      @if (emp.avatarUrl) {
+                        <img 
+                          [src]="emp.avatarUrl" 
+                          [alt]="emp.name" 
+                          class="emp-avatar"
+                          [class.ring-primary]="selectedEmployeeId() === emp.id"/>
+                      } @else {
+                        <div class="emp-initials-badge">
+                          {{ emp.initials }}
+                        </div>
+                      }
+                      <span 
+                        class="status-indicator-dot"
+                        [class.bg-tertiary]="emp.status === 'Activo'"
+                        [class.bg-primary]="emp.status === 'Onboarding'"
+                        [class.bg-secondary]="emp.status === 'Baja Temp.'">
+                      </span>
+                    </div>
+                    <div class="emp-name-role">
+                      <div class="name-id-row">
+                        <span class="emp-name" [class.text-primary]="selectedEmployeeId() === emp.id">
+                          {{ emp.name }}
+                        </span>
+                        <span class="emp-code font-mono">{{ emp.code }}</span>
+                      </div>
+                      <span class="emp-role">{{ emp.role }}</span>
+                    </div>
+                  </div>
+                </td>
+                <td>
+                  <div class="dept-location-cell">
+                    <span class="dept-name">{{ emp.department }}</span>
+                    <span class="location-tag">
+                      <span class="material-symbols-outlined text-[13px]">
+                        {{ emp.location.includes('Remoto') ? 'home_work' : 'location_on' }}
+                      </span>
+                      {{ emp.location }}
+                    </span>
+                  </div>
+                </td>
+                <td class="whitespace-nowrap">
+                  <span class="contract-pill">{{ emp.contractType }}</span>
+                </td>
+                <td class="text-right font-mono font-semibold whitespace-nowrap">
+                  {{ formatCurrency(emp.annualSalary) }}<span class="salary-unit">/año</span>
+                </td>
+                <td class="text-center font-mono text-[12px] text-on-surface-variant whitespace-nowrap">
+                  {{ emp.seniority }}
+                </td>
+                <td class="text-center whitespace-nowrap">
+                  <span 
+                    class="status-pill"
+                    [class.pill-active]="emp.status === 'Activo'"
+                    [class.pill-onboarding]="emp.status === 'Onboarding'"
+                    [class.pill-baja]="emp.status === 'Baja Temp.'">
+                    <span class="status-dot-inner"></span>
+                    {{ emp.status }}
+                  </span>
+                </td>
+                <td class="text-center" (click)="$event.stopPropagation()">
+                  <button 
+                    type="button" 
+                    class="btn-row-action"
+                    [title]="'Opciones para ' + emp.name"
+                    (click)="selectEmployee(emp)">
+                    <span class="material-symbols-outlined text-[18px]">
+                      {{ selectedEmployeeId() === emp.id ? 'chevron_right' : 'more_vert' }}
+                    </span>
+                  </button>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginación -->
+      <div class="table-pagination-bar">
+        <div class="pagination-info font-mono">
+          Mostrando <strong class="text-on-surface">1</strong> a <strong class="text-on-surface">{{ filteredEmployees.length }}</strong> de <strong class="text-on-surface">1,428</strong> resultados
+        </div>
+        <div class="pagination-buttons font-mono">
+          <button type="button" class="btn-page-nav" disabled>
+            <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+          </button>
+          <button type="button" class="btn-page-num active">1</button>
+          <button type="button" class="btn-page-num">2</button>
+          <button type="button" class="btn-page-num">3</button>
+          <span class="page-dots">...</span>
+          <button type="button" class="btn-page-num">143</button>
+          <button type="button" class="btn-page-nav">
+            <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- COLUMNA DERECHA: SIDE PANEL / FICHA 360° DE TALENTO -->
+    <div class="drawer-col-wrapper">
+      <div class="drawer-card">
+        <!-- Banner & Cabecera de Perfil (Sofía Garrido o seleccionado) -->
+        <div class="drawer-banner">
+          <div class="drawer-banner-top">
+            <div class="banner-title-flex">
+              <span class="material-symbols-outlined text-[20px] opacity-80">badge</span>
+              <span class="banner-tag">Ficha 360° de Talento</span>
+            </div>
+            <div class="banner-top-actions">
+              <button 
+                type="button" 
+                class="btn-banner-icon" 
+                title="Historial de Auditoría"
+                (click)="showToast('Historial de cambios: Versión de contrato auditada 15/06/2021')">
+                <span class="material-symbols-outlined text-[18px]">history</span>
+              </button>
+              <button 
+                type="button" 
+                class="btn-banner-icon" 
+                title="Expandir pantalla completa"
+                (click)="showToast('Modo de pantalla completa activado')">
+                <span class="material-symbols-outlined text-[18px]">open_in_full</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Profile Info Principal -->
+          <div class="drawer-profile-info">
+            <div class="profile-avatar-box">
+              @if (selectedEmployee().avatarUrl) {
+                <img 
+                  [src]="selectedEmployee().avatarUrl" 
+                  [alt]="selectedEmployee().name" 
+                  class="profile-big-avatar"/>
+              } @else {
+                <div class="profile-big-initials">
+                  {{ selectedEmployee().initials }}
+                </div>
+              }
+              <span class="status-badge-corner">
+                {{ selectedEmployee().status | uppercase }}
+              </span>
+            </div>
+
+            <div class="profile-text-group">
+              <div class="name-badge-row">
+                <h2 class="profile-name">{{ selectedEmployee().name }}</h2>
+                <span class="profile-code font-mono">{{ selectedEmployee().code }}</span>
+              </div>
+              <p class="profile-role">{{ selectedEmployee().role }}</p>
+              <div class="profile-contact-row">
+                <span class="contact-item">
+                  <span class="material-symbols-outlined text-[15px]">mail</span>
+                  {{ selectedEmployee().email }}
+                </span>
+                <span class="contact-item">
+                  <span class="material-symbols-outlined text-[15px]">call</span>
+                  {{ selectedEmployee().phone }}
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Pestañas internas de la ficha -->
+        <div class="drawer-tabs-bar">
+          <button 
+            type="button" 
+            class="drawer-tab"
+            [class.active]="currentDrawerTab() === 'general'"
+            (click)="currentDrawerTab.set('general')">
+            <span class="material-symbols-outlined text-[16px]">account_box</span>
+            <span>General</span>
+          </button>
+          <button 
+            type="button" 
+            class="drawer-tab"
+            [class.active]="currentDrawerTab() === 'compensation'"
+            (click)="currentDrawerTab.set('compensation')">
+            <span class="material-symbols-outlined text-[16px]">euro</span>
+            <span>Compensación &amp; Nómina</span>
+          </button>
+          <button 
+            type="button" 
+            class="drawer-tab"
+            [class.active]="currentDrawerTab() === 'contracts'"
+            (click)="currentDrawerTab.set('contracts')">
+            <span class="material-symbols-outlined text-[16px]">description</span>
+            <span>Contratos</span>
+          </button>
+          <button 
+            type="button" 
+            class="drawer-tab"
+            [class.active]="currentDrawerTab() === 'performance'"
+            (click)="currentDrawerTab.set('performance')">
+            <span class="material-symbols-outlined text-[16px]">sports_score</span>
+            <span>Desempeño</span>
+          </button>
+          <button 
+            type="button" 
+            class="drawer-tab"
+            [class.active]="currentDrawerTab() === 'history'"
+            (click)="currentDrawerTab.set('history')">
+            <span>Historial</span>
+          </button>
+        </div>
+
+        <!-- Contenido de la Ficha: Bloques modulares -->
+        <div class="drawer-body">
+          <!-- BLOQUE 1: RESUMEN DE COMPENSACIÓN -->
+          <div class="drawer-block-box">
+            <div class="block-header">
+              <div class="block-title text-primary">
+                <span class="material-symbols-outlined text-[18px]">payments</span>
+                <span>Compensación Anual &amp; Beneficios</span>
+              </div>
+              <span class="block-total-amount font-mono">
+                {{ formatCurrency(selectedEmployee().annualSalary) }}
+              </span>
+            </div>
+
+            <div class="comp-split-grid font-mono">
+              <div class="comp-item">
+                <span class="comp-label">Salario Base Fijo</span>
+                <span class="comp-val">
+                  {{ formatCurrency(selectedEmployee().baseSalary) }} 
+                  <span class="comp-denom">/ 14 pagas</span>
+                </span>
+              </div>
+              <div class="comp-item">
+                <span class="comp-label">Complemento Puesto</span>
+                <span class="comp-val">
+                  {{ formatCurrency(selectedEmployee().complementSalary) }} 
+                  <span class="comp-denom">/ anual</span>
+                </span>
+              </div>
+            </div>
+
+            <div class="comp-review-row">
+              <span class="review-date-info">
+                <span class="material-symbols-outlined text-[14px] text-primary">event_available</span>
+                Próxima revisión salarial: <strong>{{ selectedEmployee().nextReview }}</strong>
+              </span>
+              <span class="band-tag font-mono">Banda Salarial: {{ selectedEmployee().salaryBand }}</span>
+            </div>
+          </div>
+
+          <!-- BLOQUE 2: ESTRUCTURA Y REPORTE -->
+          <div class="drawer-block-box">
+            <div class="block-header">
+              <div class="block-title text-on-surface">
+                <span class="material-symbols-outlined text-[18px] text-secondary">lan</span>
+                <span>Estructura &amp; Reporte Directo</span>
+              </div>
+              <span class="cost-center-badge font-mono">Centro de Coste: {{ selectedEmployee().costCenter }}</span>
+            </div>
+
+            <div class="structure-inner-card">
+              <!-- Manager -->
+              <div class="manager-row">
+                <div class="manager-info">
+                  <img 
+                    [src]="selectedEmployee().managerAvatar" 
+                    [alt]="selectedEmployee().managerName" 
+                    class="manager-avatar"/>
+                  <div class="manager-text">
+                    <span class="manager-name">{{ selectedEmployee().managerName }}</span>
+                    <span class="manager-role">{{ selectedEmployee().managerRole }}</span>
+                  </div>
+                </div>
+                <button type="button" class="btn-manager-profile" title="Ver perfil del manager">
+                  <span class="material-symbols-outlined text-[18px]">account_circle</span>
+                </button>
+              </div>
+
+              <div class="divider-line"></div>
+
+              <!-- Equipo a cargo -->
+              <div class="team-row">
+                <div class="team-count-info">
+                  <span class="material-symbols-outlined text-[18px] text-primary">groups</span>
+                  <span class="team-label">Equipo a cargo:</span>
+                  <span class="team-num font-mono">
+                    {{ selectedEmployee().teamCount > 0 ? selectedEmployee().teamCount + ' desarrolladores directos' : 'Sin personas a cargo' }}
+                  </span>
+                </div>
+                @if (selectedEmployee().teamCount > 0) {
+                  <div class="team-stacked-avatars">
+                    <span class="avatar-stack-pill bg-slate">AR</span>
+                    <span class="avatar-stack-pill bg-purple">MG</span>
+                    <span class="avatar-stack-pill bg-blue">+4</span>
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 3: DATOS DE CONTRATACIÓN & CONVENIO -->
+          <div class="drawer-block-box">
+            <div class="block-header">
+              <div class="block-title text-on-surface">
+                <span class="material-symbols-outlined text-[18px] text-secondary">contract</span>
+                <span>Datos de Contratación &amp; Jurídico</span>
+              </div>
+              <span class="tgss-status-badge">
+                <span class="tgss-dot"></span> Alta TGSS Confirmada
+              </span>
+            </div>
+
+            <div class="contract-data-grid">
+              <div class="contract-card-item">
+                <span class="contract-label">Tipo de Contrato</span>
+                <span class="contract-value">{{ selectedEmployee().contractType }}</span>
+                <span class="contract-sub">Jornada Completa Flexible</span>
+              </div>
+              <div class="contract-card-item">
+                <span class="contract-label">Antigüedad y Fecha Alta</span>
+                <span class="contract-value font-mono">{{ selectedEmployee().startDate }}</span>
+                <span class="contract-sub text-primary font-mono font-medium">{{ selectedEmployee().seniorityText }}</span>
+              </div>
+            </div>
+
+            <div class="agreement-row">
+              <div class="agreement-left">
+                <span class="material-symbols-outlined text-[16px] text-outline">gavel</span>
+                <span>Convenio Colectivo: <strong>{{ selectedEmployee().collectiveAgreement }}</strong></span>
+              </div>
+            </div>
+          </div>
+
+          <!-- BLOQUE 4: DOCUMENTOS RÁPIDOS & ACCIONES -->
+          <div class="drawer-block-box">
+            <div class="block-header">
+              <div class="block-title text-on-surface">
+                <span class="material-symbols-outlined text-[18px] text-secondary">folder_shared</span>
+                <span>Documentación Laboral Activa</span>
+              </div>
+              <button 
+                type="button" 
+                class="btn-view-all-docs"
+                (click)="showToast('Abriendo gestor documental con los 9 expedientes firmados')">
+                Ver todos (9) <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              </button>
+            </div>
+
+            <div class="docs-list">
+              <!-- Doc 1 -->
+              <div class="doc-item">
+                <div class="doc-info-left">
+                  <span class="material-symbols-outlined text-[20px] text-error">picture_as_pdf</span>
+                  <div class="doc-name-col">
+                    <span class="doc-filename">Contrato_Indefinido_Firmado_2021.pdf</span>
+                    <span class="doc-meta font-mono">Firmado digitalmente DocuSign • 15/06/2021</span>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn-doc-download" 
+                  title="Descargar Contrato"
+                  (click)="downloadDocument('Contrato_Indefinido_Firmado_2021.pdf')">
+                  <span class="material-symbols-outlined text-[18px]">download</span>
+                </button>
+              </div>
+
+              <!-- Doc 2 -->
+              <div class="doc-item">
+                <div class="doc-info-left">
+                  <span class="material-symbols-outlined text-[20px] text-primary">task</span>
+                  <div class="doc-name-col">
+                    <span class="doc-filename">Anexo_Teletrabajo_60-40_SedeMadrid.pdf</span>
+                    <span class="doc-meta font-mono">Acuerdo híbrido vigente • Rev. Ene 2024</span>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn-doc-download" 
+                  title="Descargar Anexo"
+                  (click)="downloadDocument('Anexo_Teletrabajo_60-40_SedeMadrid.pdf')">
+                  <span class="material-symbols-outlined text-[18px]">download</span>
+                </button>
+              </div>
+
+              <!-- Doc 3 -->
+              <div class="doc-item">
+                <div class="doc-info-left">
+                  <span class="material-symbols-outlined text-[20px] text-tertiary">description</span>
+                  <div class="doc-name-col">
+                    <span class="doc-filename">Modelo_145_Retenciones_IRPF_2024.pdf</span>
+                    <span class="doc-meta font-mono">Retención actual IRPF: 21.5%</span>
+                  </div>
+                </div>
+                <button 
+                  type="button" 
+                  class="btn-doc-download" 
+                  title="Descargar Modelo 145"
+                  (click)="downloadDocument('Modelo_145_Retenciones_IRPF_2024.pdf')">
+                  <span class="material-symbols-outlined text-[18px]">download</span>
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <!-- BOTONES DE ACCIÓN RÁPIDA -->
+          <div class="drawer-actions-row">
+            <button 
+              type="button" 
+              class="btn-drawer-primary"
+              (click)="showToast('Modo edición activado para ' + selectedEmployee().name)">
+              <span class="material-symbols-outlined text-[18px]">edit_square</span>
+              <span>Editar Perfil</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="btn-drawer-secondary"
+              (click)="simulateLiquidationForEmployee(selectedEmployee())"
+              title="Abrir calculadora de indemnización laboral CST con los datos de este empleado">
+              <span class="material-symbols-outlined text-[18px] text-secondary">calculate</span>
+              <span>Simular Nómina</span>
+            </button>
+
+            <button 
+              type="button" 
+              class="btn-drawer-icon"
+              title="Asignar Formación o Plan de Desarrollo"
+              (click)="showToast('Plan de desarrollo asignado a ' + selectedEmployee().name)">
+              <span class="material-symbols-outlined text-[18px]">school</span>
+              <span class="btn-icon-label">Formación</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Nuevo Empleado -->
+  @if (showModalNewEmployee()) {
+    <div class="modal-overlay" (click)="showModalNewEmployee.set(false)">
+      <div class="modal-box" (click)="$event.stopPropagation()">
+        <div class="modal-head">
+          <h3 class="modal-title">Registrar Nuevo Colaborador</h3>
+          <button type="button" class="btn-close" (click)="showModalNewEmployee.set(false)">✕</button>
+        </div>
+        <p class="modal-desc">
+          El nuevo registro sincronizará automáticamente con LDAP institucional y aprovisionará cuenta en Workday Enterprise v4.2.
+        </p>
+        <div class="modal-form">
+          <input type="text" class="filter-input-search w-full" placeholder="Nombre y Apellidos completos"/>
+          <input type="email" class="filter-input-search w-full" placeholder="Correo corporativo (@nexushr.corp)"/>
+          <select class="filter-select w-full">
+            <option>Tecnología</option>
+            <option>Operaciones</option>
+            <option>Ventas &amp; Mkt</option>
+          </select>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-export" (click)="showModalNewEmployee.set(false)">Cancelar</button>
+          <button 
+            type="button" 
+            class="btn-new-employee" 
+            (click)="showModalNewEmployee.set(false); showToast('Nuevo colaborador agregado al onboarding')">
+            Guardar y Aprovisionar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

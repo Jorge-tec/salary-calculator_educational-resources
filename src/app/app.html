@@ -35,8 +35,8 @@
           <span class="nav-label">Inicio / Dashboard</span>
         </a>
 
-        <!-- 2. Recursos Humanos -->
-        <a class="nav-item" (click)="goToView('records')">
+        <!-- 2. Recursos Humanos (Directorio y Gestión de Personal) -->
+        <a class="nav-item" [class.active]="activeView() === 'directory'" (click)="goToView('directory')">
           <span class="material-symbols-outlined nav-icon">groups</span>
           <span class="nav-label">Recursos Humanos</span>
         </a>
@@ -188,7 +188,14 @@
         </app-executive-dashboard>
       }
 
-      <!-- VISTA: PROCESAMIENTO DE NÓMINA (Octubre 2024 - Vista Solicitada) -->
+      <!-- VISTA: RECURSOS HUMANOS / DIRECTORIO DE PERSONAL (Vista Solicitada) -->
+      @if (activeView() === 'directory') {
+        <app-employee-directory 
+          (onSimulateLiquidation)="openCalculatorWithEmployee($event)">
+        </app-employee-directory>
+      }
+
+      <!-- VISTA: PROCESAMIENTO DE NÓMINA (Octubre 2024) -->
       @if (activeView() === 'payroll') {
         <app-payroll-processing 
           (onOpenCalculator)="goToView('calculator')"
