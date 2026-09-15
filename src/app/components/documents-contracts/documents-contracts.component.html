@@ -1,0 +1,684 @@
+<div class="documents-page">
+  <!-- Toast Notification -->
+  @if (toastMessage()) {
+    <div class="documents-toast">
+      <span class="material-symbols-outlined text-[18px]">info</span>
+      <span>{{ toastMessage() }}</span>
+      <button type="button" class="btn-close-toast" (click)="toastMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- 1. Top Breadcrumbs & Meta Bar -->
+  <div class="top-nav-meta-row">
+    <nav class="breadcrumb-nav">
+      <span class="breadcrumb-link">Inicio</span>
+      <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+      <span class="breadcrumb-link text-primary font-semibold">Documentos y Contratos</span>
+      <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+      <span class="breadcrumb-current">Repositorio Corporativo y Firma Digital</span>
+    </nav>
+
+    <!-- Live Regulatory Status Pill -->
+    <div class="status-pill-regulatory">
+      <span class="pulse-dot"></span>
+      <span class="font-mono text-xs text-on-surface-variant font-medium">TSP eIDAS Regulation (EU) 910/2014 Compliant</span>
+      <span class="dot-sep">•</span>
+      <span class="font-mono text-xs text-tertiary font-semibold">Audit Ledger Synced</span>
+    </div>
+  </div>
+
+  <!-- 2. Header Module with Primary CTAs -->
+  <div class="header-module-row">
+    <div class="header-text-col">
+      <div class="title-with-icon">
+        <div class="icon-shield-box">
+          <span class="material-symbols-outlined text-[24px]">verified_user</span>
+        </div>
+        <h1 class="header-h1">Gestión Documental y Contratos Laborales</h1>
+      </div>
+      <p class="header-sub">
+        Repositorio centralizado con trazabilidad legal de contratos, anexos, certificados y flujos de firma electrónica cualificada (eIDAS / DocuSign / FNMT).
+      </p>
+    </div>
+
+    <div class="header-actions">
+      <button 
+        type="button" 
+        class="btn-secondary"
+        (click)="showUploadModal.set(true)">
+        <span class="material-symbols-outlined text-[18px] text-outline">upload_file</span>
+        <span>Subir Plantilla / Documento</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-primary"
+        (click)="showSignModal.set(true)">
+        <span class="material-symbols-outlined text-[18px]">drive_file_rename_outline</span>
+        <span>+ Solicitar Firma Masiva</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. 4 KPI Metrics Bento Grid -->
+  <section class="kpi-metrics-grid">
+    <!-- Card 1 -->
+    <div class="kpi-metric-card">
+      <div class="kpi-top">
+        <div class="kpi-col">
+          <span class="kpi-tag">Total Documentos Custodiados</span>
+          <span class="kpi-num font-mono">8,492</span>
+        </div>
+        <div class="kpi-icon-pill bg-low text-primary">
+          <span class="material-symbols-outlined text-[20px]">inventory_2</span>
+        </div>
+      </div>
+      <div class="kpi-bot">
+        <div class="kpi-badge-green font-mono">
+          <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+          +142 este mes
+        </div>
+        <span class="kpi-audit-text font-mono">99.8% SHA-256 Cloud</span>
+      </div>
+      <div class="kpi-bar-accent bg-primary"></div>
+    </div>
+
+    <!-- Card 2 -->
+    <div class="kpi-metric-card">
+      <div class="kpi-top">
+        <div class="kpi-col">
+          <span class="kpi-tag">Procesos de Firma Activos</span>
+          <span class="kpi-num font-mono">
+            38 <span class="kpi-num-sub font-normal">en curso</span>
+          </span>
+        </div>
+        <div class="kpi-icon-pill bg-low text-primary-container">
+          <span class="material-symbols-outlined text-[20px]">draw</span>
+        </div>
+      </div>
+      <div class="kpi-bot text-xs">
+        <span class="text-tertiary font-semibold">24 en plazo</span>
+        <span class="dot-sep">•</span>
+        <span class="text-secondary font-semibold">11 emp.</span>
+        <span class="dot-sep">•</span>
+        <span class="text-primary font-semibold">3 rep. legal</span>
+      </div>
+      <div class="kpi-bar-accent bg-secondary"></div>
+    </div>
+
+    <!-- Card 3 -->
+    <div class="kpi-metric-card">
+      <div class="kpi-top">
+        <div class="kpi-col">
+          <span class="kpi-tag">Vencimientos Próximos (&lt;30 días)</span>
+          <span class="kpi-num font-mono text-error">
+            14 <span class="kpi-num-sub text-on-surface-variant font-normal">legales</span>
+          </span>
+        </div>
+        <div class="kpi-icon-pill bg-error-container text-error">
+          <span class="material-symbols-outlined text-[20px]">warning</span>
+        </div>
+      </div>
+      <div class="kpi-bot text-xs">
+        <span class="text-on-surface-variant">8 prórrogas · 4 pruebas</span>
+        <span class="badge-red-pill">2 visados</span>
+      </div>
+      <div class="kpi-bar-accent bg-error"></div>
+    </div>
+
+    <!-- Card 4 -->
+    <div class="kpi-metric-card">
+      <div class="kpi-top">
+        <div class="kpi-col">
+          <span class="kpi-tag">Tasa de Completado de Firma</span>
+          <span class="kpi-num font-mono text-tertiary">96.2%</span>
+        </div>
+        <div class="kpi-icon-pill bg-low text-tertiary">
+          <span class="material-symbols-outlined text-[20px]">timer</span>
+        </div>
+      </div>
+      <div class="kpi-bot text-xs">
+        <div class="mediana-box">
+          <span>Mediana:</span>
+          <strong class="font-mono text-on-surface">18.4h</strong>
+        </div>
+        <span class="text-tertiary font-semibold flex items-center">
+          <span class="material-symbols-outlined text-[14px]">trending_down</span>
+          -4.2h vs Q3
+        </span>
+      </div>
+      <div class="kpi-bar-accent bg-tertiary"></div>
+    </div>
+  </section>
+
+  <!-- 4. Category Tabs Navigation -->
+  <div class="category-tabs-container">
+    <div class="category-tabs-row">
+      <button 
+        type="button" 
+        class="cat-tab"
+        [class.active]="activeCategory() === 'all'"
+        (click)="activeCategory.set('all')">
+        Todos los Documentos (8,492)
+      </button>
+      <button 
+        type="button" 
+        class="cat-tab"
+        [class.active]="activeCategory() === 'contratos'"
+        (click)="activeCategory.set('contratos')">
+        Contratos y Anexos (2,140)
+      </button>
+      <button 
+        type="button" 
+        class="cat-tab"
+        [class.active]="activeCategory() === 'nominas'"
+        (click)="activeCategory.set('nominas')">
+        Nóminas y Recibos (4,260)
+      </button>
+      <button 
+        type="button" 
+        class="cat-tab"
+        [class.active]="activeCategory() === 'fiscales'"
+        (click)="activeCategory.set('fiscales')">
+        Modelos Fiscales 145/IRPF (1,420)
+      </button>
+      <button 
+        type="button" 
+        class="cat-tab"
+        [class.active]="activeCategory() === 'certificados'"
+        (click)="activeCategory.set('certificados')">
+        Certificados y Bajas (672)
+      </button>
+    </div>
+
+    <!-- Multifunctional Filter & Query Bar -->
+    <div class="filter-query-card">
+      <div class="filter-inputs-group">
+        <!-- Search input -->
+        <div class="search-input-box">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input 
+            type="text" 
+            class="input-query" 
+            placeholder="Buscar por colaborador, NIF/NIE, expediente (EXP-), o título..."
+            [(ngModel)]="searchQuery"/>
+        </div>
+
+        <!-- Selectors -->
+        <div class="selectors-flex">
+          <div class="select-box">
+            <select class="select-native" [(ngModel)]="selectedStatusFilter">
+              <option value="">Estado: Todos los flujos</option>
+              <option value="completed">Firmado (eIDAS Cualificado)</option>
+              <option value="pending_employee">Pendiente Firma Empleado</option>
+              <option value="pending_legal">Esperando Rep. Legal</option>
+              <option value="draft">Borrador Legal</option>
+              <option value="expiring">Próximo a Vencer</option>
+            </select>
+            <span class="material-symbols-outlined select-chevron">expand_more</span>
+          </div>
+
+          <div class="select-box">
+            <select class="select-native" [(ngModel)]="selectedDeptFilter">
+              <option value="">Departamento: Todos</option>
+              <option value="engineering">Ingeniería y Producto</option>
+              <option value="finance">Finanzas y Nóminas</option>
+              <option value="hr">Talento y Personas</option>
+              <option value="ops">Operaciones Globales</option>
+              <option value="legal">Legal &amp; Compliance</option>
+            </select>
+            <span class="material-symbols-outlined select-chevron">expand_more</span>
+          </div>
+
+          <div class="select-box">
+            <select class="select-native" [(ngModel)]="selectedLocationFilter">
+              <option value="">Sede: Todas</option>
+              <option value="madrid">Sede Madrid</option>
+              <option value="bcn">Sede Barcelona</option>
+              <option value="valencia">Hub Valencia</option>
+              <option value="remoto">Remoto (España)</option>
+            </select>
+            <span class="material-symbols-outlined select-chevron">expand_more</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Quick Utilities -->
+      <div class="filter-utils-group">
+        <button 
+          type="button" 
+          class="btn-util"
+          (click)="showToast('Filtros avanzados desplegados')">
+          <span class="material-symbols-outlined text-[16px]">tune</span>
+          <span>Más Filtros</span>
+        </button>
+        <button 
+          type="button" 
+          class="btn-util"
+          (click)="showToast('Generando exportación de auditoría legal en CSV')">
+          <span class="material-symbols-outlined text-[16px]">file_download</span>
+          <span>Exportar</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Main Workspace Split-Grid -->
+  <div class="workspace-split-grid">
+    <!-- Primary Data Table Column (Left 8/12) -->
+    <div class="table-column">
+      <!-- Batch Action Bar -->
+      <div class="batch-action-bar">
+        <div class="batch-left">
+          <input 
+            type="checkbox" 
+            id="select-all" 
+            class="cb-batch"
+            [checked]="selectAllChecked"
+            (change)="toggleSelectAll()"/>
+          <label for="select-all" class="batch-label">
+            Seleccionar todos ({{ filteredDocuments.length }} de 8,492)
+          </label>
+          <span class="dot-sep">|</span>
+          <span class="batch-sub">Acciones masivas:</span>
+          <button 
+            type="button" 
+            class="btn-batch-action text-primary"
+            (click)="sendOtpReminder()">
+            <span class="material-symbols-outlined text-[14px]">send</span> Recordatorio OTP
+          </button>
+          <button 
+            type="button" 
+            class="btn-batch-action text-on-surface-variant"
+            (click)="downloadZip()">
+            <span class="material-symbols-outlined text-[14px]">download</span> Descargar ZIP
+          </button>
+        </div>
+        <div class="batch-right font-mono">
+          <span>Grid Mode: Denso</span>
+        </div>
+      </div>
+
+      <!-- Master Table Container -->
+      <div class="master-table-card">
+        <div class="table-responsive">
+          <table class="documents-table">
+            <thead>
+              <tr>
+                <th class="th-cb">
+                  <span class="sr-only">Seleccionar</span>
+                </th>
+                <th>Documento / Expediente</th>
+                <th>Colaborador / Titular</th>
+                <th>Categoría / Tipo</th>
+                <th class="text-center">Firma Digital &amp; Trazabilidad</th>
+                <th class="text-right">Acciones Rápidas</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (doc of filteredDocuments; track doc.id) {
+                <tr class="doc-row">
+                  <td class="td-cb">
+                    <input 
+                      type="checkbox" 
+                      class="cb-row"
+                      [(ngModel)]="doc.selected"/>
+                  </td>
+                  <td>
+                    <div class="doc-title-cell">
+                      <div class="file-icon-box">
+                        <span class="material-symbols-outlined text-[18px]">
+                          {{ doc.fileTypeIcon }}
+                        </span>
+                      </div>
+                      <div class="doc-info-col">
+                        <span class="doc-filename-link" (click)="openPreview(doc)">
+                          {{ doc.filename }}
+                        </span>
+                        <div class="doc-meta-sub font-mono">
+                          <span>{{ doc.expediente }}</span>
+                          <span class="dot-sep">•</span>
+                          <span>{{ doc.uploadDate }}</span>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="employee-avatar-cell">
+                      <img 
+                        [src]="doc.employeeAvatar" 
+                        [alt]="doc.employeeName" 
+                        class="table-emp-avatar"/>
+                      <div class="emp-meta-col">
+                        <span class="emp-title-name">{{ doc.employeeName }}</span>
+                        <span class="emp-dni font-mono">{{ doc.employeeDni }} · {{ doc.employeeCode }}</span>
+                      </div>
+                    </div>
+                  </td>
+                  <td>
+                    <span 
+                      class="category-tag-pill"
+                      [class.bg-visado]="doc.categoryLabel.includes('Visado')">
+                      {{ doc.categoryLabel }}
+                    </span>
+                  </td>
+                  <td class="text-center">
+                    <span 
+                      class="signature-badge"
+                      [class.badge-completed]="doc.statusType === 'completed'"
+                      [class.badge-pending-emp]="doc.statusType === 'pending_employee'"
+                      [class.badge-pending-leg]="doc.statusType === 'pending_legal'"
+                      [class.badge-expiring]="doc.statusType === 'expiring'"
+                      [class.badge-draft]="doc.statusType === 'draft'">
+                      <span class="material-symbols-outlined text-[14px]">
+                        {{ doc.statusType === 'completed' ? 'verified' : (doc.statusType === 'expiring' ? 'alarm' : (doc.statusType === 'draft' ? 'edit' : 'hourglass_top')) }}
+                      </span>
+                      {{ doc.status }}
+                    </span>
+                  </td>
+                  <td class="text-right">
+                    <div class="row-actions-group">
+                      @if (doc.statusType === 'pending_employee') {
+                        <button 
+                          type="button" 
+                          class="btn-row-cta"
+                          (click)="sendOtpReminder()">
+                          <span class="material-symbols-outlined text-[13px]">forward_to_inbox</span> Recordatorio
+                        </button>
+                      } @else if (doc.statusType === 'pending_legal') {
+                        <button 
+                          type="button" 
+                          class="btn-row-cta primary"
+                          (click)="showToast('Firma digital como apoderado completada')">
+                          <span class="material-symbols-outlined text-[13px]">check_circle</span> Firmar Ahora
+                        </button>
+                      } @else if (doc.statusType === 'expiring') {
+                        <button 
+                          type="button" 
+                          class="btn-row-cta red"
+                          (click)="showToast('Trámite de extranjería iniciado')">
+                          <span class="material-symbols-outlined text-[13px]">refresh</span> Tramitar
+                        </button>
+                      } @else if (doc.statusType === 'draft') {
+                        <button 
+                          type="button" 
+                          class="btn-row-cta"
+                          (click)="showToast('Solicitud de firma enviada')">
+                          <span class="material-symbols-outlined text-[13px]">send</span> Enviar Firma
+                        </button>
+                      }
+
+                      <button 
+                        type="button" 
+                        class="btn-icon-action" 
+                        title="Descargar Certificado de Trazabilidad (Audit Trail)"
+                        (click)="downloadAuditTrail(doc)">
+                        <span class="material-symbols-outlined text-[16px]">receipt_long</span>
+                      </button>
+
+                      <button 
+                        type="button" 
+                        class="btn-icon-action" 
+                        title="Vista Previa"
+                        (click)="openPreview(doc)">
+                        <span class="material-symbols-outlined text-[16px]">visibility</span>
+                      </button>
+
+                      <button 
+                        type="button" 
+                        class="btn-icon-action" 
+                        title="Más opciones"
+                        (click)="showToast('Opciones para ' + doc.filename)">
+                        <span class="material-symbols-outlined text-[16px]">more_vert</span>
+                      </button>
+                    </div>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Enterprise Pagination Bar -->
+        <div class="table-pagination-footer">
+          <div class="footer-left">
+            <span>
+              Mostrando <strong>1 - {{ filteredDocuments.length }}</strong> de <strong>8,492</strong> documentos custodiados
+            </span>
+            <div class="rows-per-page-group">
+              <span>• Filas por página:</span>
+              <select class="select-per-page">
+                <option>8</option>
+                <option>25</option>
+                <option>50</option>
+                <option>100</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="pagination-buttons">
+            <button type="button" class="btn-page-btn" disabled>
+              <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+            </button>
+            <button type="button" class="btn-page-btn active">1</button>
+            <button type="button" class="btn-page-btn">2</button>
+            <button type="button" class="btn-page-btn">3</button>
+            <span class="dots-span">...</span>
+            <button type="button" class="btn-page-btn">1062</button>
+            <button type="button" class="btn-page-btn">
+              <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column (Width: 4/12) - Legal Expirations & Cryptographic Audit -->
+    <div class="sidebar-column">
+      <!-- Widget 1: Critical Legal Expiration Alerts -->
+      <div class="sidebar-widget-card">
+        <div class="widget-header">
+          <div class="widget-title-group">
+            <span class="ping-dot-red"></span>
+            <h2 class="widget-title">Alertas Críticas de Vencimientos</h2>
+          </div>
+          <span class="badge-urgent-pill font-mono">3 Urgentes</span>
+        </div>
+        <p class="widget-sub">
+          Plazos improrrogables sujetos a responsabilidad laboral según el Estatuto de los Trabajadores y normativa de extranjería.
+        </p>
+
+        <!-- List of Urgent Action Cards -->
+        <div class="urgent-cards-list">
+          <!-- Alert Card 1: Probation End -->
+          <div class="urgent-alert-item">
+            <div class="alert-item-top">
+              <div class="alert-title-col">
+                <span class="material-symbols-outlined text-error text-[20px]">timer_off</span>
+                <div>
+                  <span class="alert-heading">Fin Período de Prueba</span>
+                  <span class="alert-person">Daniela Gómez · Payroll Analyst</span>
+                </div>
+              </div>
+              <span class="badge-time-red font-mono">Vence en 6 días</span>
+            </div>
+            <div class="alert-item-bot">
+              <span class="legal-limit font-mono">Límite legal: 24 Oct 2024</span>
+              <button 
+                type="button" 
+                class="btn-alert-action"
+                (click)="showToast('Período de prueba consolidado favorablemente')">
+                Consolidar / Rescindir
+              </button>
+            </div>
+          </div>
+
+          <!-- Alert Card 2: Visa Expiry -->
+          <div class="urgent-alert-item">
+            <div class="alert-item-top">
+              <div class="alert-title-col">
+                <span class="material-symbols-outlined text-secondary text-[20px]">public</span>
+                <div>
+                  <span class="alert-heading">Renovación Permiso Trabajo UE</span>
+                  <span class="alert-person">Kavita Patel · AI Engineer</span>
+                </div>
+              </div>
+              <span class="badge-time-blue font-mono">Vence en 14 días</span>
+            </div>
+            <div class="alert-item-bot">
+              <span class="legal-limit font-mono">Tasa 790-052 Requerida</span>
+              <button 
+                type="button" 
+                class="btn-alert-action primary"
+                (click)="showToast('Trámite de renovación telemática iniciado')">
+                Iniciar Trámite
+              </button>
+            </div>
+          </div>
+
+          <!-- Alert Card 3: Mobility Extension -->
+          <div class="urgent-alert-item">
+            <div class="alert-item-top">
+              <div class="alert-title-col">
+                <span class="material-symbols-outlined text-on-surface-variant text-[20px]">flight_takeoff</span>
+                <div>
+                  <span class="alert-heading">Anexo Movilidad Internacional</span>
+                  <span class="alert-person">Carlos Benítez · Operations Director</span>
+                </div>
+              </div>
+              <span class="badge-time-gray font-mono">Vence en 21 días</span>
+            </div>
+            <div class="alert-item-bot">
+              <span class="legal-limit font-mono">Destino: Dublín Tech Hub</span>
+              <button 
+                type="button" 
+                class="btn-alert-action"
+                (click)="showToast('Anexo de movilidad prorrogado 6 meses')">
+                Extender Anexo
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget 2: Security & Cryptographic Cloud Trust Ledger -->
+      <div class="sidebar-widget-card">
+        <div class="widget-header">
+          <div class="widget-title-group">
+            <span class="material-symbols-outlined text-tertiary text-[22px]">format_image_left</span>
+            <h2 class="widget-title">Seguridad Jurídica &amp; Cloud</h2>
+          </div>
+          <span class="material-symbols-outlined text-outline text-[18px]" title="Validado contra eIDAS Qualified Trust Service Provider">info</span>
+        </div>
+        <p class="widget-sub">
+          Validación continua de sellado cualificado y custodia de evidencia electrónica probatoria admisible en juicio.
+        </p>
+
+        <!-- Cryptographic Metrics Box -->
+        <div class="crypto-metrics-box">
+          <div class="crypto-row">
+            <span class="crypto-label">Sellado Cualificado</span>
+            <span class="crypto-val text-tertiary font-mono">
+              <span class="material-symbols-outlined text-[14px]">check_circle</span> FNMT / eIDAS OK
+            </span>
+          </div>
+          <div class="crypto-row">
+            <span class="crypto-label">Cifrado de Reposo</span>
+            <span class="crypto-val font-mono">AES-256 GCM (KMS HSM)</span>
+          </div>
+          <div class="crypto-row">
+            <span class="crypto-label">Integridad de Hash</span>
+            <span class="crypto-val text-primary font-mono truncate" title="SHA-256: 7f83b1657ff1fc53b92dc18148a1d65dfc2d4b1fa3d677284addd200126d9069">
+              7f83b1...26d9069 (SHA-256)
+            </span>
+          </div>
+          <div class="crypto-row">
+            <span class="crypto-label">Custodia Notarial</span>
+            <span class="crypto-val font-mono">WORM Compliant (7 Años)</span>
+          </div>
+        </div>
+
+        <!-- Micro SVG Mini Sparkline Ledger Validation Rate -->
+        <div class="sparkline-wrapper">
+          <div class="sparkline-header font-mono">
+            <span>Timestamping Throughput (24h)</span>
+            <span class="text-tertiary font-semibold">100% Inalterabilidad</span>
+          </div>
+          <svg class="sparkline-svg" viewBox="0 0 280 32">
+            <defs>
+              <linearGradient id="cryptoGrad" x1="0%" x2="0%" y1="0%" y2="100%">
+                <stop offset="0%" stop-color="#2563eb" stop-opacity="0.25"></stop>
+                <stop offset="100%" stop-color="#2563eb" stop-opacity="0.0"></stop>
+              </linearGradient>
+            </defs>
+            <path d="M0,24 Q30,18 60,20 T120,12 T180,16 T240,8 T280,10 L280,32 L0,32 Z" fill="url(#cryptoGrad)"></path>
+            <path d="M0,24 Q30,18 60,20 T120,12 T180,16 T240,8 T280,10" fill="none" stroke="#2563eb" stroke-linecap="round" stroke-width="2"></path>
+            <circle cx="280" cy="10" fill="#2563eb" r="3"></circle>
+          </svg>
+        </div>
+
+        <!-- Action Button: Audit Log Notarial -->
+        <button 
+          type="button" 
+          class="btn-audit-notarial"
+          (click)="showToast('Descargando bitácora de sellado de tiempo cualificado eIDAS')">
+          <span class="material-symbols-outlined text-[18px] text-primary">verified</span>
+          <span>Auditar Log Notarial y Trazabilidad</span>
+        </button>
+      </div>
+
+      <!-- Mini Notice: RGPD Compliance -->
+      <div class="rgpd-notice-card">
+        <span class="material-symbols-outlined text-outline text-[18px] shrink-0 mt-0.5">policy</span>
+        <div class="rgpd-text-col">
+          <span class="rgpd-title">Conformidad con RGPD y LOPD-GDD</span>
+          <span class="rgpd-desc">Todos los contratos laborales incorporan cláusulas actualizadas sobre desconexión digital y teletrabajo.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal Preview Documento -->
+  @if (previewDoc()) {
+    <div class="modal-overlay" (click)="closePreview()">
+      <div class="modal-preview-box" (click)="$event.stopPropagation()">
+        <div class="modal-preview-header">
+          <div class="preview-title-col">
+            <h3 class="preview-title">{{ previewDoc()!.filename }}</h3>
+            <span class="preview-sub font-mono">{{ previewDoc()!.expediente }} • Titular: {{ previewDoc()!.employeeName }}</span>
+          </div>
+          <button type="button" class="btn-close-modal" (click)="closePreview()">✕</button>
+        </div>
+
+        <div class="preview-doc-body">
+          <div class="preview-doc-page">
+            <div class="doc-mock-header">
+              <span class="font-bold text-primary">NEXUSHR ENTERPRISE GLOBAL</span>
+              <span class="font-mono text-xs text-outline">{{ previewDoc()!.uploadDate }}</span>
+            </div>
+            <h4 class="doc-mock-title">{{ previewDoc()!.categoryLabel | uppercase }}</h4>
+            <p class="text-sm text-slate-700 leading-relaxed">
+              En Madrid, a fecha de formalización laboral legal, intervienen de una parte la entidad empleadora NexusHR Enterprise S.L. y de otra parte <strong>{{ previewDoc()!.employeeName }}</strong> con NIF/NIE <strong>{{ previewDoc()!.employeeDni }}</strong>.
+            </p>
+            <div class="doc-mock-signature-box font-mono text-xs">
+              <div><strong>Estado de Certificación:</strong> {{ previewDoc()!.status }}</div>
+              <div><strong>Sellado Cualificado eIDAS:</strong> SHA-256 Validado</div>
+              <div><strong>Firma Titular:</strong> OTP Biométrico Aprobado</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="preview-doc-footer">
+          <button type="button" class="btn-secondary" (click)="closePreview()">Cerrar</button>
+          <button 
+            type="button" 
+            class="btn-primary" 
+            (click)="downloadAuditTrail(previewDoc()!); closePreview()">
+            <span class="material-symbols-outlined text-[16px]">download</span>
+            Descargar Certificado
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

@@ -12,6 +12,7 @@ import { ExecutiveDashboardComponent } from './components/executive-dashboard/ex
 import { VacationsCalendarComponent } from './components/vacations-calendar/vacations-calendar.component';
 import { PayrollProcessingComponent } from './components/payroll-processing/payroll-processing.component';
 import { EmployeeDirectoryComponent, DirectoryEmployee } from './components/employee-directory/employee-directory.component';
+import { DocumentsContractsComponent } from './components/documents-contracts/documents-contracts.component';
 
 @Component({
   selector: 'app-root',
@@ -27,7 +28,8 @@ import { EmployeeDirectoryComponent, DirectoryEmployee } from './components/empl
     ExecutiveDashboardComponent,
     VacationsCalendarComponent,
     PayrollProcessingComponent,
-    EmployeeDirectoryComponent
+    EmployeeDirectoryComponent,
+    DocumentsContractsComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -36,7 +38,7 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory'>('directory');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents'>('documents');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
@@ -50,7 +52,7 @@ export class App {
     this.sidebarCollapsed.update(v => !v);
   }
 
-  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory'): void {
+  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents'): void {
     this.activeView.set(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

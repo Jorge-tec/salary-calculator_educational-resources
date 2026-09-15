@@ -62,8 +62,8 @@
           <span class="nav-label">Vacaciones y Permisos</span>
         </a>
 
-        <!-- 6. Documentos y Contratos -->
-        <a class="nav-item" [class.active]="activeView() === 'records'" (click)="goToView('records')">
+        <!-- 6. Documentos y Contratos (Gestión Documental y Repositorio) -->
+        <a class="nav-item" [class.active]="activeView() === 'documents'" (click)="goToView('documents')">
           <span class="material-symbols-outlined nav-icon">description</span>
           <span class="nav-label">Documentos y Contratos</span>
         </a>
@@ -188,7 +188,15 @@
         </app-executive-dashboard>
       }
 
-      <!-- VISTA: RECURSOS HUMANOS / DIRECTORIO DE PERSONAL (Vista Solicitada) -->
+      <!-- VISTA: GESTIÓN DOCUMENTAL Y CONTRATOS (Vista Solicitada) -->
+      @if (activeView() === 'documents') {
+        <app-documents-contracts 
+          (onOpenCalculator)="goToView('calculator')"
+          (onOpenSavedRecords)="goToView('records')">
+        </app-documents-contracts>
+      }
+
+      <!-- VISTA: RECURSOS HUMANOS / DIRECTORIO DE PERSONAL -->
       @if (activeView() === 'directory') {
         <app-employee-directory 
           (onSimulateLiquidation)="openCalculatorWithEmployee($event)">
