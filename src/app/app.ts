@@ -9,6 +9,7 @@ import { FormulaInspectorComponent } from './components/formula-inspector/formul
 import { RecordsTableComponent } from './components/records-table/records-table.component';
 import { PrintSheetComponent } from './components/print-sheet/print-sheet.component';
 import { ExecutiveDashboardComponent } from './components/executive-dashboard/executive-dashboard.component';
+import { VacationsCalendarComponent } from './components/vacations-calendar/vacations-calendar.component';
 
 @Component({
   selector: 'app-root',
@@ -21,7 +22,8 @@ import { ExecutiveDashboardComponent } from './components/executive-dashboard/ex
     FormulaInspectorComponent,
     RecordsTableComponent,
     PrintSheetComponent,
-    ExecutiveDashboardComponent
+    ExecutiveDashboardComponent,
+    VacationsCalendarComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -30,7 +32,7 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative'>('dashboard');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations'>('vacations');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
@@ -44,7 +46,7 @@ export class App {
     this.sidebarCollapsed.update(v => !v);
   }
 
-  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative'): void {
+  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations'): void {
     this.activeView.set(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

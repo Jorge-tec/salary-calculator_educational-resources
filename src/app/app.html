@@ -57,7 +57,7 @@
         </a>
 
         <!-- 5. Vacaciones y Permisos -->
-        <a class="nav-item" (click)="goToView('dashboard')">
+        <a class="nav-item" [class.active]="activeView() === 'vacations'" (click)="goToView('vacations')">
           <span class="material-symbols-outlined nav-icon">date_range</span>
           <span class="nav-label">Vacaciones y Permisos</span>
         </a>
@@ -179,13 +179,20 @@
 
     <!-- ÁREA DE CONTENIDO PRINCIPAL -->
     <main class="enterprise-main-body">
-      <!-- VISTA 1: DASHBOARD EJECUTIVO (La vista de la imagen adjunta) -->
+      <!-- VISTA 1: DASHBOARD EJECUTIVO -->
       @if (activeView() === 'dashboard') {
         <app-executive-dashboard 
           (onNewLiquidation)="startNewLiquidation()"
           (onOpenCalculator)="openWithPreset($event)"
           (onViewAllRecords)="goToView('records')">
         </app-executive-dashboard>
+      }
+
+      <!-- VISTA: CALENDARIO DE VACACIONES Y ASISTENCIA (La vista de la imagen adjunta) -->
+      @if (activeView() === 'vacations') {
+        <app-vacations-calendar 
+          (onRequestVacation)="startNewLiquidation()">
+        </app-vacations-calendar>
       }
 
       <!-- VISTA 2: NÓMINA GLOBAL / CALCULADORA CST -->

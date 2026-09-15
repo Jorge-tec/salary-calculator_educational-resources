@@ -1,0 +1,644 @@
+<div class="calendar-page-container">
+  <!-- Top Context & Action Bar -->
+  <section class="top-context-section">
+    <!-- Breadcrumbs -->
+    <div class="breadcrumb-strip">
+      <span class="crumb-link">Inicio</span>
+      <span class="material-symbols-outlined crumb-sep">chevron_right</span>
+      <span class="crumb-link">Vacaciones y Permisos</span>
+      <span class="material-symbols-outlined crumb-sep">chevron_right</span>
+      <span class="crumb-active">Planificador de Ausencias y Calendario</span>
+    </div>
+
+    <!-- Header & Primary Actions -->
+    <div class="calendar-header-row">
+      <div class="calendar-titles">
+        <h1 class="calendar-main-title">Calendario de Asistencia, Turnos y Vacaciones</h1>
+        <p class="calendar-sub-title">Planificación de ausencias del equipo, cobertura operativa y turnos rotativos</p>
+      </div>
+      <div class="calendar-top-actions">
+        <button class="btn-top secondary" type="button">
+          <span class="material-symbols-outlined">file_download</span>
+          <span>Exportar Calendario (iCal/Excel)</span>
+        </button>
+        <button class="btn-top primary" type="button" (click)="onRequestVacation.emit()">
+          <span class="material-symbols-outlined">add</span>
+          <span>Solicitar Vacaciones / Permiso</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Secondary Navigation & Filter Toolbar -->
+    <div class="filters-legend-toolbar">
+      <!-- Filtros y Vistas -->
+      <div class="filters-left-group">
+        <!-- Date Navigator -->
+        <div class="date-navigator-cluster">
+          <button class="nav-arrow-btn" type="button" title="Mes Anterior">
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <span class="current-month-text">Octubre 2024</span>
+          <button class="nav-arrow-btn" type="button" title="Mes Siguiente">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+          <button class="btn-today-pill" type="button">Hoy</button>
+        </div>
+
+        <!-- View Switcher -->
+        <div class="view-switcher-cluster">
+          <button class="switch-btn" [class.active]="activeViewMode() === 'month'" (click)="activeViewMode.set('month')">
+            Mes
+          </button>
+          <button class="switch-btn" [class.active]="activeViewMode() === 'week'" (click)="activeViewMode.set('week')">
+            Semana
+          </button>
+          <button class="switch-btn gantt-btn" [class.active]="activeViewMode() === 'gantt'" (click)="activeViewMode.set('gantt')">
+            <span>Timeline Gantt</span>
+            <span class="gantt-badge">LIVE</span>
+          </button>
+        </div>
+
+        <!-- Department Filter -->
+        <div class="custom-select-box">
+          <select aria-label="Filtrar por Departamento" class="filter-dropdown">
+            <option>Departamento: Todos</option>
+            <option>Tecnología &amp; Producto</option>
+            <option>Operaciones Globales</option>
+            <option>Ventas &amp; Alianzas</option>
+          </select>
+          <span class="material-symbols-outlined select-arrow">expand_more</span>
+        </div>
+
+        <!-- Location Filter -->
+        <div class="custom-select-box">
+          <select aria-label="Filtrar por Sede" class="filter-dropdown">
+            <option>Sede: Madrid (Principal)</option>
+            <option>Sede: Barcelona Hub</option>
+            <option>Sede: Remoto Global</option>
+          </select>
+          <span class="material-symbols-outlined select-arrow">expand_more</span>
+        </div>
+      </div>
+
+      <!-- Leyenda Semántica a la Derecha -->
+      <div class="semantic-legend-group">
+        <div class="legend-chip">
+          <span class="legend-dot blue"></span>
+          <span class="legend-text">Presencial / Turno</span>
+          <strong class="legend-num blue">1,120</strong>
+        </div>
+        <div class="legend-chip">
+          <span class="legend-dot green"></span>
+          <span class="legend-text">Vacaciones</span>
+          <strong class="legend-num green">142</strong>
+        </div>
+        <div class="legend-chip">
+          <span class="legend-dot amber"></span>
+          <span class="legend-text">Permiso</span>
+          <strong class="legend-num amber">28</strong>
+        </div>
+        <div class="legend-chip">
+          <span class="legend-dot red"></span>
+          <span class="legend-text">Baja Médica</span>
+          <strong class="legend-num red">18</strong>
+        </div>
+        <div class="legend-chip">
+          <span class="legend-dot gray"></span>
+          <span class="legend-text">Festivo</span>
+          <strong class="legend-num gray">1</strong>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Main Canvas: Calendar + Side Analytics Layout -->
+  <div class="calendar-canvas-layout">
+    <!-- Columna Izquierda: Calendario Mensual Interactivo (7 Columnas) -->
+    <div class="calendar-card">
+      <!-- Weekday Headers -->
+      <div class="weekday-header-grid">
+        <div>LUN</div>
+        <div>MAR</div>
+        <div>MIÉ</div>
+        <div>JUE</div>
+        <div>VIE</div>
+        <div class="weekend-head">SÁB</div>
+        <div class="weekend-head">DOM</div>
+      </div>
+
+      <!-- 35 Celdas de Calendario -->
+      <div class="month-cells-grid">
+        <!-- SEMANA 1 -->
+        <!-- Sep 30 (Prev month) -->
+        <div class="day-cell prev-month">
+          <span class="day-number">30</span>
+          <span class="prev-month-stat">88% activo</span>
+        </div>
+
+        <!-- Oct 01 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">01</span>
+            <span class="cell-pct green">96%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag gray">4 Turno N...</span>
+          </div>
+        </div>
+
+        <!-- Oct 02 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">02</span>
+            <span class="cell-pct green">94%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">E. Ramos - V...</span>
+          </div>
+        </div>
+
+        <!-- Oct 03 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">03</span>
+            <span class="cell-pct green">95%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">E. Ramos ...</span>
+          </div>
+        </div>
+
+        <!-- Oct 04 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">04</span>
+            <span class="cell-pct green">92%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag amber">D. Ortiz - Pe...</span>
+          </div>
+        </div>
+
+        <!-- Oct 05 (Weekend) -->
+        <div class="day-cell weekend">
+          <div class="cell-top">
+            <span class="day-number">05</span>
+            <span class="weekend-sub">Guardias</span>
+          </div>
+          <span class="weekend-info">2 técnicos</span>
+        </div>
+
+        <!-- Oct 06 (Weekend) -->
+        <div class="day-cell weekend">
+          <div class="cell-top">
+            <span class="day-number">06</span>
+            <span class="weekend-sub">Descanso</span>
+          </div>
+          <span class="weekend-info">Guardia 24h</span>
+        </div>
+
+        <!-- SEMANA 2 -->
+        <!-- Oct 07 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">07</span>
+            <span class="cell-pct green">97%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag blue">Turno Ma...</span>
+          </div>
+        </div>
+
+        <!-- Oct 08 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">08</span>
+            <span class="cell-pct green">96%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag gray">12 Remotos</span>
+          </div>
+        </div>
+
+        <!-- Oct 09 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">09</span>
+            <span class="cell-pct red">88%</span>
+          </div>
+          <div class="cell-content multi">
+            <span class="badge-tag red">C. Mendoza</span>
+            <span class="badge-tag amber">M. Solís - ...</span>
+          </div>
+        </div>
+
+        <!-- Oct 10 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">10</span>
+            <span class="cell-pct green">91%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag red">C. Mendo...</span>
+          </div>
+        </div>
+
+        <!-- Oct 11 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">11</span>
+            <span class="cell-pct green">95%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">3 Vacacio...</span>
+          </div>
+        </div>
+
+        <!-- Oct 12 (Festivo Nacional) -->
+        <div class="day-cell holiday-cell">
+          <div class="cell-top">
+            <span class="day-number bold">12</span>
+            <span class="holiday-pill">Festivo</span>
+          </div>
+          <div class="holiday-center-box">
+            <span class="material-symbols-outlined flag-icon">flag</span>
+            <span class="holiday-name">Fiesta Nacional de España</span>
+            <span class="holiday-sub">Cierre Corporativo</span>
+          </div>
+        </div>
+
+        <!-- Oct 13 (Weekend) -->
+        <div class="day-cell weekend">
+          <div class="cell-top">
+            <span class="day-number">13</span>
+            <span class="weekend-sub">Fin de Semana</span>
+          </div>
+          <span class="weekend-info">Cobertura 100% OK</span>
+        </div>
+
+        <!-- SEMANA 3 -->
+        <!-- Oct 14 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">14</span>
+            <span class="cell-pct green">96%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">A. Valls - ...</span>
+          </div>
+        </div>
+
+        <!-- Oct 15 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">15</span>
+            <span class="cell-pct green">98%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag gray">Rotación ...</span>
+          </div>
+        </div>
+
+        <!-- Oct 16 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">16</span>
+            <span class="cell-pct green">95%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag blue">Mesa Téc...</span>
+          </div>
+        </div>
+
+        <!-- Oct 17 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">17</span>
+            <span class="cell-pct green">93%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">S. Ruiz - ...</span>
+          </div>
+        </div>
+
+        <!-- Oct 18 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">18</span>
+            <span class="cell-pct green">94%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag amber">Permiso E...</span>
+          </div>
+        </div>
+
+        <!-- Oct 19 (Weekend) -->
+        <div class="day-cell weekend">
+          <div class="cell-top">
+            <span class="day-number">19</span>
+            <span class="weekend-sub">Descanso</span>
+          </div>
+          <span class="weekend-info">Turno Soporte On</span>
+        </div>
+
+        <!-- Oct 20 (Weekend) -->
+        <div class="day-cell weekend">
+          <div class="cell-top">
+            <span class="day-number">20</span>
+            <span class="weekend-sub">Descanso</span>
+          </div>
+          <span class="weekend-info">Guardia 24h</span>
+        </div>
+
+        <!-- SEMANA 4 -->
+        <!-- Oct 21 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">21</span>
+            <span class="cell-pct green">96%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag gray">16 Presen...</span>
+          </div>
+        </div>
+
+        <!-- Oct 22 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">22</span>
+            <span class="cell-pct green">97%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">L. Peña - ...</span>
+          </div>
+        </div>
+
+        <!-- Oct 23 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">23</span>
+            <span class="cell-pct green">95%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag red">P. Gil - Ac...</span>
+          </div>
+        </div>
+
+        <!-- Oct 24 (HOY - ACTIVO DESTACADO CON BORDE AZUL) -->
+        <div class="day-cell today-active-cell">
+          <div class="cell-top">
+            <div class="today-tag-wrap">
+              <span class="today-pill">24</span>
+              <span class="today-txt">HOY</span>
+            </div>
+            <span class="cell-pct green bold">92.4%</span>
+          </div>
+          <div class="cell-content multi">
+            <span class="badge-tag green font-bold">Elena Ramos</span>
+            <span class="badge-tag amber font-bold">David Ortiz</span>
+          </div>
+          <div class="cell-footer-split">
+            <span>2 ausencias</span>
+            <span class="link-turnos">Ver 8 turnos</span>
+          </div>
+        </div>
+
+        <!-- Oct 25 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">25</span>
+            <span class="cell-pct green">91%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">E. Ramos ...</span>
+          </div>
+        </div>
+
+        <!-- Oct 26 (Weekend) -->
+        <div class="day-cell weekend">
+          <div class="cell-top">
+            <span class="day-number">26</span>
+            <span class="weekend-sub">Descanso</span>
+          </div>
+          <span class="weekend-info">Turno Redes</span>
+        </div>
+
+        <!-- Oct 27 (Weekend) -->
+        <div class="day-cell weekend">
+          <div class="cell-top">
+            <span class="day-number">27</span>
+            <span class="weekend-sub">Descanso</span>
+          </div>
+          <span class="weekend-info">Guardia 24h</span>
+        </div>
+
+        <!-- SEMANA 5 -->
+        <!-- Oct 28 (ALERTA DE COBERTURA CRÍTICA) -->
+        <div class="day-cell alert-day-cell">
+          <div class="cell-top">
+            <span class="day-number">28</span>
+            <span class="cell-pct alert-red">78% Alerta</span>
+          </div>
+          <div class="cell-content multi">
+            <span class="badge-tag alert-red">
+              <span class="material-symbols-outlined icon-alert">warning</span>
+              2 Ausenci...
+            </span>
+            <span class="badge-tag green">J. Romero...</span>
+          </div>
+          <span class="cell-alert-footer">Sub-cobertura activa</span>
+        </div>
+
+        <!-- Oct 29 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">29</span>
+            <span class="cell-pct green">96%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag gray">18 Presen...</span>
+          </div>
+        </div>
+
+        <!-- Oct 30 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">30</span>
+            <span class="cell-pct green">97%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag green">M. Vidal -...</span>
+          </div>
+        </div>
+
+        <!-- Oct 31 -->
+        <div class="day-cell">
+          <div class="cell-top">
+            <span class="day-number">31</span>
+            <span class="cell-pct green">95%</span>
+          </div>
+          <div class="cell-content">
+            <span class="badge-tag amber">1 Permiso ...</span>
+          </div>
+        </div>
+
+        <!-- Nov 01 (Festivo Próximo Mes) -->
+        <div class="day-cell next-month">
+          <div class="cell-top">
+            <span class="day-number">01</span>
+            <span class="next-holiday-pill">Festivo</span>
+          </div>
+          <div class="next-month-info">
+            <span>Todos los Santos</span>
+          </div>
+          <span class="next-month-lbl">Noviembre</span>
+        </div>
+
+        <!-- Nov 02 -->
+        <div class="day-cell next-month empty">
+          <span class="day-number">02</span>
+          <span class="next-month-lbl">Noviembre</span>
+        </div>
+
+        <!-- Nov 03 -->
+        <div class="day-cell next-month empty">
+          <span class="day-number">03</span>
+          <span class="next-month-lbl">Noviembre</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Panel de Widgets Operativos (4 Cards) -->
+    <div class="side-widgets-column">
+      <!-- Widget 1: Disponibilidad de la Semana -->
+      <div class="widget-box">
+        <div class="widget-header-row">
+          <span class="widget-tag">DISPONIBILIDAD DE LA SEMANA</span>
+          <span class="badge-pill-optimal">Óptimo</span>
+        </div>
+        <div class="availability-val-row">
+          <span class="big-pct-num">92.4%</span>
+          <span class="trend-sub-pct">
+            <span class="material-symbols-outlined">trending_up</span>
+            +1.8% vs semana previa
+          </span>
+        </div>
+        <div class="availability-progress-track">
+          <div class="progress-fill-green" style="width: 92.4%;"></div>
+        </div>
+        <div class="availability-three-stats">
+          <div class="sub-stat-box">
+            <strong class="stat-num">34</strong>
+            <span class="stat-lbl">En Puesto</span>
+          </div>
+          <div class="sub-stat-box">
+            <strong class="stat-num blue">8</strong>
+            <span class="stat-lbl">Teletrabajo</span>
+          </div>
+          <div class="sub-stat-box">
+            <strong class="stat-num amber">3</strong>
+            <span class="stat-lbl">Ausencias</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Widget 2: Alerta de Cobertura Crítica -->
+      <div class="alert-coverage-box">
+        <div class="alert-header">
+          <span class="material-symbols-outlined alert-warn-icon">warning</span>
+          <h4 class="alert-title">Alerta de Cobertura Crítica</h4>
+        </div>
+        <p class="alert-body-text">
+          <strong>Departamento de Soporte Técnico:</strong> 2 ausencias simultáneas programadas para el 
+          <span class="underline-red">28 de Octubre</span>. La capacidad descenderá a 78%, por debajo del umbral mínimo de SLA (85%).
+        </p>
+        <div class="alert-footer-act">
+          <button class="btn-reassign" type="button">Reasignar Guardia</button>
+        </div>
+      </div>
+
+      <!-- Widget 3: Solicitudes Recientes -->
+      <div class="widget-box requests-widget">
+        <div class="widget-header-row">
+          <div class="title-with-badge">
+            <h4 class="widget-title">Solicitudes Recientes</h4>
+            <span class="badge-count-blue">3</span>
+          </div>
+          <a class="link-view-all">Ver todas</a>
+        </div>
+
+        <div class="requests-card-list">
+          @for (req of recentRequests(); track req.id) {
+            <div class="request-row-item">
+              <div class="req-top-row">
+                <div class="req-user-info">
+                  <img [src]="req.avatar" class="req-avatar-img" [alt]="req.name" />
+                  <div class="req-names">
+                    <strong class="req-name">{{ req.name }}</strong>
+                    <span class="req-role">{{ req.role }}</span>
+                  </div>
+                </div>
+                <span class="req-tag-pill" [class.vac]="req.typeClass === 'vacations'" [class.pers]="req.typeClass === 'personal'">
+                  {{ req.type }}
+                </span>
+              </div>
+
+              <div class="req-dates-bar">
+                <span class="req-dates-text">
+                  <span class="material-symbols-outlined text-[16px] text-outline">event</span>
+                  {{ req.dates }}
+                </span>
+                <span class="req-duration">{{ req.daysText }}</span>
+              </div>
+
+              <div class="req-actions-btns">
+                <button type="button" class="btn-req-reject" (click)="reject(req.id)">Rechazar</button>
+                <button type="button" class="btn-req-approve" (click)="approve(req.id)">
+                  <span class="material-symbols-outlined text-[15px]">check</span>
+                  Aprobar
+                </button>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Widget 4: Mi Saldo de Vacaciones -->
+      <div class="widget-box vacation-balance-box">
+        <div class="widget-header-row">
+          <h4 class="widget-title">Mi Saldo de Vacaciones</h4>
+          <span class="convenio-text">Convenio 2024</span>
+        </div>
+
+        <div class="balance-content-row">
+          <div class="donut-chart-small">
+            <svg class="donut-svg-sm" viewBox="0 0 36 36">
+              <path class="circle-bg" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+              <path class="circle-fill" stroke-dasharray="60, 100" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
+            </svg>
+            <span class="donut-pct-text">60%</span>
+          </div>
+
+          <div class="balance-details">
+            <div class="detail-line">
+              <span class="point-dot blue"></span>
+              <strong class="detail-bold">18 días</strong>
+              <span class="detail-sub">disfrutados</span>
+            </div>
+            <div class="detail-line">
+              <span class="point-dot green"></span>
+              <strong class="detail-bold green">12 días</strong>
+              <span class="detail-sub">restantes</span>
+            </div>
+            <span class="total-assigned-text">Total asignado: 30 días anuales</span>
+          </div>
+        </div>
+
+        <button class="btn-history-link" type="button">
+          <span>Ver Historial Detallado de Fichajes</span>
+          <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
