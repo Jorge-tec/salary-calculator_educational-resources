@@ -10,6 +10,7 @@ import { RecordsTableComponent } from './components/records-table/records-table.
 import { PrintSheetComponent } from './components/print-sheet/print-sheet.component';
 import { ExecutiveDashboardComponent } from './components/executive-dashboard/executive-dashboard.component';
 import { VacationsCalendarComponent } from './components/vacations-calendar/vacations-calendar.component';
+import { PayrollProcessingComponent } from './components/payroll-processing/payroll-processing.component';
 
 @Component({
   selector: 'app-root',
@@ -23,7 +24,8 @@ import { VacationsCalendarComponent } from './components/vacations-calendar/vaca
     RecordsTableComponent,
     PrintSheetComponent,
     ExecutiveDashboardComponent,
-    VacationsCalendarComponent
+    VacationsCalendarComponent,
+    PayrollProcessingComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -32,7 +34,7 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations'>('vacations');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll'>('payroll');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
@@ -46,7 +48,7 @@ export class App {
     this.sidebarCollapsed.update(v => !v);
   }
 
-  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations'): void {
+  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll'): void {
     this.activeView.set(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

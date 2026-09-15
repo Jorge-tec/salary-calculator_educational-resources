@@ -41,8 +41,8 @@
           <span class="nav-label">Recursos Humanos</span>
         </a>
 
-        <!-- 3. Nómina Global -->
-        <a class="nav-item" [class.active]="activeView() === 'calculator'" (click)="goToView('calculator')">
+        <!-- 3. Nómina Global (Vista solicitada: Procesamiento de Nómina) -->
+        <a class="nav-item" [class.active]="activeView() === 'payroll'" (click)="goToView('payroll')">
           <span class="material-symbols-outlined nav-icon">payments</span>
           <span class="nav-label">Nómina Global</span>
           @if (currentLiquidation() && currentLiquidation()!.totalLiquidacion > 0) {
@@ -188,17 +188,40 @@
         </app-executive-dashboard>
       }
 
-      <!-- VISTA: CALENDARIO DE VACACIONES Y ASISTENCIA (La vista de la imagen adjunta) -->
+      <!-- VISTA: PROCESAMIENTO DE NÓMINA (Octubre 2024 - Vista Solicitada) -->
+      @if (activeView() === 'payroll') {
+        <app-payroll-processing 
+          (onOpenCalculator)="goToView('calculator')"
+          (onOpenSimulation)="goToView('calculator')">
+        </app-payroll-processing>
+      }
+
+      <!-- VISTA: CALENDARIO DE VACACIONES Y ASISTENCIA -->
       @if (activeView() === 'vacations') {
         <app-vacations-calendar 
           (onRequestVacation)="startNewLiquidation()">
         </app-vacations-calendar>
       }
 
-      <!-- VISTA 2: NÓMINA GLOBAL / CALCULADORA CST -->
+      <!-- VISTA 2: NÓMINA GLOBAL / CALCULADORA CST COLOMBIA -->
       @if (activeView() === 'calculator') {
         <div class="calculator-view-grid">
           <div class="calculator-main-col">
+            <!-- Barra de retorno a Procesamiento de Nómina -->
+            <div class="mb-3 flex items-center justify-between bg-white px-4 py-2.5 rounded-xl border border-slate-200 shadow-sm">
+              <div class="flex items-center gap-2">
+                <span class="material-symbols-outlined text-primary text-[20px]">calculate</span>
+                <span class="text-sm font-semibold text-slate-800">Módulo de Liquidación Laboral Individual (CST Art. 64 / 360 días)</span>
+              </div>
+              <button 
+                type="button" 
+                class="inline-flex items-center gap-1.5 text-xs font-semibold text-primary hover:text-blue-700 transition-colors"
+                (click)="goToView('payroll')">
+                <span class="material-symbols-outlined text-[16px]">arrow_back</span>
+                Volver a Ciclo de Nómina Octubre 2024
+              </button>
+            </div>
+
             <!-- Formulario Principal -->
             <app-liquidation-form 
               [initialData]="editingInput()" 

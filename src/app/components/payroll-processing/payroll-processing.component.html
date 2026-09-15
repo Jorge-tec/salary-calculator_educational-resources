@@ -1,0 +1,595 @@
+<div class="payroll-processing-page">
+  <!-- Toast / Status Alert -->
+  @if (statusMessage()) {
+    <div class="payroll-status-banner">
+      <span class="material-symbols-outlined text-[18px]">info</span>
+      <span>{{ statusMessage() }}</span>
+      <button type="button" class="btn-close-toast" (click)="statusMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- Header Breadcrumb & Actions -->
+  <header class="payroll-header">
+    <div class="payroll-title-col">
+      <nav class="breadcrumb-nav">
+        <span class="breadcrumb-link">Inicio</span>
+        <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+        <span class="breadcrumb-link">Nómina</span>
+        <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+        <span class="breadcrumb-current">Ciclo de Procesamiento Octubre 2024</span>
+      </nav>
+
+      <div class="payroll-heading-row">
+        <h1 class="payroll-h1">Procesamiento de Nómina — Octubre 2024</h1>
+        <span class="badge-status-running">
+          <span class="ping-dot"></span>
+          En Ejecución
+        </span>
+      </div>
+
+      <p class="payroll-meta-info">
+        <span>Período regular mensual: <strong>01 Oct 2024 — 31 Oct 2024</strong></span>
+        <span class="separator">•</span>
+        <span class="meta-deadline">
+          <span class="material-symbols-outlined text-[16px]">alarm</span>
+          Cierre programado en 2 días hábiles (29 Oct, 18:00 CEST)
+        </span>
+      </p>
+    </div>
+
+    <div class="payroll-header-actions">
+      <button 
+        type="button" 
+        class="btn-action-neutral"
+        (click)="openCstCalculator()"
+        title="Simular liquidaciones y provisiones laborales CST Colombia">
+        <span class="material-symbols-outlined text-[18px]">query_stats</span>
+        Simular Impacto
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-action-primary"
+        [disabled]="isCalculating()"
+        (click)="triggerValidation()">
+        <span class="material-symbols-outlined text-[18px]">
+          {{ isCalculating() ? 'hourglass_top' : 'play_circle' }}
+        </span>
+        {{ isCalculating() ? 'Calculando...' : '+ Validar y Calcular Nómina' }}
+      </button>
+    </div>
+  </header>
+
+  <!-- 1. Línea de Tiempo Visual (Stepper Wizard) -->
+  <section class="wizard-stepper-card">
+    <div class="stepper-header">
+      <div class="stepper-title-group">
+        <span class="material-symbols-outlined text-primary text-[20px]">timeline</span>
+        <span class="stepper-title">Flujo Operativo de Certificación</span>
+      </div>
+      <div class="stepper-progress-meta">
+        <span class="stepper-step-label">Paso 3 de 5</span>
+        <div class="stepper-progress-bar">
+          <div class="stepper-progress-fill" style="width: 60%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="stepper-steps-grid">
+      <!-- Step 1: Borrador -->
+      <div 
+        class="stepper-step-box step-completed"
+        (click)="setStep(1)">
+        <div class="step-top-row">
+          <span class="step-check-badge">
+            <span class="material-symbols-outlined text-[14px]">check</span>
+          </span>
+          <span class="step-pct-text text-tertiary">100%</span>
+        </div>
+        <div class="step-text-body">
+          <p class="step-name">1. Borrador</p>
+          <p class="step-desc">Parámetros y contratos cargados</p>
+        </div>
+        <span class="step-status-tag tag-success">Completado 22 Oct</span>
+      </div>
+
+      <!-- Step 2: Pre-nómina -->
+      <div 
+        class="stepper-step-box step-completed"
+        (click)="setStep(2)">
+        <div class="step-top-row">
+          <span class="step-check-badge">
+            <span class="material-symbols-outlined text-[14px]">check</span>
+          </span>
+          <span class="step-pct-text text-tertiary">100%</span>
+        </div>
+        <div class="step-text-body">
+          <p class="step-name">2. Pre-nómina</p>
+          <p class="step-desc">Cálculo de bases y tramos</p>
+        </div>
+        <span class="step-status-tag tag-success">Completado 24 Oct</span>
+      </div>
+
+      <!-- Step 3: Incidencias (ACTIVO) -->
+      <div 
+        class="stepper-step-box step-active"
+        (click)="setStep(3)">
+        <div class="step-glow"></div>
+        <div class="step-top-row">
+          <span class="step-active-number">
+            <span class="step-ping-ring"></span>
+            <span class="step-number-pill">3</span>
+          </span>
+          <span class="step-pct-badge-active">98%</span>
+        </div>
+        <div class="step-text-body">
+          <p class="step-name active-title">3. Validación Incidencias</p>
+          <p class="step-desc active-desc">8 anomalías por resolver</p>
+        </div>
+        <div class="step-active-phase-indicator">
+          <span class="phase-pulse-dot"></span>
+          Fase actual: 98% verificado
+        </div>
+      </div>
+
+      <!-- Step 4: Aprobación Dirección -->
+      <div 
+        class="stepper-step-box step-pending"
+        [class.step-unlocked]="activeStep() >= 4">
+        <div class="step-top-row">
+          <span class="step-locked-badge">4</span>
+          <span class="step-pct-text text-outline">{{ activeStep() >= 4 ? '50%' : '0%' }}</span>
+        </div>
+        <div class="step-text-body">
+          <p class="step-name">4. Aprobación Dirección</p>
+          <p class="step-desc">Firma digital Finanzas / HR</p>
+        </div>
+        <span class="step-status-tag tag-pending">{{ activeStep() >= 4 ? 'En Revisión' : 'Pendiente de paso 3' }}</span>
+      </div>
+
+      <!-- Step 5: Dispersión Bancaria -->
+      <div class="stepper-step-box step-blocked">
+        <div class="step-top-row">
+          <span class="step-locked-badge">
+            <span class="material-symbols-outlined text-[14px]">lock</span>
+          </span>
+          <span class="step-pct-text text-outline">—</span>
+        </div>
+        <div class="step-text-body">
+          <p class="step-name">5. Dispersión Bancaria</p>
+          <p class="step-desc">Emisión SEPA ISO 20022</p>
+        </div>
+        <span class="step-status-tag tag-blocked">Bloqueado</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. Tarjetas de Resumen Rápido de Nómina (4 KPIs) -->
+  <section class="kpis-grid">
+    <!-- KPI 1: Empleados en Ciclo -->
+    <div class="kpi-card">
+      <div class="kpi-card-header">
+        <span class="kpi-label">Empleados en Ciclo</span>
+        <div class="kpi-icon-pill bg-low text-primary">
+          <span class="material-symbols-outlined text-[18px]">badge</span>
+        </div>
+      </div>
+      <div class="kpi-card-body">
+        <div class="kpi-figure-row">
+          <span class="kpi-main-number font-mono">{{ totalEmpleados | number }}</span>
+          <span class="kpi-sub-denom">/ {{ totalPlantilla | number }}</span>
+        </div>
+        <div class="kpi-bar-track">
+          <div class="kpi-bar-fill bg-primary" style="width: 99.4%;"></div>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <span class="kpi-footnote-status text-tertiary">
+          <span class="material-symbols-outlined text-[14px]">task_alt</span> 8 pendientes
+        </span>
+        <span class="kpi-footnote-sub">99.4% cobertura</span>
+      </div>
+    </div>
+
+    <!-- KPI 2: Total Devengado Bruto -->
+    <div class="kpi-card">
+      <div class="kpi-card-header">
+        <span class="kpi-label">Total Devengado Bruto</span>
+        <div class="kpi-icon-pill bg-high text-primary-container">
+          <span class="material-symbols-outlined text-[18px]">account_balance_wallet</span>
+        </div>
+      </div>
+      <div class="kpi-card-body">
+        <div class="kpi-figure-row">
+          <span class="kpi-main-number font-mono">€4,610,200<span class="kpi-cents">.00</span></span>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <span class="kpi-footnote-status text-tertiary">
+          <span class="material-symbols-outlined text-[14px]">arrow_upward</span> +2.1%
+        </span>
+        <span class="kpi-footnote-sub">vs. Septiembre (€4.51M)</span>
+      </div>
+    </div>
+
+    <!-- KPI 3: Total Deducciones & IRPF -->
+    <div class="kpi-card">
+      <div class="kpi-card-header">
+        <span class="kpi-label">Total Deducciones &amp; IRPF</span>
+        <div class="kpi-icon-pill bg-low text-secondary">
+          <span class="material-symbols-outlined text-[18px]">price_check</span>
+        </div>
+      </div>
+      <div class="kpi-card-body">
+        <div class="kpi-figure-row">
+          <span class="kpi-main-number font-mono">€1,189,450<span class="kpi-cents">.00</span></span>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <span class="kpi-footnote-status text-secondary">
+          <span class="material-symbols-outlined text-[14px]">horizontal_rule</span> 25.8%
+        </span>
+        <span class="kpi-footnote-sub">Tasa retención global</span>
+      </div>
+    </div>
+
+    <!-- KPI 4: Costo Empleador SS -->
+    <div class="kpi-card">
+      <div class="kpi-card-header">
+        <span class="kpi-label">Costo Empleador SS</span>
+        <div class="kpi-icon-pill bg-low text-on-surface-variant">
+          <span class="material-symbols-outlined text-[18px]">domain_verification</span>
+        </div>
+      </div>
+      <div class="kpi-card-body">
+        <div class="kpi-figure-row">
+          <span class="kpi-main-number font-mono">€421,750<span class="kpi-cents">.00</span></span>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <span class="kpi-footnote-status text-tertiary">
+          <span class="material-symbols-outlined text-[14px]">shield</span> Cuota patronal
+        </span>
+        <span class="kpi-footnote-sub">Seguridad Social Directa</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Vista de Detalle Financiero: Split Ledger Bento -->
+  <section class="ledger-split-grid">
+    <!-- PANEL IZQUIERDO: DEVENGOS SALARIALES -->
+    <div class="ledger-panel">
+      <div>
+        <!-- Panel Header -->
+        <div class="ledger-panel-header">
+          <div class="ledger-header-left">
+            <div class="ledger-icon-badge badge-devengos">
+              <span class="material-symbols-outlined text-[18px]">add_circle</span>
+            </div>
+            <div>
+              <h2 class="ledger-h2">Devengos Salariales</h2>
+              <span class="ledger-sublabel">Percepciones brutas computables</span>
+            </div>
+          </div>
+          <div class="ledger-header-right">
+            <span class="badge-total-devengos">
+              €4,610,200.00
+            </span>
+          </div>
+        </div>
+
+        <!-- Quick Filters Toolbar -->
+        <div class="ledger-toolbar">
+          <div class="filter-pill-group">
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="devengosFilter() === 'todos'"
+              (click)="devengosFilter.set('todos')">
+              Todos (5)
+            </button>
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="devengosFilter() === 'fijos'"
+              (click)="devengosFilter.set('fijos')">
+              Fijos
+            </button>
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="devengosFilter() === 'variables'"
+              (click)="devengosFilter.set('variables')">
+              Variables
+            </button>
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="devengosFilter() === 'exentos'"
+              (click)="devengosFilter.set('exentos')">
+              Exentos
+            </button>
+          </div>
+          <span class="toolbar-side-note">
+            <span class="material-symbols-outlined text-[14px]">tune</span>
+            Vista analítica
+          </span>
+        </div>
+
+        <!-- Table Devengos -->
+        <div class="table-responsive">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th class="th-left">Concepto Salarial</th>
+                <th class="th-left">Detalle / Volumen</th>
+                <th class="th-right">Peso</th>
+                <th class="th-right">Importe Bruto</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of filteredDevengos; track item.id) {
+                <tr class="ledger-row">
+                  <td class="td-left">
+                    <div class="concept-cell">
+                      <span class="concept-stripe" [style.background-color]="item.accentColor"></span>
+                      <div>
+                        <p class="concept-name">{{ item.name }}</p>
+                        <p class="concept-sub">{{ item.description }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-left font-mono text-on-surface-variant">{{ item.detail }}</td>
+                  <td class="td-right font-mono text-outline">{{ item.weight }}</td>
+                  <td class="td-right font-mono font-bold text-on-surface">
+                    {{ formatCurrency(item.amount) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer Panel Devengos -->
+      <div class="ledger-panel-footer">
+        <span class="footer-label">Subtotal bruto devengado verificado</span>
+        <span class="footer-amount font-mono text-on-surface">€4,610,200.00</span>
+      </div>
+    </div>
+
+    <!-- PANEL DERECHO: DEDUCCIONES & RETENCIONES -->
+    <div class="ledger-panel">
+      <div>
+        <!-- Panel Header -->
+        <div class="ledger-panel-header">
+          <div class="ledger-header-left">
+            <div class="ledger-icon-badge badge-deducciones">
+              <span class="material-symbols-outlined text-[18px]">remove_circle</span>
+            </div>
+            <div>
+              <h2 class="ledger-h2">Deducciones &amp; Retenciones</h2>
+              <span class="ledger-sublabel">Obligaciones tributarias y retenciones voluntarias</span>
+            </div>
+          </div>
+          <div class="ledger-header-right">
+            <span class="badge-total-deducciones">
+              €1,189,450.00
+            </span>
+          </div>
+        </div>
+
+        <!-- Quick Filters Toolbar -->
+        <div class="ledger-toolbar">
+          <div class="filter-pill-group">
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="deduccionesFilter() === 'todos'"
+              (click)="deduccionesFilter.set('todos')">
+              Todos (5)
+            </button>
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="deduccionesFilter() === 'fiscales'"
+              (click)="deduccionesFilter.set('fiscales')">
+              Fiscales
+            </button>
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="deduccionesFilter() === 'seg_social'"
+              (click)="deduccionesFilter.set('seg_social')">
+              Seg. Social
+            </button>
+            <button 
+              type="button" 
+              class="filter-tab"
+              [class.active]="deduccionesFilter() === 'planes_flex'"
+              (click)="deduccionesFilter.set('planes_flex')">
+              Planes Flex
+            </button>
+          </div>
+          <span class="toolbar-side-note">
+            <span class="material-symbols-outlined text-[14px]">receipt_long</span>
+            Modelos 111 / RLC
+          </span>
+        </div>
+
+        <!-- Table Deducciones -->
+        <div class="table-responsive">
+          <table class="ledger-table">
+            <thead>
+              <tr>
+                <th class="th-left">Concepto Deductivo</th>
+                <th class="th-left">Tasa Impositiva / Tipo</th>
+                <th class="th-right">Cuota (%)</th>
+                <th class="th-right">Importe Retenido</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (item of filteredDeducciones; track item.id) {
+                <tr class="ledger-row">
+                  <td class="td-left">
+                    <div class="concept-cell">
+                      <span class="concept-stripe" [style.background-color]="item.accentColor"></span>
+                      <div>
+                        <p class="concept-name hover-error">{{ item.name }}</p>
+                        <p class="concept-sub">{{ item.description }}</p>
+                      </div>
+                    </div>
+                  </td>
+                  <td class="td-left font-mono text-on-surface-variant">{{ item.rateType }}</td>
+                  <td class="td-right font-mono text-outline">{{ item.quotaShare }}</td>
+                  <td class="td-right font-mono font-bold text-error">
+                    {{ formatCurrency(item.amount) }}
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Footer Panel Deducciones -->
+      <div class="ledger-panel-footer">
+        <span class="footer-label">Total retenciones deducidas en origen</span>
+        <span class="footer-amount font-mono text-error">€1,189,450.00</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Visual Reconciliation Ledger Bar (Distribution Graph) -->
+  <section class="distribution-bar-card">
+    <div class="distribution-header">
+      <span class="distribution-title">Desglose de Distribución de Masa Salarial Bruta</span>
+      <div class="distribution-legend font-mono">
+        <span class="legend-item">
+          <span class="legend-swatch bg-neto"></span>
+          Neto (74.2%)
+        </span>
+        <span class="legend-item">
+          <span class="legend-swatch bg-irpf"></span>
+          IRPF (16.1%)
+        </span>
+        <span class="legend-item">
+          <span class="legend-swatch bg-ss"></span>
+          SS Empleado (6.3%)
+        </span>
+        <span class="legend-item">
+          <span class="legend-swatch bg-flex"></span>
+          Beneficios / Flex (3.4%)
+        </span>
+      </div>
+    </div>
+
+    <!-- Segmented Graphic Bar (SVG Pixel-Perfect) -->
+    <div class="bar-svg-container">
+      <svg class="bar-svg" preserveAspectRatio="none" viewBox="0 0 1000 16">
+        <rect fill="#2563EB" height="16" width="742" x="0" y="0"></rect>
+        <rect fill="#ba1a1a" height="16" width="161" x="742" y="0"></rect>
+        <rect fill="#565e74" height="16" width="63" x="903" y="0"></rect>
+        <rect fill="#b4c5ff" height="16" width="34" x="966" y="0"></rect>
+      </svg>
+    </div>
+  </section>
+
+  <!-- 5. Tarjeta Hero Inferior de Liquidación Final & Emisión -->
+  <section class="hero-consolidation-card">
+    <div class="hero-accent-blur"></div>
+
+    <div class="hero-content-row">
+      <!-- Main Net Balance Figure -->
+      <div class="hero-balance-col">
+        <div class="hero-badge-group">
+          <span class="badge-consolidated">
+            Liquidación Neta Consolidada
+          </span>
+          <span class="badge-cent-exact">
+            <span class="material-symbols-outlined text-[15px]">verified</span> 
+            Cuadrado al céntimo
+          </span>
+        </div>
+
+        <p class="hero-balance-label">Total Neto a Pagar a Empleados (Transferencias):</p>
+        
+        <div class="hero-amount-display">
+          <span class="hero-big-number font-mono">
+            €3,420,750<span class="hero-cents">.00</span>
+          </span>
+          <span class="hero-currency-tag font-mono">EUR / SEPA Zone</span>
+        </div>
+
+        <p class="hero-formula-audit">
+          Fórmula de balance auditada: 
+          <span class="font-mono formula-box">
+            €4,610,200.00 (Bruto) − €1,189,450.00 (Deducciones) = €3,420,750.00
+          </span>
+        </p>
+      </div>
+
+      <!-- Action Center & Audit Footnote -->
+      <div class="hero-actions-col">
+        <div class="hero-buttons-row">
+          <button 
+            type="button" 
+            class="btn-hero-secondary"
+            (click)="downloadDraftPdf()">
+            <span class="material-symbols-outlined text-[18px]">picture_as_pdf</span>
+            Generar Borrador de Recibos (PDF)
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-hero-secondary"
+            (click)="downloadSepaXml()">
+            <span class="material-symbols-outlined text-[18px]">download_for_offline</span>
+            Descargar Fichero Bancario SEPA XML
+          </button>
+
+          <button 
+            type="button" 
+            class="btn-hero-primary"
+            (click)="sendToFinanceApproval()">
+            <span class="material-symbols-outlined text-[20px]">send_and_archive</span>
+            Enviar a Aprobación de Finanzas
+          </button>
+        </div>
+
+        <!-- Mini Audit Log -->
+        <div class="hero-audit-footnote">
+          <span class="material-symbols-outlined text-[16px] text-tertiary">history</span>
+          <span>Última modificación por <strong>Elena Morales</strong> hace 12 min</span>
+          <span class="audit-dot">•</span>
+          <span class="font-mono">Versión de cálculo: #PAY-2024-10-v3</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal Aprobación Exitosa -->
+  @if (showSuccessModal()) {
+    <div class="modal-backdrop" (click)="closeModal()">
+      <div class="modal-dialog" (click)="$event.stopPropagation()">
+        <div class="modal-header-icon">
+          <span class="material-symbols-outlined text-[40px] text-tertiary">task_alt</span>
+        </div>
+        <h3 class="modal-title">Enviado a Aprobación de Finanzas</h3>
+        <p class="modal-desc">
+          El ciclo regular de nómina de <strong>Octubre 2024</strong> por importe neto de <strong>€3,420,750.00</strong> ha sido transferido a la bandeja de firma digital de Dirección Financiera y RRHH.
+        </p>
+        <div class="modal-meta-box font-mono text-[12px]">
+          <div><strong>Firma Digital:</strong> PENDING_FINANCE_SIGNATURE</div>
+          <div><strong>ID Remesa SEPA:</strong> NEXUS-PAY-202410-001 (1,420 órdenes)</div>
+          <div><strong>Control de Cuadrante:</strong> 100% conciliado</div>
+        </div>
+        <div class="modal-actions">
+          <button type="button" class="btn-hero-primary w-full" (click)="closeModal()">
+            Entendido y Continuar
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+</div>
