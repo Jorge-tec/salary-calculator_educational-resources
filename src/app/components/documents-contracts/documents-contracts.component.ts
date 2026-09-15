@@ -264,7 +264,7 @@ export class DocumentsContractsComponent {
   }
 
   downloadDoc(doc: DocumentItem): void {
-    const content = `NexusHR Enterprise Cloud - Documento Certificado\nExpediente: ${doc.expediente}\nArchivo: ${doc.filename}\nEmpleado: ${doc.employeeName} (${doc.employeeDni})\nEstado: ${doc.status}\nFirma: SHA256-${Date.now().toString(16)}`;
+    const content = `RH Enterprise Cloud - Documento Certificado\nExpediente: ${doc.expediente}\nArchivo: ${doc.filename}\nEmpleado: ${doc.employeeName} (${doc.employeeDni})\nEstado: ${doc.status}\nFirma: SHA256-${Date.now().toString(16)}`;
     const blob = new Blob([content], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
@@ -281,7 +281,7 @@ export class DocumentsContractsComponent {
 
   downloadZip(): void {
     const list = this.documents().map(d => `${d.filename} - ${d.employeeName} (${d.status})`).join('\n');
-    const blob = new Blob([`Índice de Documentos Firmados NexusHR\n====================================\n${list}`], { type: 'text/plain' });
+    const blob = new Blob([`Índice de Documentos Firmados RH\n====================================\n${list}`], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;

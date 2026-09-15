@@ -159,7 +159,7 @@ export class App {
     this.editingInput.set({
       employeeName: emp.name,
       employeeId: emp.code,
-      companyName: 'NexusHR Enterprise (' + emp.location + ')',
+      companyName: 'RH Enterprise (' + emp.location + ')',
       contractType: 'INDEFINIDO',
       terminationReason: 'DESPIDO_SIN_JUSTA_CAUSA',
       startDate: '2021-06-15',

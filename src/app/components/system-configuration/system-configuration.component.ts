@@ -118,7 +118,7 @@ export class SystemConfigurationComponent {
     {
       id: 'ADM-01',
       name: 'Elena Morales',
-      email: 'elena.morales@nexushr.es',
+      email: 'elena.morales@rh.es',
       isCurrentUser: true,
       avatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnFEWz0sp1ws92wAlDNV0tDFzZZ23pCeSvGHNXzHJOF0kqrTMKrzB2Vm9abxLXG8ucYi2HAbVMqKudG9yx1NmSYlYdAQPNF6xct0r6FiTWo134dmHD9NTYmK6Q04of1yHLlrhYfR0Ep2fVsbqyF8EL_QMevSv9dg9qHnw2q90_aOAoVXythbsTH-uKqNPIzkyXcmAb-0B__2pCLDP_pnXP3rQULM5j6LxTZOp5dcYHrxwufKpuhO2y',
       role: 'Super Admin'
@@ -126,7 +126,7 @@ export class SystemConfigurationComponent {
     {
       id: 'ADM-02',
       name: 'Marcos Vance',
-      email: 'marcos.vance@nexushr.es',
+      email: 'marcos.vance@rh.es',
       initials: 'MV',
       initialsClass: 'bg-slate-200 text-slate-800',
       role: 'Payroll Admin'
@@ -134,7 +134,7 @@ export class SystemConfigurationComponent {
     {
       id: 'ADM-03',
       name: 'Sofía Arispe',
-      email: 'sofia.arispe@nexushr.es',
+      email: 'sofia.arispe@rh.es',
       initials: 'SA',
       initialsClass: 'bg-blue-100 text-blue-900',
       role: 'Legal & Compliance'

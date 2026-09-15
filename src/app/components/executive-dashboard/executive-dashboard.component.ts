@@ -190,7 +190,7 @@ export class ExecutiveDashboardComponent {
 
   downloadExecutiveReport(): void {
     const reportData = {
-      empresa: "NexusHR Enterprise Cloud",
+      empresa: "RH Enterprise Cloud",
       periodo: "Octubre 2024",
       totalEmpleados: 1428,
       costoNominaMensual: 3842500,
@@ -204,7 +204,7 @@ export class ExecutiveDashboardComponent {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `reporte_ejecutivo_nexushr_${new Date().toISOString().slice(0, 10)}.json`;
+    link.download = `reporte_ejecutivo_rh_${new Date().toISOString().slice(0, 10)}.json`;
     link.click();
     URL.revokeObjectURL(url);
 

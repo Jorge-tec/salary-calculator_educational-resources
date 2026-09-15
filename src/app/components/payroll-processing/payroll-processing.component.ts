@@ -203,7 +203,7 @@ export class PayrollProcessingComponent {
   }
 
   downloadSepaXml(): void {
-    const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>\n<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n      <MsgId>NEXUS-PAY-202410-001</MsgId>\n      <CreDtTm>2024-10-24T10:00:00Z</CreDtTm>\n      <NbOfTxs>1420</NbOfTxs>\n      <CtrlSum>3420750.00</CtrlSum>\n      <InitgPty><Nm>NexusHR Enterprise Global S.L.</Nm></InitgPty>\n    </GrpHdr>\n  </CstmrCdtTrfInitn>\n</Document>`;
+    const xmlHeader = `<?xml version="1.0" encoding="UTF-8"?>\n<Document xmlns="urn:iso:std:iso:20022:tech:xsd:pain.001.001.03">\n  <CstmrCdtTrfInitn>\n    <GrpHdr>\n      <MsgId>RH-PAY-202410-001</MsgId>\n      <CreDtTm>2024-10-24T10:00:00Z</CreDtTm>\n      <NbOfTxs>1420</NbOfTxs>\n      <CtrlSum>3420750.00</CtrlSum>\n      <InitgPty><Nm>RH Enterprise Global S.L.</Nm></InitgPty>\n    </GrpHdr>\n  </CstmrCdtTrfInitn>\n</Document>`;
     const blob = new Blob([xmlHeader], { type: 'application/xml' });
     const url = window.URL.createObjectURL(blob);
     const a = document.createElement('a');

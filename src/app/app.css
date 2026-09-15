@@ -1,4 +1,4 @@
-/* Layout General Enterprise (NexusHR) */
+/* Layout General Enterprise (RH) */
 .enterprise-shell {
   min-height: 100vh;
   width: 100%;
@@ -40,7 +40,7 @@
   cursor: pointer;
 }
 
-.nexus-logo-box {
+.rh-logo-box {
   width: 32px;
   height: 32px;
   display: flex;
@@ -48,7 +48,7 @@
   justify-content: center;
 }
 
-.nexus-logo-svg {
+.rh-logo-svg {
   width: 32px;
   height: 32px;
 }

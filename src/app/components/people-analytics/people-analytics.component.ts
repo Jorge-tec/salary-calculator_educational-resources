@@ -152,7 +152,7 @@ export class PeopleAnalyticsComponent {
 
   exportExecutiveReport(): void {
     const reportData = {
-      titulo: "NexusHR - People Analytics & Inteligencia de Capital Humano",
+      titulo: "RH - People Analytics & Inteligencia de Capital Humano",
       periodo: this.activePeriod() === 'fiscal' ? 'Año Fiscal 2024' : 'Q3/Q4 2024 (Acum.)',
       kpis: {
         rotacionVoluntaria: this.kpiTurnover(),
@@ -174,7 +174,7 @@ export class PeopleAnalyticsComponent {
   }
 
   downloadReport(report: PredefinedReport, format: 'xlsx' | 'pdf'): void {
-    const content = `NexusHR Enterprise Cloud - Reporte Normativo Oficial\n${report.title}\n${report.subtitle}\nMarco Legal: ${report.framework}\nPeriodicidad: ${report.frequency}\nActualización: ${report.lastUpdated}\nValidación: ${report.statusBadge}`;
+    const content = `RH Enterprise Cloud - Reporte Normativo Oficial\n${report.title}\n${report.subtitle}\nMarco Legal: ${report.framework}\nPeriodicidad: ${report.frequency}\nActualización: ${report.lastUpdated}\nValidación: ${report.statusBadge}`;
     const blob = new Blob([content], { type: format === 'xlsx' ? 'text/csv' : 'application/pdf' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');

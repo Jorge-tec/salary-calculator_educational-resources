@@ -2,16 +2,16 @@
   <!-- SIDEBAR ENTERPRISE FIJO (Pixel-Perfect con la imagen) -->
   <aside class="enterprise-sidebar">
     <div class="sidebar-top">
-      <!-- Header de Marca NexusHR -->
+      <!-- Header de Marca RH -->
       <div class="sidebar-brand" (click)="goToView('dashboard')">
-        <div class="nexus-logo-box">
-          <svg class="nexus-logo-svg" viewBox="0 0 24 24" fill="none">
+        <div class="rh-logo-box">
+          <svg class="rh-logo-svg" viewBox="0 0 24 24" fill="none">
             <rect width="24" height="24" rx="5" fill="#004ac6"/>
             <path d="M6 12.5L10 16.5L18 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
           </svg>
         </div>
         <div class="brand-info">
-          <span class="brand-name">NexusHR</span>
+          <span class="brand-name">RH</span>
           <span class="brand-edition">ENTERPRISE CLOUD</span>
         </div>
       </div>
@@ -167,7 +167,7 @@
         @if (showNotifications()) {
           <div class="notifications-dropdown-panel" (click)="$event.stopPropagation()">
             <div class="notif-head">
-              <span class="notif-head-title">Centro de Alertas NexusHR</span>
+              <span class="notif-head-title">Centro de Alertas RH</span>
               <button type="button" class="btn-mark-all" (click)="markAllNotificationsRead()">Marcar leídas</button>
             </div>
             <div class="notif-list">
@@ -208,7 +208,7 @@
             <div class="profile-dropdown-panel" (click)="$event.stopPropagation()">
               <div class="profile-user-head">
                 <p class="font-bold text-slate-800 text-xs">Elena Morales</p>
-                <p class="text-[11px] text-slate-500">elena.morales&#64;nexushr.corp</p>
+                <p class="text-[11px] text-slate-500">elena.morales&#64;rh.corp</p>
                 <span class="badge-role-tag">Super Admin &bull; Global</span>
               </div>
               <div class="profile-menu-body">
@@ -388,7 +388,7 @@
           <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
             <div class="flex items-center gap-2">
               <span class="material-symbols-outlined text-primary text-[22px]">keyboard</span>
-              <h3 class="font-bold text-slate-900 text-sm">NexusHR Enterprise &bull; Atajos y Navegación</h3>
+              <h3 class="font-bold text-slate-900 text-sm">RH Enterprise &bull; Atajos y Navegación</h3>
             </div>
             <button type="button" class="text-slate-400 hover:text-slate-600 font-bold" (click)="showHelpModal.set(false)">✕</button>
           </div>

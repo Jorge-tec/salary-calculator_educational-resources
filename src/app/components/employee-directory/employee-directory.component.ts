@@ -90,7 +90,7 @@ export class EmployeeDirectoryComponent {
       status: 'Activo',
       statusKey: 'act',
       avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuByFACmd6PTtuIp1XGA355TD4zvsQkKhjMlUU8YkS-ROtJcesIIYulyVPCYySn7dg_y4NR9vYeIwacdg4GYFN2bgNDq3SEXfttkDvWrQfHP8cm9Av6SS7i_RjPphWDkVCFjVVTsIJrJJdK-QanpQvnmyEmKltSSnfRw11vS5u4oMsq8MmC0PXikv3Gtaj2lHhkRiFfWthD3CkTHvyMVvk9jXwoAK5eHeNMY462RQUpfB4pLoLW8cxp0',
-      email: 'sofia.garrido@nexushr.corp',
+      email: 'sofia.garrido@rh.corp',
       phone: '+34 912 884 219',
       managerName: 'David Ortiz',
       managerRole: 'VP of Engineering (Reporte Directo)',
@@ -121,7 +121,7 @@ export class EmployeeDirectoryComponent {
       status: 'Activo',
       statusKey: 'act',
       avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCZg0GLTMeN4IQXqhvUMH_4Fd_lyv1-Qi3HYO_a2s3Ou0CUlgZq3WFZvese-TQ2lh0TnN-lyOzuxX-tjyJ6oWiY_6aL0-4l0mYbVgwsFTCFBIPtVgcO2jbKZAlD2XH7uMz1gP3RF-zToC_wCAyJ6Ea4vhPsNKT3-M7B6dgFeobZf83Mm4wCv3N05MAX_Aw60ys0yk2mqG48T-Brf19Y8DiHnUWsjZEspjh5dPgU-pbuYnYXZPgO08SQ',
-      email: 'carlos.benitez@nexushr.corp',
+      email: 'carlos.benitez@rh.corp',
       phone: '+34 934 112 901',
       managerName: 'Laura Menéndez',
       managerRole: 'Chief Commercial Officer',
@@ -152,7 +152,7 @@ export class EmployeeDirectoryComponent {
       status: 'Activo',
       statusKey: 'act',
       avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuCzYR6eR9EsxulUbf1WFonFd17c7Q7blGb0gsq5WjMqQLN0oPiFhZYZgA8fmhqStGSwLaUI22GWD9TiuGVD2mkTpWQoVx-DrOAK8XaYZrZ4kxvJBvaO_qSdnEGQ-m6bwZPPXP_07-WQgW9Jx6JqjLziqli7-mPJeUm8m40w-4CY7wqiOzsLu7pQK0rvf2AjbVvM4DplyR1_YULT2fP03KVmK59pvBfF4LeMB5DsSjzyPUkWTkqmf3z4',
-      email: 'martina.soria@nexushr.corp',
+      email: 'martina.soria@rh.corp',
       phone: '+34 963 881 240',
       managerName: 'David Ortiz',
       managerRole: 'VP of Engineering',
@@ -184,7 +184,7 @@ export class EmployeeDirectoryComponent {
       statusKey: 'act',
       avatarUrl: '',
       initials: 'JA',
-      email: 'javier.aranda@nexushr.corp',
+      email: 'javier.aranda@rh.corp',
       phone: '+34 912 770 194',
       managerName: 'Rodrigo Sanz',
       managerRole: 'Director de Operaciones',
@@ -216,7 +216,7 @@ export class EmployeeDirectoryComponent {
       statusKey: 'baja',
       avatarUrl: '',
       initials: 'LM',
-      email: 'lucia.mendez@nexushr.corp',
+      email: 'lucia.mendez@rh.corp',
       phone: '+34 963 119 502',
       managerName: 'Rodrigo Sanz',
       managerRole: 'Director de Operaciones',
@@ -247,7 +247,7 @@ export class EmployeeDirectoryComponent {
       status: 'Activo',
       statusKey: 'act',
       avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuDZdw7TAMSfr3x1fcRWm1DboXneiKCWSWjXDDwXKZI3_i71IdM1z5w3ezMlyCydJzY27PAQCZhFvB8b8az4U_iXboZPsoQbPFUrwhdHMYmI0khMZSxVbrtCyO8QbmQyWnAkuwWySMlcGQFbLMWzYFP-FOQwQV5iFfa9WnGgYn7weaz8asYAUOHRWzy0p5e3QG37e79I4l-5nsPQ_7xpUJaxwqjqsjROnqFRtns0ZRO4MheA_wEDGuTK',
-      email: 'alejandro.ruiz@nexushr.corp',
+      email: 'alejandro.ruiz@rh.corp',
       phone: '+34 912 405 889',
       managerName: 'Sofía Garrido',
       managerRole: 'Frontend Lead & Arch',
@@ -278,7 +278,7 @@ export class EmployeeDirectoryComponent {
       status: 'Onboarding',
       statusKey: 'onb',
       avatarUrl: 'https://lh3.googleusercontent.com/aida-public/AB6AXuD5Xc8nKXaRUuavn7gXV3iCnOgqS7UXms9s58cCv0RJwe5TMY2Q1Cbq19BlVLlDNGqNwpRsB2IU4c9mOpjyTUrChWQJ-AT795d96CHeC7BjSKXhJUsh5xShHkPl90hd6Tl2YzW8ZkdN7A6jkfSAZUef_X76HlH7Xcz9idk9gdasUPTtTkr1CttuZwJSv0nYTrdTvmRWz8Op0ByKB2_1JLEOZK0pSX4plrwSlHKOTTgNUP0XHuXF3BVg',
-      email: 'kavita.patel@nexushr.corp',
+      email: 'kavita.patel@rh.corp',
       phone: '+34 934 882 100',
       managerName: 'David Ortiz',
       managerRole: 'VP of Engineering',
@@ -381,14 +381,14 @@ export class EmployeeDirectoryComponent {
       statusKey: 'onb',
       avatarUrl: '',
       initials: this.newEmpName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase(),
-      email: this.newEmpEmail.trim() || `empleado${newIdNum}@nexushr.corp`,
+      email: this.newEmpEmail.trim() || `empleado${newIdNum}@rh.corp`,
       phone: '+34 912 ' + Math.floor(100000 + Math.random() * 900000),
       managerName: 'Elena Morales',
       managerRole: 'HR Operations Director',
       managerAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnFEWz0sp1ws92wAlDNV0tDFzZZ23pCeSvGHNXzHJOF0kqrTMKrzB2Vm9abxLXG8ucYi2HAbVMqKudG9yx1NmSYlYdAQPNF6xct0r6FiTWo134dmHD9NTYmK6Q04of1yHLlrhYfR0Ep2fVsbqyF8EL_QMevSv9dg9qHnw2q90_aOAoVXythbsTH-uKqNPIzkyXcmAb-0B__2pCLDP_pnXP3rQULM5j6LxTZOp5dcYHrxwufKpuhO2y',
       teamCount: 0,
       costCenter: 'CC-041',
-      collectiveAgreement: 'Convenio General NexusHR',
+      collectiveAgreement: 'Convenio General RH',
       salaryBand: '85% P50',
       nextReview: 'Diciembre 2025'
     };
@@ -418,12 +418,12 @@ export class EmployeeDirectoryComponent {
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");
     link.setAttribute("href", encodedUri);
-    link.setAttribute("download", "directorio_personal_nexushr.csv");
+    link.setAttribute("download", "directorio_personal_rh.csv");
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 
-    this.showToast('Descarga iniciada: directorio_personal_nexushr.csv (XLSX/CSV compatible)');
+    this.showToast('Descarga iniciada: directorio_personal_rh.csv (XLSX/CSV compatible)');
   }
 
   simulateLiquidationForEmployee(emp: DirectoryEmployee): void {
