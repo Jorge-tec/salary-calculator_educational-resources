@@ -44,8 +44,14 @@ export class DocumentsContractsComponent {
   selectedLocationFilter: string = '';
   selectAllChecked: boolean = false;
 
-  // Master Document List
-  documents: DocumentItem[] = [
+  // Formulario Subir/Generar Documento
+  newDocFilename: string = '';
+  newDocCategory: 'contratos' | 'nominas' | 'fiscales' | 'certificados' | 'cst' = 'contratos';
+  newDocEmpName: string = '';
+  newDocEmpDni: string = '';
+
+  // Master Document List as reactive signal
+  readonly documents = signal<DocumentItem[]>([
     {
       id: 'doc-1',
       expediente: 'EXP-2024-8891',
@@ -174,10 +180,10 @@ export class DocumentsContractsComponent {
       fileTypeIcon: 'public',
       selected: false
     }
-  ];
+  ]);
 
   get filteredDocuments(): DocumentItem[] {
-    return this.documents.filter(doc => {
+    return this.documents().filter(doc => {
       // Category tab filter
       const cat = this.activeCategory();
       if (cat !== 'all' && doc.category !== cat) {
@@ -206,7 +212,67 @@ export class DocumentsContractsComponent {
 
   toggleSelectAll(): void {
     this.selectAllChecked = !this.selectAllChecked;
-    this.documents.forEach(d => d.selected = this.selectAllChecked);
+    this.documents.update(list => list.map(d => ({ ...d, selected: this.selectAllChecked })));
+  }
+
+  addNewDocument(): void {
+    if (!this.newDocFilename.trim()) {
+      this.showToast('Por favor introduce el nombre del archivo.');
+      return;
+    }
+    const idNum = Math.floor(1000 + Math.random() * 9000);
+    const newDoc: DocumentItem = {
+      id: `doc-${idNum}`,
+      expediente: `EXP-2024-${idNum}`,
+      filename: this.newDocFilename.trim().endsWith('.pdf') ? this.newDocFilename.trim() : `${this.newDocFilename.trim()}.pdf`,
+      uploadDate: 'Subido recién',
+      category: this.newDocCategory,
+      categoryLabel: this.newDocCategory === 'contratos' ? 'Contrato Laboral' : (this.newDocCategory === 'nominas' ? 'Recibo de Nómina' : 'Documento Corporativo'),
+      employeeName: this.newDocEmpName.trim() || 'Elena Morales',
+      employeeDni: this.newDocEmpDni.trim() || '48291049T',
+      employeeCode: `EMP-${Math.floor(100 + Math.random() * 900)}`,
+      employeeAvatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      status: 'Pendiente Firma Empleado',
+      statusType: 'pending_employee',
+      fileTypeIcon: 'edit_document',
+      selected: false
+    };
+
+    this.documents.update(list => [newDoc, ...list]);
+    this.showUploadModal.set(false);
+    this.showToast(`Documento ${newDoc.filename} incorporado al expediente digital.`);
+
+    // Reset
+    this.newDocFilename = '';
+    this.newDocEmpName = '';
+    this.newDocEmpDni = '';
+  }
+
+  signDocument(doc: DocumentItem): void {
+    this.documents.update(list => list.map(d => {
+      if (d.id === doc.id) {
+        return {
+          ...d,
+          status: 'Completado (eIDAS)',
+          statusType: 'completed',
+          fileTypeIcon: 'verified'
+        };
+      }
+      return d;
+    }));
+    this.showToast(`Documento ${doc.filename} firmado digitalmente mediante certificado eIDAS.`);
+  }
+
+  downloadDoc(doc: DocumentItem): void {
+    const content = `NexusHR Enterprise Cloud - Documento Certificado\nExpediente: ${doc.expediente}\nArchivo: ${doc.filename}\nEmpleado: ${doc.employeeName} (${doc.employeeDni})\nEstado: ${doc.status}\nFirma: SHA256-${Date.now().toString(16)}`;
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = doc.filename;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.showToast(`Descargado archivo: ${doc.filename}`);
   }
 
   downloadAuditTrail(doc: DocumentItem): void {
@@ -214,7 +280,15 @@ export class DocumentsContractsComponent {
   }
 
   downloadZip(): void {
-    this.showToast('Empaquetando lote de 8 documentos firmados en archivo ZIP...');
+    const list = this.documents().map(d => `${d.filename} - ${d.employeeName} (${d.status})`).join('\n');
+    const blob = new Blob([`Índice de Documentos Firmados NexusHR\n====================================\n${list}`], { type: 'text/plain' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `lote_documentos_${new Date().toISOString().slice(0, 10)}.txt`;
+    a.click();
+    URL.revokeObjectURL(url);
+    this.showToast('Lote de documentos exportado correctamente.');
   }
 
   sendOtpReminder(): void {

@@ -99,11 +99,11 @@
         <span class="kpi-label font-mono">Tasa Rotación Voluntaria</span>
         <span class="kpi-tag-green font-mono">
           <span class="material-symbols-outlined text-[14px]">trending_down</span>
-          -0.4% YoY
+          {{ kpiTurnoverTrend() }}
         </span>
       </div>
       <div class="kpi-mid-row">
-        <span class="kpi-big-val font-mono">2.1%</span>
+        <span class="kpi-big-val font-mono">{{ kpiTurnover() }}</span>
         <!-- Inline Sparkline Trend -->
         <div class="sparkline-wrap">
           <svg class="w-full h-full text-emerald-600 overflow-visible" fill="none" viewBox="0 0 96 32">
@@ -131,7 +131,7 @@
         </span>
       </div>
       <div class="kpi-mid-row">
-        <span class="kpi-big-val font-mono">1.2%</span>
+        <span class="kpi-big-val font-mono">{{ kpiPayGap() }}</span>
         <div class="gauge-wrap">
           <div class="gauge-track">
             <div class="gauge-fill bg-primary" style="width: 24%"></div>
@@ -154,7 +154,7 @@
         </span>
       </div>
       <div class="kpi-mid-row">
-        <span class="kpi-big-val font-mono">2.840 €</span>
+        <span class="kpi-big-val font-mono">{{ kpiCostPerHire() }}</span>
         <span class="kpi-denom font-mono">/ contratación</span>
       </div>
       <div class="kpi-bottom-row font-mono">
@@ -173,7 +173,7 @@
         </span>
       </div>
       <div class="kpi-mid-row">
-        <span class="kpi-big-val font-mono">+68</span>
+        <span class="kpi-big-val font-mono">{{ kpieNps() }}</span>
         <div class="flex items-center gap-1">
           <span class="material-symbols-outlined text-[18px] text-emerald-600">sentiment_very_satisfied</span>
           <span class="text-xs font-bold text-emerald-600">Excelente</span>
@@ -699,7 +699,7 @@
 
           <div class="form-group-ana">
             <label class="form-lbl">Destinatarios (Comité de Dirección / RRHH)</label>
-            <input type="text" [(ngModel)]="scheduleRecipients" class="form-ctl font-mono"/>
+            <input type="text" [(ngModel)]="scheduleRecipients" placeholder="Ej. direccion.rrhh@nexushr.es, comite.direccion@nexushr.es" class="form-ctl font-mono"/>
           </div>
 
           <div class="form-group-ana">

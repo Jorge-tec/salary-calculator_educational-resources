@@ -46,10 +46,59 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance' | 'configuration' | 'analytics'>('analytics');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance' | 'configuration' | 'analytics'>('dashboard');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
+
+  // Sede corporativa activa
+  readonly activeSede = signal<string>('Sede Madrid (Principal)');
+  readonly showSedeDropdown = signal<boolean>(false);
+  readonly sedesList: string[] = [
+    'Sede Madrid (Principal)',
+    'Sede Barcelona (Tech Hub)',
+    'Hub Remoto España (Teletrabajo)'
+  ];
+
+  // Centro de Notificaciones
+  readonly showNotifications = signal<boolean>(false);
+  readonly showUserProfile = signal<boolean>(false);
+  readonly showHelpModal = signal<boolean>(false);
+  readonly unreadNotificationsCount = signal<number>(4);
+  readonly notificationsList = signal([
+    {
+      id: 'n1',
+      title: 'Solicitud de vacaciones urgente: Sara Villanueva (10 días)',
+      time: 'Hace 15 min',
+      read: false,
+      icon: 'flight_takeoff',
+      targetView: 'vacations' as const
+    },
+    {
+      id: 'n2',
+      title: 'Fichaje fuera de tolerancia: 14 empleados con descuadre hoy',
+      time: 'Hace 42 min',
+      read: false,
+      icon: 'schedule',
+      targetView: 'attendance' as const
+    },
+    {
+      id: 'n3',
+      title: 'Contrato de obra y servicio vence en 6 días: Alejandro Ruiz',
+      time: 'Hace 2 horas',
+      read: false,
+      icon: 'description',
+      targetView: 'documents' as const
+    },
+    {
+      id: 'n4',
+      title: 'Cierre de nómina Octubre 2024 listo para validación SEPA',
+      time: 'Hace 3 horas',
+      read: false,
+      icon: 'payments',
+      targetView: 'payroll' as const
+    }
+  ]);
   
   // Búsqueda global
   globalSearchQuery: string = '';
@@ -58,6 +107,39 @@ export class App {
 
   toggleSidebar(): void {
     this.sidebarCollapsed.update(v => !v);
+  }
+
+  toggleSedeDropdown(): void {
+    this.showSedeDropdown.update(v => !v);
+  }
+
+  selectSede(sede: string): void {
+    this.activeSede.set(sede);
+    this.showSedeDropdown.set(false);
+    this.showToast(`Sede corporativa cambiada a: ${sede}`);
+  }
+
+  toggleNotifications(): void {
+    this.showNotifications.update(v => !v);
+    this.showUserProfile.set(false);
+  }
+
+  toggleUserProfile(): void {
+    this.showUserProfile.update(v => !v);
+    this.showNotifications.set(false);
+  }
+
+  markAllNotificationsRead(): void {
+    this.notificationsList.update(list => list.map(n => ({ ...n, read: true })));
+    this.unreadNotificationsCount.set(0);
+    this.showToast('Todas las notificaciones han sido marcadas como leídas.');
+  }
+
+  clickNotification(notif: any): void {
+    notif.read = true;
+    this.unreadNotificationsCount.update(c => Math.max(0, c - 1));
+    this.showNotifications.set(false);
+    this.goToView(notif.targetView);
   }
 
   goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance' | 'configuration' | 'analytics'): void {
@@ -130,6 +212,34 @@ export class App {
 
   handleGlobalSearch(): void {
     if (!this.globalSearchQuery.trim()) return;
-    this.goToView('records');
+    const q = this.globalSearchQuery.toLowerCase().trim();
+    if (q.includes('vacaci') || q.includes('permiso') || q.includes('ausenc')) {
+      this.goToView('vacations');
+      this.showToast(`Búsqueda: filtrando en Vacaciones y Permisos por "${this.globalSearchQuery}"`);
+    } else if (q.includes('nomin') || q.includes('pago') || q.includes('sepa') || q.includes('salari')) {
+      this.goToView('payroll');
+      this.showToast(`Búsqueda: navegando a Nómina Global por "${this.globalSearchQuery}"`);
+    } else if (q.includes('fich') || q.includes('asistenc') || q.includes('hora') || q.includes('reloj')) {
+      this.goToView('attendance');
+      this.showToast(`Búsqueda: navegando a Control Horario por "${this.globalSearchQuery}"`);
+    } else if (q.includes('contrat') || q.includes('doc') || q.includes('pdf') || q.includes('expedien')) {
+      this.goToView('documents');
+      this.showToast(`Búsqueda: navegando a Documentos y Contratos por "${this.globalSearchQuery}"`);
+    } else if (q.includes('evalua') || q.includes('okr') || q.includes('9-box') || q.includes('rendimien')) {
+      this.goToView('evaluations');
+      this.showToast(`Búsqueda: navegando a Evaluaciones y 9-Box por "${this.globalSearchQuery}"`);
+    } else if (q.includes('analit') || q.includes('report') || q.includes('rotac') || q.includes('kpi') || q.includes('bi')) {
+      this.goToView('analytics');
+      this.showToast(`Búsqueda: navegando a People Analytics por "${this.globalSearchQuery}"`);
+    } else if (q.includes('config') || q.includes('sede') || q.includes('admin') || q.includes('rol')) {
+      this.goToView('configuration');
+      this.showToast(`Búsqueda: navegando a Configuración por "${this.globalSearchQuery}"`);
+    } else if (q.includes('liquid') || q.includes('cst') || q.includes('indemniz')) {
+      this.goToView('calculator');
+      this.showToast(`Búsqueda: abriendo Calculadora CST por "${this.globalSearchQuery}"`);
+    } else {
+      this.goToView('directory');
+      this.showToast(`Búsqueda de colaborador: "${this.globalSearchQuery}" en Directorio`);
+    }
   }
 }

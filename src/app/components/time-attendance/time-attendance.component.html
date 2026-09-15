@@ -41,10 +41,25 @@
     <div class="header-actions-col">
       <button 
         type="button" 
+        class="px-3.5 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border shadow-sm cursor-pointer"
+        [class.bg-emerald-50]="isCheckedIn()"
+        [class.border-emerald-300]="isCheckedIn()"
+        [class.text-emerald-800]="isCheckedIn()"
+        [class.bg-primary]="!isCheckedIn()"
+        [class.text-white]="!isCheckedIn()"
+        (click)="toggleUserPunch()"
+        title="Haz clic para registrar entrada o salida en tiempo real">
+        <span class="w-2 h-2 rounded-full" [class.bg-emerald-500]="isCheckedIn()" [class.bg-white]="!isCheckedIn()" [class.animate-pulse]="isCheckedIn()"></span>
+        <span class="material-symbols-outlined text-[16px]">{{ isCheckedIn() ? 'schedule' : 'login' }}</span>
+        <span>{{ isCheckedIn() ? 'Fichado (' + currentPunchTime() + ') • Registrar Salida' : 'Fichar Entrada Ahora' }}</span>
+      </button>
+
+      <button 
+        type="button" 
         class="btn-export-pdf"
         (click)="exportOfficialPdf()">
         <span class="material-symbols-outlined text-primary text-[18px]">picture_as_pdf</span>
-        <span>Exportar Registro Legal (PDF Oficial)</span>
+        <span>Exportar Registro Legal (PDF/CSV)</span>
       </button>
 
       <button 
@@ -649,7 +664,7 @@
         <div class="modal-body-fichaje">
           <div class="form-field-group">
             <label class="form-field-label">Colaborador / Expediente</label>
-            <input type="text" [(ngModel)]="manualEmpName" class="form-field-input" readonly/>
+            <input type="text" [(ngModel)]="manualEmpName" class="form-field-input" placeholder="Nombre completo o código del empleado"/>
           </div>
 
           <div class="form-field-grid-2">
@@ -676,7 +691,7 @@
 
           <div class="form-field-group">
             <label class="form-field-label">Motivo Justificativo (Trazabilidad ITSS)</label>
-            <textarea [(ngModel)]="manualReason" rows="2" class="form-field-input"></textarea>
+            <textarea [(ngModel)]="manualReason" rows="2" class="form-field-input" placeholder="Olvido de tarjeta, visita a cliente o trabajo en exteriores..."></textarea>
           </div>
 
           <div class="legal-disclaimer-note">

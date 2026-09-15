@@ -54,13 +54,13 @@ export class SystemConfigurationComponent {
   autoOvertimeEnabled: boolean = true;
   mfaEnforced: boolean = true;
 
-  // New location form state
-  newLocCode: string = 'VAL';
-  newLocName: string = 'Sede Valencia (Hub Levante)';
-  newLocCcc: string = '46 1928374619';
-  newLocStaff: string = '85 colaboradores';
-  newLocCalendar: string = 'Comunidad Valenciana 2025';
-  newLocAddress: string = 'Calle Colón 45, Valencia';
+  // New location form state (inicia limpio sin datos de muestra rígidos)
+  newLocCode: string = '';
+  newLocName: string = '';
+  newLocCcc: string = '';
+  newLocStaff: string = '';
+  newLocCalendar: string = '';
+  newLocAddress: string = '';
 
   // Invite admin form state
   inviteEmail: string = '';
@@ -174,23 +174,35 @@ export class SystemConfigurationComponent {
   }
 
   saveNewLocation(): void {
+    if (!this.newLocName.trim()) {
+      this.showToast('Por favor escribe el nombre de la sede corporativa.');
+      return;
+    }
     const newLoc: CorporateLocation = {
       id: 'LOC-' + (this.locations().length + 1).toString().padStart(2, '0'),
-      code: this.newLocCode,
-      name: this.newLocName,
+      code: this.newLocCode.trim() || 'REG',
+      name: this.newLocName.trim(),
       tag: 'Regional',
       tagClass: 'bg-primary-light text-primary',
       status: 'Operativo',
       statusClass: 'bg-green-light text-tertiary',
       cif: 'B-88401923',
-      ccc: this.newLocCcc,
-      activeStaff: this.newLocStaff,
-      workCalendar: this.newLocCalendar,
-      fiscalAddress: this.newLocAddress
+      ccc: this.newLocCcc.trim() || '28 1092837482',
+      activeStaff: this.newLocStaff.trim() || '1 colaborador',
+      workCalendar: this.newLocCalendar.trim() || 'Comunidad Autónoma 2025',
+      fiscalAddress: this.newLocAddress.trim() || 'Centro de Trabajo'
     };
     this.locations.update(list => [...list, newLoc]);
     this.closeNewLocation();
     this.showToast(`Nueva sede "${newLoc.name}" añadida con CCC ${newLoc.ccc}.`);
+
+    // Reset
+    this.newLocCode = '';
+    this.newLocName = '';
+    this.newLocCcc = '';
+    this.newLocStaff = '';
+    this.newLocCalendar = '';
+    this.newLocAddress = '';
   }
 
   openInviteAdmin(): void {

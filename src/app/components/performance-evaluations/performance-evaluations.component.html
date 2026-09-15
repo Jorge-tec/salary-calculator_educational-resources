@@ -579,7 +579,7 @@
           </tr>
         </thead>
         <tbody>
-          @for (row of calibrationRows; track row.id) {
+          @for (row of calibrationRows(); track row.id) {
             <tr class="cal-row">
               <td class="td-cb">
                 <input type="checkbox" class="cb-input"/>
@@ -620,16 +620,10 @@
                 {{ row.ratingScore }} <span class="denom-text font-normal">/ 5.0</span>
               </td>
               <td>
-                <span 
-                  class="potential-pill"
-                  [class.pill-high]="row.potential === 'Alto'"
-                  [class.pill-med]="row.potential === 'Medio'"
-                  [class.pill-low]="row.potential === 'Bajo'">
-                  {{ row.potential }}
-                </span>
+                <span class="font-semibold text-xs text-on-surface">{{ row.potential }}</span>
               </td>
               <td>
-                <span class="quad-cell-badge {{ row.quadrantClass }}">
+                <span class="quadrant-tag-pill {{ row.quadrantClass }}">
                   @if (row.quadrantName === 'Top Talent') {
                     <span class="material-symbols-outlined text-[12px]">star</span>
                   } @else if (row.quadrantName === 'Plan PIP') {
@@ -657,13 +651,25 @@
                 </span>
               </td>
               <td class="text-right">
-                <button 
-                  type="button" 
-                  class="btn-row-action" 
-                  title="Opciones para {{ row.employeeName }}"
-                  (click)="showToast('Expediente y calibración 360 abierta para ' + row.employeeName)">
-                  <span class="material-symbols-outlined text-[18px]">more_vert</span>
-                </button>
+                <div class="flex items-center justify-end gap-1">
+                  @if (row.evalStatusType !== 'ok') {
+                    <button 
+                      type="button" 
+                      class="px-2 py-1 bg-blue-50 text-blue-700 hover:bg-blue-100 rounded text-[11px] font-semibold flex items-center gap-1 transition-colors"
+                      (click)="approveCalibration(row)"
+                      title="Aprobar calibración de comité">
+                      <span class="material-symbols-outlined text-[13px]">check</span>
+                      <span>Calibrar</span>
+                    </button>
+                  }
+                  <button 
+                    type="button" 
+                    class="btn-row-action" 
+                    title="Opciones para {{ row.employeeName }}"
+                    (click)="showToast('Expediente y calibración 360 abierta para ' + row.employeeName)">
+                    <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                  </button>
+                </div>
               </td>
             </tr>
           }

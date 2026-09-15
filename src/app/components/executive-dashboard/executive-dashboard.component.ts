@@ -160,6 +160,8 @@ export class ExecutiveDashboardComponent {
     }
   ];
 
+  readonly dashboardToast = signal<string | null>(null);
+
   filteredRequests() {
     const cat = this.selectedCategory();
     if (cat === 'all') return this.requests();
@@ -171,10 +173,46 @@ export class ExecutiveDashboardComponent {
   }
 
   approveRequest(id: string): void {
+    const req = this.requests().find(r => r.id === id);
     this.requests.update(list => list.filter(item => item.id !== id));
+    this.showToast(`Solicitud aprobada: ${req?.name || ''} - ${req?.requestType || ''}`);
   }
 
   rejectRequest(id: string): void {
+    const req = this.requests().find(r => r.id === id);
     this.requests.update(list => list.filter(item => item.id !== id));
+    this.showToast(`Solicitud rechazada: ${req?.name || ''}`);
+  }
+
+  resolveExpiration(exp: ExpirationItem): void {
+    this.showToast(`Expediente gestionado para ${exp.person} (${exp.title}). Recordatorio actualizado.`);
+  }
+
+  downloadExecutiveReport(): void {
+    const reportData = {
+      empresa: "NexusHR Enterprise Cloud",
+      periodo: "Octubre 2024",
+      totalEmpleados: 1428,
+      costoNominaMensual: 3842500,
+      solicitudesPendientes: this.requests().length,
+      solicitudes: this.requests(),
+      vencimientos: this.expirations,
+      timestamp: new Date().toISOString()
+    };
+
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `reporte_ejecutivo_nexushr_${new Date().toISOString().slice(0, 10)}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+
+    this.showToast('Descarga completada: reporte ejecutivo descargado correctamente.');
+  }
+
+  showToast(msg: string): void {
+    this.dashboardToast.set(msg);
+    setTimeout(() => this.dashboardToast.set(null), 3500);
   }
 }

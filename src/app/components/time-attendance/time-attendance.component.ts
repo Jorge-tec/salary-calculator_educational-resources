@@ -62,12 +62,34 @@ export class TimeAttendanceComponent {
   selectedStatus: string = 'all';
   selectAllRows: boolean = false;
 
-  // Modal regularización rápida
-  manualEmpName: string = 'Marta Solís Bermejo';
+  // Modal regularización rápida (inicia limpio)
+  manualEmpName: string = '';
   manualDate: string = '2024-10-24';
-  manualCheckIn: string = '09:00';
-  manualCheckOut: string = '18:00';
-  manualReason: string = 'Olvido involuntario de tarjeta RFID en acceso principal';
+  manualCheckIn: string = '';
+  manualCheckOut: string = '';
+  manualReason: string = '';
+
+  // Fichaje en vivo Elena Morales
+  readonly isCheckedIn = signal<boolean>(true);
+  readonly currentPunchTime = signal<string>('08:58');
+  readonly punchStatusText = signal<string>('Jornada Iniciada');
+
+  toggleUserPunch(): void {
+    if (this.isCheckedIn()) {
+      const now = new Date();
+      const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+      this.isCheckedIn.set(false);
+      this.punchStatusText.set('Jornada Finalizada (' + timeStr + ')');
+      this.showToast(`Fichaje de salida registrado a las ${timeStr}. Jornada computada correctamente.`);
+    } else {
+      const now = new Date();
+      const timeStr = now.getHours().toString().padStart(2, '0') + ':' + now.getMinutes().toString().padStart(2, '0');
+      this.isCheckedIn.set(true);
+      this.currentPunchTime.set(timeStr);
+      this.punchStatusText.set('Jornada Iniciada (' + timeStr + ')');
+      this.showToast(`Fichaje de entrada registrado a las ${timeStr}. Sesión activa.`);
+    }
+  }
 
   // Datos principales de la tabla de fichajes
   readonly records = signal<AttendanceRecord[]>([
@@ -304,10 +326,20 @@ export class TimeAttendanceComponent {
   }
 
   exportOfficialPdf(): void {
-    this.showToast('Generando Registro Oficial de Jornada conforme al RD-Ley 8/2019 (PDF sellado digitalmente)...');
-    setTimeout(() => {
-      this.showToast('Descarga completada: Registro_Laboral_Octubre_2024_SHA256.pdf');
-    }, 1800);
+    const csvContent = "data:text/csv;charset=utf-8," + 
+      "Registro Oficial de Jornada - RD-Ley 8/2019 - ITSS\n" +
+      "ID,Empleado,Codigo,Entrada,Pausa,Salida,Efectivas,Balance,Horas Extras,Estado\n" +
+      this.records().map(r => `"${r.id}","${r.name}","${r.empCode}","${r.checkIn}","${r.lunchBreak}","${r.checkOut}","${r.effectiveHours}","${r.balance}","${r.overtimeHours}","${r.statusText}"`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", "registro_oficial_jornada_itss_20241024.csv");
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    this.showToast('Descarga completada: Registro_Laboral_Octubre_2024_SHA256 (Compatible ITSS/Excel)');
   }
 
   openManualRegularization(): void {
@@ -319,26 +351,57 @@ export class TimeAttendanceComponent {
   }
 
   saveManualRegularization(): void {
-    // Actualiza a Marta Solís como regularizada
-    this.records.update(list => list.map(item => {
-      if (item.empCode === 'EMP-0205') {
-        return {
-          ...item,
-          checkIn: this.manualCheckIn,
-          lunchBreak: '1h 00m',
-          checkOut: this.manualCheckOut,
-          effectiveHours: '8h 00m',
-          isHoursError: false,
-          balance: '0m',
-          balanceType: 'neutral',
-          statusText: 'Regularizado Manualmente',
-          statusType: 'ok'
-        };
-      }
-      return item;
-    }));
+    const targetEmp = this.manualEmpName.trim() || 'Marta Solís Bermejo';
+    const existingIndex = this.records().findIndex(r => r.name.toLowerCase().includes(targetEmp.toLowerCase()) || r.empCode === 'EMP-0205');
+
+    if (existingIndex >= 0) {
+      this.records.update(list => list.map((item, idx) => {
+        if (idx === existingIndex) {
+          return {
+            ...item,
+            checkIn: this.manualCheckIn || '09:00',
+            lunchBreak: '1h 00m',
+            checkOut: this.manualCheckOut || '18:00',
+            effectiveHours: '8h 00m',
+            isHoursError: false,
+            balance: '0m',
+            balanceType: 'neutral',
+            statusText: 'Regularizado Manualmente',
+            statusType: 'ok'
+          };
+        }
+        return item;
+      }));
+    } else {
+      const newRec: AttendanceRecord = {
+        id: `REC-${Date.now().toString().slice(-4)}`,
+        name: targetEmp,
+        empCode: `EMP-${Math.floor(1000 + Math.random() * 9000)}`,
+        role: 'Colaborador General',
+        avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+        location: 'Sede Madrid',
+        checkIn: this.manualCheckIn || '09:00',
+        lunchBreak: '1h 00m',
+        checkOut: this.manualCheckOut || '18:00',
+        effectiveHours: '8h 00m',
+        balance: '0m',
+        balanceType: 'neutral',
+        overtimeHours: '0.0h',
+        statusText: 'Fichaje Manual Registrado',
+        statusType: 'ok',
+        selected: false
+      };
+      this.records.update(list => [newRec, ...list]);
+    }
+
     this.closeManualRegularization();
-    this.showToast(`Fichaje manual registrado para ${this.manualEmpName} con firma de conformidad.`);
+    this.showToast(`Fichaje manual registrado para ${targetEmp} con firma de conformidad.`);
+
+    // Limpiar inputs
+    this.manualEmpName = '';
+    this.manualCheckIn = '';
+    this.manualCheckOut = '';
+    this.manualReason = '';
   }
 
   validateRow(record: AttendanceRecord): void {

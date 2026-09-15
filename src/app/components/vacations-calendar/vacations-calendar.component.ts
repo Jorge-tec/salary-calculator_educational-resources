@@ -1,5 +1,6 @@
-import { Component, Output, EventEmitter, signal } from '@angular/core';
+import { Component, Output, EventEmitter, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 export interface CalendarVacationRequest {
   id: string;
@@ -15,7 +16,7 @@ export interface CalendarVacationRequest {
 @Component({
   selector: 'app-vacations-calendar',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './vacations-calendar.component.html',
   styleUrl: './vacations-calendar.component.css'
 })
@@ -25,6 +26,20 @@ export class VacationsCalendarComponent {
   readonly activeViewMode = signal<'month' | 'week' | 'gantt'>('month');
   readonly selectedDepartment = signal<string>('Todos');
   readonly selectedSede = signal<string>('Madrid');
+  readonly toastMessage = signal<string | null>(null);
+  readonly showRequestModal = signal<boolean>(false);
+
+  // Navegación de meses
+  readonly monthsList = ['Septiembre 2024', 'Octubre 2024', 'Noviembre 2024', 'Diciembre 2024', 'Enero 2025'];
+  readonly currentMonthIndex = signal<number>(1); // Octubre 2024
+  readonly currentMonthText = computed(() => this.monthsList[this.currentMonthIndex()]);
+
+  // Formulario Solicitud
+  reqEmpName: string = '';
+  reqRole: string = '';
+  reqType: string = 'Vacaciones';
+  reqDates: string = '';
+  reqDays: number = 5;
 
   readonly recentRequests = signal<CalendarVacationRequest[]>([
     {
@@ -59,11 +74,90 @@ export class VacationsCalendarComponent {
     }
   ]);
 
+  prevMonth(): void {
+    if (this.currentMonthIndex() > 0) {
+      this.currentMonthIndex.update(i => i - 1);
+      this.showToast(`Visualizando calendario: ${this.currentMonthText()}`);
+    }
+  }
+
+  nextMonth(): void {
+    if (this.currentMonthIndex() < this.monthsList.length - 1) {
+      this.currentMonthIndex.update(i => i + 1);
+      this.showToast(`Visualizando calendario: ${this.currentMonthText()}`);
+    }
+  }
+
+  goToday(): void {
+    this.currentMonthIndex.set(1); // Octubre 2024
+    this.showToast('Calendario centrado en el mes actual.');
+  }
+
+  openRequestModal(): void {
+    this.showRequestModal.set(true);
+  }
+
+  closeRequestModal(): void {
+    this.showRequestModal.set(false);
+  }
+
+  submitVacationRequest(): void {
+    if (!this.reqEmpName.trim()) {
+      this.showToast('Por favor escribe el nombre del colaborador.');
+      return;
+    }
+
+    const newReq: CalendarVacationRequest = {
+      id: `req-${Date.now().toString().slice(-4)}`,
+      name: this.reqEmpName.trim(),
+      role: this.reqRole.trim() || 'Especialista',
+      avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150',
+      type: this.reqType,
+      typeClass: this.reqType === 'Vacaciones' ? 'vacations' : 'personal',
+      dates: this.reqDates.trim() || '20 Nov - 25 Nov',
+      daysText: `${this.reqDays || 5} días laborables`
+    };
+
+    this.recentRequests.update(list => [newReq, ...list]);
+    this.closeRequestModal();
+    this.showToast(`Solicitud de ${newReq.name} enviada al responsable de área para su aprobación.`);
+
+    // Reset
+    this.reqEmpName = '';
+    this.reqRole = '';
+    this.reqDates = '';
+  }
+
   approve(id: string): void {
+    const req = this.recentRequests().find(r => r.id === id);
     this.recentRequests.update(list => list.filter(item => item.id !== id));
+    this.showToast(`Solicitud de ${req?.name || ''} aprobada. Saldo de vacaciones actualizado.`);
   }
 
   reject(id: string): void {
+    const req = this.recentRequests().find(r => r.id === id);
     this.recentRequests.update(list => list.filter(item => item.id !== id));
+    this.showToast(`Solicitud de ${req?.name || ''} denegada.`);
+  }
+
+  exportCalendar(): void {
+    const csvContent = "data:text/csv;charset=utf-8," + 
+      "Colaborador,Rol,Tipo Ausencia,Fechas,Dias\n" +
+      this.recentRequests().map(r => `"${r.name}","${r.role}","${r.type}","${r.dates}","${r.daysText}"`).join("\n");
+    
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `calendario_ausencias_${this.currentMonthText().replace(/\s+/g, '_')}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    this.showToast('Descarga completada: calendario de ausencias exportado.');
+  }
+
+  showToast(msg: string): void {
+    this.toastMessage.set(msg);
+    setTimeout(() => this.toastMessage.set(null), 3500);
   }
 }

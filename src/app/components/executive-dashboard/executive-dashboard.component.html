@@ -1,4 +1,12 @@
-<div class="dash-container">
+<div class="dash-container relative">
+  @if (dashboardToast()) {
+    <div class="fixed top-4 right-8 z-50 flex items-center gap-2 bg-slate-900 text-white px-4 py-2.5 rounded-xl shadow-xl text-xs font-semibold animate-bounce">
+      <span class="material-symbols-outlined text-[18px] text-green-400">check_circle</span>
+      <span>{{ dashboardToast() }}</span>
+      <button type="button" class="ml-2 text-slate-400 hover:text-white" (click)="dashboardToast.set(null)">✕</button>
+    </div>
+  }
+
   <!-- Top Bar: Breadcrumb + Executive Heading & Primary Actions -->
   <div class="dash-header-section">
     <div class="dash-title-group">
@@ -12,7 +20,7 @@
     </div>
 
     <div class="header-action-buttons">
-      <button class="btn-action secondary" type="button">
+      <button class="btn-action secondary" type="button" (click)="downloadExecutiveReport()">
         <span class="material-symbols-outlined">download</span>
         <span>Descargar Reporte Ejecutivo</span>
       </button>
@@ -78,7 +86,7 @@
         </div>
       </div>
       <div class="kpi-value-row">
-        <span class="kpi-big-number">18 <span class="kpi-unit">por revisar</span></span>
+        <span class="kpi-big-number">{{ requests().length }} <span class="kpi-unit">por revisar</span></span>
         <span class="trend-badge alert">
           <span class="material-symbols-outlined">priority_high</span>
           +5 urgentes hoy
@@ -467,7 +475,7 @@
       <!-- Lista de Vencimientos -->
       <div class="expirations-list">
         @for (item of expirations; track item.id) {
-          <div class="expiration-box">
+          <div class="expiration-box cursor-pointer hover:bg-slate-50 transition-colors" (click)="resolveExpiration(item)" title="Click para gestionar o actualizar recordatorio">
             <div class="exp-box-top">
               <div class="exp-title-side">
                 <span class="exp-dot" [class]="item.colorType"></span>

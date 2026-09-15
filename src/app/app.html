@@ -18,13 +18,25 @@
 
       <!-- Selector de Sede -->
       <div class="sede-selector-wrapper">
-        <div class="sede-selector-card">
+        <div class="sede-selector-card cursor-pointer" (click)="toggleSedeDropdown()">
           <div class="sede-info-left">
             <span class="material-symbols-outlined text-primary text-[18px]">apartment</span>
-            <span class="sede-text">Sede Madrid (Principal)</span>
+            <span class="sede-text">{{ activeSede() }}</span>
           </div>
           <span class="material-symbols-outlined text-outline text-[16px]">unfold_more</span>
         </div>
+        @if (showSedeDropdown()) {
+          <div class="sede-dropdown-menu">
+            @for (sede of sedesList; track sede) {
+              <div class="sede-option" [class.selected]="activeSede() === sede" (click)="selectSede(sede)">
+                <span>{{ sede }}</span>
+                @if (activeSede() === sede) {
+                  <span class="material-symbols-outlined text-[15px] text-primary">check</span>
+                }
+              </div>
+            }
+          </div>
+        }
       </div>
 
       <!-- Menú de Navegación Vertical -->
@@ -140,19 +152,44 @@
 
       <!-- Acciones de Usuario & Perfil Elena Morales -->
       <div class="topbar-actions-area">
-        <button type="button" class="btn-icon-topbar" title="Atajos y Ayuda">
+        <button type="button" class="btn-icon-topbar" title="Atajos y Ayuda" (click)="showHelpModal.set(true)">
           <span class="material-symbols-outlined">help</span>
         </button>
 
-        <button type="button" class="btn-icon-topbar relative" title="Notificaciones">
+        <button type="button" class="btn-icon-topbar relative" title="Notificaciones" (click)="toggleNotifications()">
           <span class="material-symbols-outlined">notifications</span>
-          <span class="notif-badge-red">4</span>
+          @if (unreadNotificationsCount() > 0) {
+            <span class="notif-badge-red">{{ unreadNotificationsCount() }}</span>
+          }
         </button>
+
+        <!-- Dropdown Notificaciones -->
+        @if (showNotifications()) {
+          <div class="notifications-dropdown-panel" (click)="$event.stopPropagation()">
+            <div class="notif-head">
+              <span class="notif-head-title">Centro de Alertas NexusHR</span>
+              <button type="button" class="btn-mark-all" (click)="markAllNotificationsRead()">Marcar leídas</button>
+            </div>
+            <div class="notif-list">
+              @for (n of notificationsList(); track n.id) {
+                <div class="notif-item" [class.unread]="!n.read" (click)="clickNotification(n)">
+                  <div class="notif-icon-box">
+                    <span class="material-symbols-outlined text-[18px] text-primary">{{ n.icon }}</span>
+                  </div>
+                  <div class="notif-text-col">
+                    <p class="notif-title">{{ n.title }}</p>
+                    <span class="notif-time">{{ n.time }}</span>
+                  </div>
+                </div>
+              }
+            </div>
+          </div>
+        }
 
         <div class="topbar-divider"></div>
 
         <!-- Perfil Elena Morales -->
-        <div class="user-profile-badge">
+        <div class="user-profile-badge cursor-pointer relative" (click)="toggleUserProfile()">
           <div class="user-avatar-wrap">
             <img 
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnFEWz0sp1ws92wAlDNV0tDFzZZ23pCeSvGHNXzHJOF0kqrTMKrzB2Vm9abxLXG8ucYi2HAbVMqKudG9yx1NmSYlYdAQPNF6xct0r6FiTWo134dmHD9NTYmK6Q04of1yHLlrhYfR0Ep2fVsbqyF8EL_QMevSv9dg9qHnw2q90_aOAoVXythbsTH-uKqNPIzkyXcmAb-0B__2pCLDP_pnXP3rQULM5j6LxTZOp5dcYHrxwufKpuhO2y" 
@@ -165,6 +202,31 @@
             <span class="user-role-title">HR Operations Director</span>
           </div>
           <span class="material-symbols-outlined text-outline text-[18px]">expand_more</span>
+
+          <!-- Dropdown Perfil -->
+          @if (showUserProfile()) {
+            <div class="profile-dropdown-panel" (click)="$event.stopPropagation()">
+              <div class="profile-user-head">
+                <p class="font-bold text-slate-800 text-xs">Elena Morales</p>
+                <p class="text-[11px] text-slate-500">elena.morales&#64;nexushr.corp</p>
+                <span class="badge-role-tag">Super Admin &bull; Global</span>
+              </div>
+              <div class="profile-menu-body">
+                <button type="button" class="profile-menu-item" (click)="goToView('directory'); showUserProfile.set(false)">
+                  <span class="material-symbols-outlined text-[16px]">person</span>
+                  <span>Directorio de Personal</span>
+                </button>
+                <button type="button" class="profile-menu-item" (click)="goToView('configuration'); showUserProfile.set(false)">
+                  <span class="material-symbols-outlined text-[16px]">settings</span>
+                  <span>Ajustes y Gobernanza</span>
+                </button>
+                <button type="button" class="profile-menu-item item-logout" (click)="showToast('Sesión segura restablecida.'); showUserProfile.set(false)">
+                  <span class="material-symbols-outlined text-[16px]">logout</span>
+                  <span>Cerrar Sesión</span>
+                </button>
+              </div>
+            </div>
+          }
         </div>
       </div>
     </header>
@@ -317,6 +379,50 @@
         [liquidation]="printLiquidation()" 
         (onClose)="closePrintModal()">
       </app-print-sheet>
+    }
+
+    <!-- MODAL DE AYUDA Y ATAJOS DE SISTEMA -->
+    @if (showHelpModal()) {
+      <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm" (click)="showHelpModal.set(false)">
+        <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-lg overflow-hidden" (click)="$event.stopPropagation()">
+          <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+            <div class="flex items-center gap-2">
+              <span class="material-symbols-outlined text-primary text-[22px]">keyboard</span>
+              <h3 class="font-bold text-slate-900 text-sm">NexusHR Enterprise &bull; Atajos y Navegación</h3>
+            </div>
+            <button type="button" class="text-slate-400 hover:text-slate-600 font-bold" (click)="showHelpModal.set(false)">✕</button>
+          </div>
+          <div class="p-6 space-y-4 text-xs text-slate-600">
+            <div class="p-3 bg-blue-50 border border-blue-200 rounded-xl text-blue-900">
+              <p class="font-semibold mb-1">Navegación Rápida con ⌘K / Enter:</p>
+              <p>Escribe en la barra superior palabras clave como <em>"vacaciones"</em>, <em>"nómina"</em>, <em>"fichaje"</em>, <em>"contratos"</em>, <em>"liquidación"</em> o el nombre de un colaborador para saltar al módulo correspondiente.</p>
+            </div>
+            <div class="space-y-2">
+              <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                <span>Buscar en todo el sistema</span>
+                <kbd class="px-2 py-0.5 bg-slate-100 border border-slate-300 rounded font-mono font-bold">⌘K</kbd>
+              </div>
+              <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                <span>Directorio de Personal</span>
+                <span class="font-semibold text-slate-800">Menú &gt; Recursos Humanos</span>
+              </div>
+              <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                <span>Calculadora CST Colombia</span>
+                <span class="font-semibold text-slate-800">Nómina Global &gt; Módulo CST</span>
+              </div>
+              <div class="flex items-center justify-between py-1.5 border-b border-slate-100">
+                <span>Cumplimiento RGPD &amp; ITSS</span>
+                <span class="text-green-700 font-semibold font-mono">100% Certificado</span>
+              </div>
+            </div>
+          </div>
+          <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 text-right">
+            <button type="button" class="px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-blue-700 transition-colors" (click)="showHelpModal.set(false)">
+              Entendido
+            </button>
+          </div>
+        </div>
+      </div>
     }
   </div>
 </div>

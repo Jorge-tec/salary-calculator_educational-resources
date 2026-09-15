@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Output, signal } from '@angular/core';
+import { Component, EventEmitter, Output, signal, computed } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
@@ -42,9 +42,16 @@ export class PeopleAnalyticsComponent {
   readonly isScheduleModalOpen = signal<boolean>(false);
   readonly isRiskModalOpen = signal<boolean>(false);
 
-  // Programar envío
+  // KPIs dinámicos según el período seleccionado
+  readonly kpiTurnover = computed(() => this.activePeriod() === 'fiscal' ? '2.8%' : '2.1%');
+  readonly kpiTurnoverTrend = computed(() => this.activePeriod() === 'fiscal' ? '-0.1% YoY' : '-0.4% YoY');
+  readonly kpiPayGap = computed(() => this.activePeriod() === 'fiscal' ? '1.5%' : '1.2%');
+  readonly kpiCostPerHire = computed(() => this.activePeriod() === 'fiscal' ? '3.120 €' : '2.840 €');
+  readonly kpieNps = computed(() => this.activePeriod() === 'fiscal' ? '+64' : '+68');
+
+  // Programar envío (inicia limpio)
   scheduleFrequency: string = 'Mensual (primer lunes de mes)';
-  scheduleRecipients: string = 'direccion.rrhh@nexushr.es, comite.direccion@nexushr.es';
+  scheduleRecipients: string = '';
   scheduleFormat: string = 'PDF Ejecutivo + Resumen BI';
 
   // Datos de equidad salarial
@@ -144,14 +151,38 @@ export class PeopleAnalyticsComponent {
   ]);
 
   exportExecutiveReport(): void {
-    this.showToast('Generando Informe Ejecutivo Consolidado People Analytics (PDF / PowerBI / Excel)...');
-    setTimeout(() => {
-      this.showToast('Descarga completada: Executive_People_Analytics_Report_2024.pdf');
-    }, 1500);
+    const reportData = {
+      titulo: "NexusHR - People Analytics & Inteligencia de Capital Humano",
+      periodo: this.activePeriod() === 'fiscal' ? 'Año Fiscal 2024' : 'Q3/Q4 2024 (Acum.)',
+      kpis: {
+        rotacionVoluntaria: this.kpiTurnover(),
+        brechaSalarial: this.kpiPayGap(),
+        costeMedioContratacion: this.kpiCostPerHire(),
+        eNps: this.kpieNps()
+      },
+      equidadPorDepartamento: this.equityRows(),
+      informesOficiales: this.reports()
+    };
+    const blob = new Blob([JSON.stringify(reportData, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `informe_ejecutivo_people_analytics_${this.activePeriod()}.json`;
+    link.click();
+    URL.revokeObjectURL(url);
+    this.showToast('Informe ejecutivo generado y descargado correctamente.');
   }
 
   downloadReport(report: PredefinedReport, format: 'xlsx' | 'pdf'): void {
-    this.showToast(`Descargando "${report.title}" en formato ${format.toUpperCase()}...`);
+    const content = `NexusHR Enterprise Cloud - Reporte Normativo Oficial\n${report.title}\n${report.subtitle}\nMarco Legal: ${report.framework}\nPeriodicidad: ${report.frequency}\nActualización: ${report.lastUpdated}\nValidación: ${report.statusBadge}`;
+    const blob = new Blob([content], { type: format === 'xlsx' ? 'text/csv' : 'application/pdf' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `${report.title.replace(/\s+/g, '_')}_2024.${format}`;
+    link.click();
+    URL.revokeObjectURL(url);
+    this.showToast(`Descarga completada: ${report.title} (.${format.toUpperCase()})`);
   }
 
   openScheduleModal(): void {

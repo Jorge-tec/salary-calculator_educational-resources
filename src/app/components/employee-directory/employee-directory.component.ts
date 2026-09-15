@@ -52,15 +52,24 @@ export class EmployeeDirectoryComponent {
   readonly toastMessage = signal<string | null>(null);
   readonly showModalNewEmployee = signal<boolean>(false);
 
-  // Search & Select Filters
+  // Search & Select Filters (Start clean without hardcoded sample filters)
   searchQuery: string = '';
-  selectedDept: string = 'tech';
+  selectedDept: string = '';
   selectedLocation: string = '';
   selectedContract: string = '';
-  selectedStatus: string = 'act';
+  selectedStatus: string = '';
 
-  // Master Employee List (matching screenshot & referencia-front/4.code.html)
-  readonly employees: DirectoryEmployee[] = [
+  // Formulario Nuevo Empleado
+  newEmpName: string = '';
+  newEmpRole: string = '';
+  newEmpEmail: string = '';
+  newEmpDept: string = 'Tecnología';
+  newEmpLocation: string = 'Sede Madrid';
+  newEmpSalary: number = 42000;
+  newEmpContract: string = 'Indefinido 40h';
+
+  // Master Employee List as reactive signal
+  readonly employees = signal<DirectoryEmployee[]>([
     {
       id: 'EMP-8942',
       code: '#EMP-8942',
@@ -280,17 +289,17 @@ export class EmployeeDirectoryComponent {
       salaryBand: '90% P75',
       nextReview: 'Octubre 2025'
     }
-  ];
+  ]);
 
   // Active selected employee computed
   readonly selectedEmployee = computed(() => {
     const id = this.selectedEmployeeId();
-    return this.employees.find(e => e.id === id) || this.employees[0];
+    return this.employees().find(e => e.id === id) || this.employees()[0];
   });
 
   // Filtered employees
   get filteredEmployees(): DirectoryEmployee[] {
-    return this.employees.filter(emp => {
+    return this.employees().filter(emp => {
       // Tab filter
       const tab = this.activeTab();
       if (tab === 'activos' && emp.status !== 'Activo') return false;
@@ -345,10 +354,66 @@ export class EmployeeDirectoryComponent {
     this.activeTab.set('todos');
   }
 
+  addNewEmployee(): void {
+    if (!this.newEmpName.trim()) {
+      this.showToast('Por favor introduce el nombre completo del colaborador.');
+      return;
+    }
+    const newIdNum = Math.floor(1000 + Math.random() * 9000);
+    const newEmp: DirectoryEmployee = {
+      id: `EMP-${newIdNum}`,
+      code: `#EMP-${newIdNum}`,
+      name: this.newEmpName.trim(),
+      role: this.newEmpRole.trim() || 'Especialista',
+      department: this.newEmpDept,
+      deptKey: this.newEmpDept.toLowerCase().slice(0, 4),
+      location: this.newEmpLocation,
+      locationKey: this.newEmpLocation.toLowerCase().includes('barcelona') ? 'bcn' : (this.newEmpLocation.toLowerCase().includes('remoto') ? 'rem' : 'madrid'),
+      contractType: this.newEmpContract,
+      contractKey: 'indef',
+      annualSalary: Number(this.newEmpSalary) || 42000,
+      baseSalary: Math.round((Number(this.newEmpSalary) || 42000) * 0.9),
+      complementSalary: Math.round((Number(this.newEmpSalary) || 42000) * 0.1),
+      seniority: '0a 1m',
+      seniorityText: 'Reciente incorporación',
+      startDate: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' }),
+      status: 'Onboarding',
+      statusKey: 'onb',
+      avatarUrl: '',
+      initials: this.newEmpName.split(' ').map(p => p[0]).join('').slice(0, 2).toUpperCase(),
+      email: this.newEmpEmail.trim() || `empleado${newIdNum}@nexushr.corp`,
+      phone: '+34 912 ' + Math.floor(100000 + Math.random() * 900000),
+      managerName: 'Elena Morales',
+      managerRole: 'HR Operations Director',
+      managerAvatar: 'https://lh3.googleusercontent.com/aida-public/AB6AXuBnFEWz0sp1ws92wAlDNV0tDFzZZ23pCeSvGHNXzHJOF0kqrTMKrzB2Vm9abxLXG8ucYi2HAbVMqKudG9yx1NmSYlYdAQPNF6xct0r6FiTWo134dmHD9NTYmK6Q04of1yHLlrhYfR0Ep2fVsbqyF8EL_QMevSv9dg9qHnw2q90_aOAoVXythbsTH-uKqNPIzkyXcmAb-0B__2pCLDP_pnXP3rQULM5j6LxTZOp5dcYHrxwufKpuhO2y',
+      teamCount: 0,
+      costCenter: 'CC-041',
+      collectiveAgreement: 'Convenio General NexusHR',
+      salaryBand: '85% P50',
+      nextReview: 'Diciembre 2025'
+    };
+
+    this.employees.update(list => [newEmp, ...list]);
+    this.selectedEmployeeId.set(newEmp.id);
+    this.showModalNewEmployee.set(false);
+    this.showToast(`Colaborador ${newEmp.name} registrado exitosamente.`);
+
+    // Limpiar inputs
+    this.newEmpName = '';
+    this.newEmpRole = '';
+    this.newEmpEmail = '';
+  }
+
+  toggleEmployeeStatus(emp: DirectoryEmployee): void {
+    const newStatus = emp.status === 'Activo' ? 'Baja Temp.' : 'Activo';
+    this.employees.update(list => list.map(e => e.id === emp.id ? { ...e, status: newStatus, statusKey: newStatus === 'Activo' ? 'act' : 'baja' } : e));
+    this.showToast(`Estado de ${emp.name} actualizado a: ${newStatus}`);
+  }
+
   exportDirectory(): void {
     const csvContent = "data:text/csv;charset=utf-8," + 
       "ID,Nombre,Cargo,Departamento,Sede,Contrato,Salario Anual,Estado\n" +
-      this.employees.map(e => `"${e.code}","${e.name}","${e.role}","${e.department}","${e.location}","${e.contractType}",${e.annualSalary},"${e.status}"`).join("\n");
+      this.employees().map(e => `"${e.code}","${e.name}","${e.role}","${e.department}","${e.location}","${e.contractType}",${e.annualSalary},"${e.status}"`).join("\n");
     
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");

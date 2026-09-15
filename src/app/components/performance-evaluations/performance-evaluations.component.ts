@@ -290,7 +290,7 @@ export class PerformanceEvaluationsComponent {
   };
 
   // Calibration Table Rows (5 master rows from referencia-front/6.code.html)
-  readonly calibrationRows: CalibrationRow[] = [
+  readonly calibrationRows = signal<CalibrationRow[]>([
     {
       id: 'cal-1',
       employeeName: 'Carmen Salgado',
@@ -386,7 +386,7 @@ export class PerformanceEvaluationsComponent {
       recommendedAction: 'Acceso a Plan PIP (60d)',
       actionClass: 'bg-error text-on-error font-bold'
     }
-  ];
+  ]);
 
   readonly activeQuadrant = computed(() => {
     const k = this.selectedQuadrantKey();
@@ -395,12 +395,28 @@ export class PerformanceEvaluationsComponent {
 
   selectQuadrant(key: string): void {
     this.selectedQuadrantKey.set(key);
+    this.showToast(`Filtrando por cuadrante: ${this.quadrants[key]?.name || key}`);
+  }
+
+  approveCalibration(row: CalibrationRow): void {
+    this.calibrationRows.update(list => list.map(r => {
+      if (r.id === row.id) {
+        return {
+          ...r,
+          evalStatus: 'Calibrada OK',
+          evalStatusType: 'ok',
+          evalSub: 'Comité de Dirección Aprobado'
+        };
+      }
+      return r;
+    }));
+    this.showToast(`Calibración aprobada para ${row.employeeName} (${row.quadrantName}).`);
   }
 
   exportMatrix(): void {
     const csvContent = "data:text/csv;charset=utf-8," + 
       "Colaborador,Manager,Rating 360,Potencial,Cuadrante 9-Box,Cumplimiento OKR,Accion Recomendada\n" +
-      this.calibrationRows.map(r => `"${r.employeeName}","${r.managerName}",${r.ratingScore},"${r.potential}","${r.quadrantName}","${r.okrPct}%","${r.recommendedAction}"`).join("\n");
+      this.calibrationRows().map(r => `"${r.employeeName}","${r.managerName}",${r.ratingScore},"${r.potential}","${r.quadrantName}","${r.okrPct}%","${r.recommendedAction}"`).join("\n");
 
     const encodedUri = encodeURI(csvContent);
     const link = document.createElement("a");

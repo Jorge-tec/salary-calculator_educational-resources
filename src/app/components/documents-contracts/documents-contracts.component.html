@@ -389,24 +389,32 @@
                         <button 
                           type="button" 
                           class="btn-row-cta primary"
-                          (click)="showToast('Firma digital como apoderado completada')">
+                          (click)="signDocument(doc)">
                           <span class="material-symbols-outlined text-[13px]">check_circle</span> Firmar Ahora
                         </button>
                       } @else if (doc.statusType === 'expiring') {
                         <button 
                           type="button" 
                           class="btn-row-cta red"
-                          (click)="showToast('Trámite de extranjería iniciado')">
+                          (click)="showToast('Trámite de prórroga para ' + doc.employeeName + ' iniciado')">
                           <span class="material-symbols-outlined text-[13px]">refresh</span> Tramitar
                         </button>
                       } @else if (doc.statusType === 'draft') {
                         <button 
                           type="button" 
                           class="btn-row-cta"
-                          (click)="showToast('Solicitud de firma enviada')">
-                          <span class="material-symbols-outlined text-[13px]">send</span> Enviar Firma
+                          (click)="signDocument(doc)">
+                          <span class="material-symbols-outlined text-[13px]">send</span> Validar y Firmar
                         </button>
                       }
+
+                      <button 
+                        type="button" 
+                        class="btn-icon-action" 
+                        title="Descargar Documento"
+                        (click)="downloadDoc(doc)">
+                        <span class="material-symbols-outlined text-[16px]">download</span>
+                      </button>
 
                       <button 
                         type="button" 
@@ -676,6 +684,71 @@
             (click)="downloadAuditTrail(previewDoc()!); closePreview()">
             <span class="material-symbols-outlined text-[16px]">download</span>
             Descargar Certificado
+          </button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal Subir / Incorporar Documento -->
+  @if (showUploadModal()) {
+    <div class="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm" (click)="showUploadModal.set(false)">
+      <div class="bg-white rounded-2xl shadow-2xl border border-slate-200 w-full max-w-md overflow-hidden" (click)="$event.stopPropagation()">
+        <div class="px-6 py-4 bg-slate-50 border-b border-slate-200 flex items-center justify-between">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[22px]">upload_file</span>
+            <h3 class="font-bold text-slate-900 text-sm">Subir Documento o Generar Contrato</h3>
+          </div>
+          <button type="button" class="text-slate-400 hover:text-slate-600 font-bold" (click)="showUploadModal.set(false)">✕</button>
+        </div>
+
+        <div class="p-6 space-y-3.5 text-xs text-slate-600">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nombre del Archivo</label>
+            <input 
+              type="text" 
+              [(ngModel)]="newDocFilename" 
+              placeholder="Ej. CTR_Indefinido_David_Ruiz.pdf" 
+              class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary" />
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">Categoría Documental</label>
+              <select [(ngModel)]="newDocCategory" class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs bg-white focus:outline-none focus:border-primary">
+                <option value="contratos">Contratos y Anexos</option>
+                <option value="nominas">Recibos de Nómina</option>
+                <option value="fiscales">Modelos Fiscales</option>
+                <option value="certificados">Certificados Laborales</option>
+                <option value="cst">Liquidación CST</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">DNI / NIF Colaborador</label>
+              <input 
+                type="text" 
+                [(ngModel)]="newDocEmpDni" 
+                placeholder="Ej. 48102948R" 
+                class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary" />
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">Nombre Completo del Colaborador</label>
+            <input 
+              type="text" 
+              [(ngModel)]="newDocEmpName" 
+              placeholder="Ej. David Ruiz Salcedo" 
+              class="w-full px-3 py-2 border border-slate-200 rounded-lg text-xs focus:outline-none focus:border-primary" />
+          </div>
+        </div>
+
+        <div class="px-6 py-3 bg-slate-50 border-t border-slate-200 flex items-center justify-end gap-2">
+          <button type="button" class="px-3.5 py-2 border border-slate-300 text-slate-700 text-xs font-semibold rounded-lg hover:bg-slate-100" (click)="showUploadModal.set(false)">
+            Cancelar
+          </button>
+          <button type="button" class="px-4 py-2 bg-primary text-white text-xs font-semibold rounded-lg hover:bg-blue-700 shadow-sm transition-colors" (click)="addNewDocument()">
+            Incorporar Documento
           </button>
         </div>
       </div>
