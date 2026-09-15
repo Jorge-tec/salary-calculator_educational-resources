@@ -1,141 +1,170 @@
 <div class="enterprise-shell" [class.sidebar-is-collapsed]="sidebarCollapsed()">
-  <!-- Barra de Acento Tricolor Colombiano (Sutil) -->
-  <div class="flag-accent-bar">
-    <span class="flag-stripe yellow"></span>
-    <span class="flag-stripe blue"></span>
-    <span class="flag-stripe red"></span>
-  </div>
-
-  <!-- SIDEBAR ENTERPRISE FIJO (Inspirado en referencia-front) -->
+  <!-- SIDEBAR ENTERPRISE FIJO (Pixel-Perfect con la imagen) -->
   <aside class="enterprise-sidebar">
     <div class="sidebar-top">
-      <!-- Marca y Logo -->
+      <!-- Header de Marca NexusHR -->
       <div class="sidebar-brand" (click)="goToView('dashboard')">
-        <div class="brand-logo-circle">
-          <span class="material-symbols-outlined brand-icon">balance</span>
+        <div class="nexus-logo-box">
+          <svg class="nexus-logo-svg" viewBox="0 0 24 24" fill="none">
+            <rect width="24" height="24" rx="5" fill="#004ac6"/>
+            <path d="M6 12.5L10 16.5L18 8.5" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
         </div>
         <div class="brand-info">
           <span class="brand-name">NexusHR</span>
-          <span class="brand-edition">COLOMBIA CST</span>
+          <span class="brand-edition">ENTERPRISE CLOUD</span>
         </div>
       </div>
 
-      <!-- Selector de Régimen / Sede -->
-      <div class="jurisdiction-box">
-        <div class="jurisdiction-inner">
-          <div class="jurisdiction-title">
-            <span class="material-symbols-outlined text-primary text-[18px]">verified</span>
-            <span class="jur-text">CST &bull; Ley 789 / 2002</span>
+      <!-- Selector de Sede -->
+      <div class="sede-selector-wrapper">
+        <div class="sede-selector-card">
+          <div class="sede-info-left">
+            <span class="material-symbols-outlined text-primary text-[18px]">apartment</span>
+            <span class="sede-text">Sede Madrid (Principal)</span>
           </div>
-          <span class="jur-badge">2025</span>
+          <span class="material-symbols-outlined text-outline text-[16px]">unfold_more</span>
         </div>
       </div>
 
-      <!-- Navegación Vertical Principal -->
+      <!-- Menú de Navegación Vertical -->
       <nav class="sidebar-nav">
-        <!-- 1. Dashboard -->
+        <!-- 1. Inicio / Dashboard -->
         <a class="nav-item" [class.active]="activeView() === 'dashboard'" (click)="goToView('dashboard')">
           <span class="material-symbols-outlined nav-icon">dashboard</span>
-          <span class="nav-label">Dashboard Ejecutivo</span>
+          <span class="nav-label">Inicio / Dashboard</span>
         </a>
 
-        <!-- 2. Calculadora & Certificación -->
+        <!-- 2. Recursos Humanos -->
+        <a class="nav-item" (click)="goToView('records')">
+          <span class="material-symbols-outlined nav-icon">groups</span>
+          <span class="nav-label">Recursos Humanos</span>
+        </a>
+
+        <!-- 3. Nómina Global -->
         <a class="nav-item" [class.active]="activeView() === 'calculator'" (click)="goToView('calculator')">
-          <span class="material-symbols-outlined nav-icon">calculate</span>
-          <span class="nav-label">Calculadora CST</span>
+          <span class="material-symbols-outlined nav-icon">payments</span>
+          <span class="nav-label">Nómina Global</span>
           @if (currentLiquidation() && currentLiquidation()!.totalLiquidacion > 0) {
-            <span class="nav-badge-pill active-calc">Activo</span>
+            <span class="nav-badge-dot"></span>
           }
         </a>
 
-        <!-- 3. Tabla Organizacional / Casos -->
-        <a class="nav-item" [class.active]="activeView() === 'records'" (click)="goToView('records')">
-          <span class="material-symbols-outlined nav-icon">folder_shared</span>
-          <span class="nav-label">Expedientes Guardados</span>
-          <span class="nav-count-badge">{{ storageService.savedLiquidations().length }}</span>
+        <!-- 4. Tiempo y Asistencia -->
+        <a class="nav-item" (click)="goToView('dashboard')">
+          <span class="material-symbols-outlined nav-icon">schedule</span>
+          <span class="nav-label">Tiempo y Asistencia</span>
         </a>
 
-        <!-- 4. Normativa y Artículos CST -->
+        <!-- 5. Vacaciones y Permisos -->
+        <a class="nav-item" (click)="goToView('dashboard')">
+          <span class="material-symbols-outlined nav-icon">date_range</span>
+          <span class="nav-label">Vacaciones y Permisos</span>
+        </a>
+
+        <!-- 6. Documentos y Contratos -->
+        <a class="nav-item" [class.active]="activeView() === 'records'" (click)="goToView('records')">
+          <span class="material-symbols-outlined nav-icon">description</span>
+          <span class="nav-label">Documentos y Contratos</span>
+        </a>
+
+        <!-- 7. Evaluaciones -->
+        <a class="nav-item" (click)="goToView('dashboard')">
+          <span class="material-symbols-outlined nav-icon">trending_up</span>
+          <span class="nav-label">Evaluaciones</span>
+        </a>
+
+        <!-- 8. Reportes y Analítica -->
         <a class="nav-item" [class.active]="activeView() === 'normative'" (click)="goToView('normative')">
-          <span class="material-symbols-outlined nav-icon">menu_book</span>
-          <span class="nav-label">Normativa & Fórmulas</span>
+          <span class="material-symbols-outlined nav-icon">bar_chart</span>
+          <span class="nav-label">Reportes y Analítica</span>
+        </a>
+
+        <!-- 9. Configuración -->
+        <a class="nav-item" (click)="goToView('normative')">
+          <span class="material-symbols-outlined nav-icon">settings</span>
+          <span class="nav-label">Configuración</span>
         </a>
       </nav>
     </div>
 
-    <!-- Sección Inferior del Sidebar: Indicador de Almacenamiento y Colapsar -->
+    <!-- Sección Inferior: Plan Enterprise 72% y Contraer Menú -->
     <div class="sidebar-bottom">
-      <div class="storage-indicator-card">
-        <div class="storage-card-header">
-          <span class="storage-lbl">Base de Datos Local</span>
-          <span class="storage-pct">{{ storageService.savedLiquidations().length }} Casos</span>
+      <div class="plan-indicator-card">
+        <div class="plan-card-top">
+          <span class="plan-tag">PLAN ENTERPRISE</span>
+          <span class="plan-pct">72%</span>
         </div>
-        <div class="storage-track">
-          <div class="storage-fill" [style.width.%]="storageService.savedLiquidations().length > 0 ? (storageService.savedLiquidations().length * 10) : 5"></div>
+        <div class="plan-track">
+          <div class="plan-fill" style="width: 72%;"></div>
         </div>
-        <div class="storage-card-footer">
-          <span>SMMLV: $1.423.500</span>
-          <span>Transp: $200.000</span>
+        <div class="plan-card-sub">
+          <span>Almacenamiento</span>
+          <span>1.4 / 2 TB</span>
         </div>
       </div>
 
       <button type="button" class="btn-toggle-sidebar" (click)="toggleSidebar()">
-        <span class="material-symbols-outlined">
+        <span class="toggle-text">{{ sidebarCollapsed() ? 'Expandir' : 'Contraer Menú' }}</span>
+        <span class="material-symbols-outlined text-[18px]">
           {{ sidebarCollapsed() ? 'keyboard_double_arrow_right' : 'keyboard_double_arrow_left' }}
         </span>
-        <span class="toggle-text">{{ sidebarCollapsed() ? 'Expandir' : 'Contraer Menú' }}</span>
       </button>
     </div>
   </aside>
 
-  <!-- CONTENEDOR PRINCIPAL DERECHO (pl-64) -->
+  <!-- CONTENEDOR PRINCIPAL DERECHO -->
   <div class="enterprise-content-wrapper">
-    <!-- TOPBAR SUPERIOR FIJO (h-16) -->
+    <!-- TOPBAR SUPERIOR FIJO (Pixel-Perfect con la imagen) -->
     <header class="enterprise-topbar">
-      <!-- Búsqueda Rápida ⌘K -->
+      <!-- Input de Búsqueda ⌘K -->
       <div class="topbar-search-area">
         <div class="search-input-wrapper">
           <span class="material-symbols-outlined search-icon">search</span>
           <input 
             type="text" 
             [(ngModel)]="globalSearchQuery" 
-            placeholder="Buscar colaborador, cédula o empresa..." 
+            placeholder="Buscar empleado, nómina, reporte..." 
             class="topbar-search-input"
             (keyup.enter)="handleGlobalSearch()" />
-          <kbd class="kbd-shortcut">↵ Enter</kbd>
+          <kbd class="kbd-shortcut">⌘K</kbd>
         </div>
 
         <div class="topbar-status-chip">
           <span class="status-live-dot"></span>
-          <span class="chip-text-main">CST Colombia 2025</span>
+          <span class="chip-text-main">Sistema Activo</span>
           <span class="chip-bullet">•</span>
-          <span class="chip-text-sub">Fórmulas Certificadas</span>
+          <span class="chip-text-sub">Sync OK</span>
         </div>
       </div>
 
-      <!-- Acciones Rápidas & Perfil -->
+      <!-- Acciones de Usuario & Perfil Elena Morales -->
       <div class="topbar-actions-area">
-        <button type="button" class="btn-icon-topbar" title="Guía y Fundamentos Legales" (click)="goToView('normative')">
+        <button type="button" class="btn-icon-topbar" title="Atajos y Ayuda">
           <span class="material-symbols-outlined">help</span>
         </button>
 
-        <button type="button" class="btn-icon-topbar relative" title="Expedientes Guardados" (click)="goToView('records')">
+        <button type="button" class="btn-icon-topbar relative" title="Notificaciones">
           <span class="material-symbols-outlined">notifications</span>
-          <span class="notif-badge">{{ storageService.savedLiquidations().length }}</span>
+          <span class="notif-badge-red">4</span>
         </button>
 
         <div class="topbar-divider"></div>
 
-        <!-- Perfil Certificador / HR Specialist -->
+        <!-- Perfil Elena Morales -->
         <div class="user-profile-badge">
           <div class="user-avatar-wrap">
-            <span class="avatar-initials">HR</span>
+            <img 
+              src="https://lh3.googleusercontent.com/aida-public/AB6AXuBnFEWz0sp1ws92wAlDNV0tDFzZZ23pCeSvGHNXzHJOF0kqrTMKrzB2Vm9abxLXG8ucYi2HAbVMqKudG9yx1NmSYlYdAQPNF6xct0r6FiTWo134dmHD9NTYmK6Q04of1yHLlrhYfR0Ep2fVsbqyF8EL_QMevSv9dg9qHnw2q90_aOAoVXythbsTH-uKqNPIzkyXcmAb-0B__2pCLDP_pnXP3rQULM5j6LxTZOp5dcYHrxwufKpuhO2y" 
+              class="profile-img" 
+              alt="Elena Morales" />
             <span class="user-status-online"></span>
           </div>
           <div class="user-meta-info">
-            <span class="user-display-name">Gestión Humana</span>
-            <span class="user-role-title">Certificador Jurídico CST</span>
+            <span class="user-display-name">Elena Morales</span>
+            <span class="user-role-title">HR Operations Director</span>
           </div>
+          <span class="material-symbols-outlined text-outline text-[18px]">expand_more</span>
         </div>
       </div>
     </header>
@@ -148,20 +177,18 @@
       </div>
     }
 
-    <!-- ÁREA DE CONTENIDO DINÁMICO (pt-16) -->
+    <!-- ÁREA DE CONTENIDO PRINCIPAL -->
     <main class="enterprise-main-body">
-      <!-- VISTA 1: DASHBOARD EJECUTIVO -->
+      <!-- VISTA 1: DASHBOARD EJECUTIVO (La vista de la imagen adjunta) -->
       @if (activeView() === 'dashboard') {
         <app-executive-dashboard 
           (onNewLiquidation)="startNewLiquidation()"
           (onOpenCalculator)="openWithPreset($event)"
-          (onViewAllRecords)="goToView('records')"
-          (onLoadRecord)="loadRecordToForm($event)"
-          (onPrintRecord)="openPrintModal($event)">
+          (onViewAllRecords)="goToView('records')">
         </app-executive-dashboard>
       }
 
-      <!-- VISTA 2: CALCULADORA Y RESUMEN EN TIEMPO REAL -->
+      <!-- VISTA 2: NÓMINA GLOBAL / CALCULADORA CST -->
       @if (activeView() === 'calculator') {
         <div class="calculator-view-grid">
           <div class="calculator-main-col">
@@ -188,7 +215,7 @@
         </div>
       }
 
-      <!-- VISTA 3: TABLA ORGANIZACIONAL DE CASOS -->
+      <!-- VISTA 3: EXPEDIENTES / RECURSOS HUMANOS -->
       @if (activeView() === 'records') {
         <div class="records-view-wrapper">
           <app-records-table 
@@ -200,7 +227,7 @@
         </div>
       }
 
-      <!-- VISTA 4: COMPENDIO NORMATIVO Y FÓRMULAS -->
+      <!-- VISTA 4: REPORTES Y ANALÍTICA / NORMATIVA -->
       @if (activeView() === 'normative') {
         <div class="normative-view-wrapper">
           <app-formula-inspector [liquidation]="currentLiquidation()" [defaultToNormativa]="true">
@@ -216,17 +243,5 @@
         (onClose)="closePrintModal()">
       </app-print-sheet>
     }
-
-    <!-- FOOTER ENTERPRISE -->
-    <footer class="enterprise-footer">
-      <div class="footer-inner-content">
-        <p class="footer-copy">
-          <strong>NexusHR &bull; Calculadora de Liquidaciones e Indemnizaciones Laborales</strong> | República de Colombia
-        </p>
-        <p class="footer-disclaimer">
-          Fórmulas y directrices jurídicas sustentadas en el Código Sustantivo del Trabajo (Art. 64, 186, 249, 306 CST), Ley 789 de 2002 y Ley 15 de 1959. Herramienta con propósitos didácticos y de verificación técnica.
-        </p>
-      </div>
-    </footer>
   </div>
 </div>

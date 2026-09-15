@@ -1,0 +1,496 @@
+<div class="dash-container">
+  <!-- Top Bar: Breadcrumb + Executive Heading & Primary Actions -->
+  <div class="dash-header-section">
+    <div class="dash-title-group">
+      <div class="breadcrumb-nav">
+        <span class="crumb-item">Inicio</span>
+        <span class="material-symbols-outlined crumb-arrow">chevron_right</span>
+        <span class="crumb-active">Dashboard Ejecutivo</span>
+      </div>
+      <h1 class="page-main-title">Dashboard Ejecutivo de RRHH &amp; Nómina</h1>
+      <p class="page-subtitle">Monitoreo consolidado de nómina, headcount y métricas operativas del período actual (Octubre 2024)</p>
+    </div>
+
+    <div class="header-action-buttons">
+      <button class="btn-action secondary" type="button">
+        <span class="material-symbols-outlined">download</span>
+        <span>Descargar Reporte Ejecutivo</span>
+      </button>
+      <button class="btn-action primary" type="button" (click)="onNewLiquidation.emit()">
+        <span class="material-symbols-outlined">add</span>
+        <span>+ Nuevo Empleado</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- Row 1: KPI Cards Grid (4 Cards superiores) -->
+  <div class="kpi-grid">
+    <!-- KPI 1: Total Empleados -->
+    <div class="kpi-box">
+      <div class="kpi-box-top">
+        <span class="kpi-label">TOTAL EMPLEADOS</span>
+        <div class="kpi-icon-square blue">
+          <span class="material-symbols-outlined">groups</span>
+        </div>
+      </div>
+      <div class="kpi-value-row">
+        <span class="kpi-big-number">1,428</span>
+        <span class="trend-badge positive">
+          <span class="material-symbols-outlined">trending_up</span>
+          +3.4% vs mes anterior
+        </span>
+      </div>
+      <div class="kpi-footer-progress">
+        <div class="progress-bar-track">
+          <div class="progress-bar-value" style="width: 82%"></div>
+        </div>
+        <span class="progress-info-text">98.2% act.</span>
+      </div>
+    </div>
+
+    <!-- KPI 2: Costo de Nómina Mensual -->
+    <div class="kpi-box">
+      <div class="kpi-box-top">
+        <span class="kpi-label">COSTO DE NÓMINA MENSUAL</span>
+        <div class="kpi-icon-square green">
+          <span class="material-symbols-outlined">account_balance_wallet</span>
+        </div>
+      </div>
+      <div class="kpi-value-row">
+        <span class="kpi-big-number">&euro;3,842,500</span>
+        <span class="trend-badge positive">
+          <span class="material-symbols-outlined">trending_down</span>
+          -0.8% optimizado
+        </span>
+      </div>
+      <div class="kpi-footer-text-row">
+        <span class="kpi-text-sub">Presupuesto ejecutado: <strong>94.1%</strong></span>
+        <span class="kpi-tag-status green">En objetivo</span>
+      </div>
+    </div>
+
+    <!-- KPI 3: Solicitudes Pendientes -->
+    <div class="kpi-box">
+      <div class="kpi-box-top">
+        <span class="kpi-label">SOLICITUDES PENDIENTES</span>
+        <div class="kpi-icon-square dark">
+          <span class="material-symbols-outlined">assignment_turned_in</span>
+        </div>
+      </div>
+      <div class="kpi-value-row">
+        <span class="kpi-big-number">18 <span class="kpi-unit">por revisar</span></span>
+        <span class="trend-badge alert">
+          <span class="material-symbols-outlined">priority_high</span>
+          +5 urgentes hoy
+        </span>
+      </div>
+      <div class="kpi-footer-text-row">
+        <span class="kpi-text-sub">Tiempo medio de resolución</span>
+        <span class="kpi-text-highlight">1.4 días</span>
+      </div>
+    </div>
+
+    <!-- KPI 4: Ausencias / Bajas Hoy -->
+    <div class="kpi-box">
+      <div class="kpi-box-top">
+        <span class="kpi-label">AUSENCIAS / BAJAS HOY</span>
+        <div class="kpi-icon-square gray">
+          <span class="material-symbols-outlined">person_off</span>
+        </div>
+      </div>
+      <div class="kpi-value-row">
+        <span class="kpi-big-number">12 <span class="kpi-unit">(0.8%)</span></span>
+        <span class="trend-badge neutral-blue">
+          <span class="material-symbols-outlined">check_circle</span>
+          Bajo ratio histórico
+        </span>
+      </div>
+      <div class="kpi-footer-text-row">
+        <span class="kpi-text-sub">7 Vacaciones &bull; 5 Bajas médicas</span>
+        <a class="kpi-link" (click)="onViewAllRecords.emit()">Auditar</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 2: Gráficos y Analítica Visual -->
+  <div class="charts-analytics-row">
+    <!-- Columna Izquierda: Evolución de Costo de Nómina (Barras Apiladas) -->
+    <div class="chart-card payroll-chart-card">
+      <div class="chart-card-header">
+        <div class="chart-titles">
+          <h2 class="chart-title">Evolución de Costo de Nómina (Últimos 6 Meses)</h2>
+          <p class="chart-subtitle">Desglose acumulado por departamentos con proyección presupuestaria</p>
+        </div>
+        <div class="chart-header-controls">
+          <span class="year-pill">2024</span>
+          <button class="btn-more-options" type="button">
+            <span class="material-symbols-outlined">more_vert</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Leyenda de Departamentos -->
+      <div class="chart-legend-row">
+        <div class="legend-item">
+          <span class="legend-dot tech"></span>
+          <span class="legend-label">Tecnología</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot ops"></span>
+          <span class="legend-label">Operaciones</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot sales"></span>
+          <span class="legend-label">Ventas &amp; Mktg</span>
+        </div>
+        <div class="legend-item">
+          <span class="legend-dot corp"></span>
+          <span class="legend-label">Corporativo</span>
+        </div>
+      </div>
+
+      <!-- Gráfico de Barras Apiladas SVG/HTML -->
+      <div class="stacked-bar-container">
+        <!-- Mayo -->
+        <div class="bar-column group">
+          <span class="bar-value-label">&euro;3.68M</span>
+          <div class="bar-stack" style="height: 72%;">
+            <div class="stack-segment corp" style="height: 14%;"></div>
+            <div class="stack-segment sales" style="height: 22%;"></div>
+            <div class="stack-segment ops" style="height: 26%;"></div>
+            <div class="stack-segment tech" style="height: 38%;"></div>
+          </div>
+          <span class="bar-month-label">Mayo</span>
+        </div>
+
+        <!-- Junio -->
+        <div class="bar-column group">
+          <span class="bar-value-label">&euro;3.72M</span>
+          <div class="bar-stack" style="height: 76%;">
+            <div class="stack-segment corp" style="height: 13%;"></div>
+            <div class="stack-segment sales" style="height: 23%;"></div>
+            <div class="stack-segment ops" style="height: 26%;"></div>
+            <div class="stack-segment tech" style="height: 38%;"></div>
+          </div>
+          <span class="bar-month-label">Junio</span>
+        </div>
+
+        <!-- Julio -->
+        <div class="bar-column group">
+          <span class="bar-value-label">&euro;3.79M</span>
+          <div class="bar-stack" style="height: 82%;">
+            <div class="stack-segment corp" style="height: 12%;"></div>
+            <div class="stack-segment sales" style="height: 22%;"></div>
+            <div class="stack-segment ops" style="height: 27%;"></div>
+            <div class="stack-segment tech" style="height: 39%;"></div>
+          </div>
+          <span class="bar-month-label">Julio</span>
+        </div>
+
+        <!-- Agosto -->
+        <div class="bar-column group">
+          <span class="bar-value-label">&euro;3.75M</span>
+          <div class="bar-stack" style="height: 79%;">
+            <div class="stack-segment corp" style="height: 12%;"></div>
+            <div class="stack-segment sales" style="height: 21%;"></div>
+            <div class="stack-segment ops" style="height: 28%;"></div>
+            <div class="stack-segment tech" style="height: 39%;"></div>
+          </div>
+          <span class="bar-month-label">Agosto</span>
+        </div>
+
+        <!-- Septiembre -->
+        <div class="bar-column group">
+          <span class="bar-value-label">&euro;3.87M</span>
+          <div class="bar-stack" style="height: 88%;">
+            <div class="stack-segment corp" style="height: 12%;"></div>
+            <div class="stack-segment sales" style="height: 21%;"></div>
+            <div class="stack-segment ops" style="height: 27%;"></div>
+            <div class="stack-segment tech" style="height: 40%;"></div>
+          </div>
+          <span class="bar-month-label">Sept</span>
+        </div>
+
+        <!-- Octubre (Hoy - Destacado) -->
+        <div class="bar-column group active-period">
+          <span class="bar-value-label active">&euro;3.84M</span>
+          <div class="bar-stack active-highlight" style="height: 85%;">
+            <div class="stack-segment corp" style="height: 11%;"></div>
+            <div class="stack-segment sales" style="height: 21%;"></div>
+            <div class="stack-segment ops" style="height: 28%;"></div>
+            <div class="stack-segment tech" style="height: 40%;"></div>
+          </div>
+          <span class="bar-month-label active">Oct (Hoy)</span>
+        </div>
+      </div>
+
+      <!-- Footer Resumen Financiero -->
+      <div class="chart-footer-strip">
+        <div class="footer-metric-block">
+          <span class="metric-label">Total Acumulado Semestre</span>
+          <span class="metric-amount">&euro;22,652,500</span>
+        </div>
+        <div class="footer-divider-vert"></div>
+        <div class="footer-metric-block">
+          <span class="metric-label">Variación Presupuestaria</span>
+          <span class="metric-status-favorable">-&euro;58,000 (-1.5%) Favorable</span>
+        </div>
+        <a class="footer-link-action" (click)="onOpenCalculator.emit('UNJUSTIFIED_NORMAL')">
+          <span>Ver desglose contable</span>
+          <span class="material-symbols-outlined">arrow_forward</span>
+        </a>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Distribución de Headcount (Gráfico de Dona) -->
+    <div class="chart-card headcount-chart-card">
+      <div class="chart-card-header">
+        <div class="chart-titles">
+          <h2 class="chart-title">Distribución de Headcount</h2>
+          <p class="chart-subtitle">Por departamento y áreas de negocio</p>
+        </div>
+        <span class="quarter-badge">Q4 Activo</span>
+      </div>
+
+      <!-- Dona SVG y Leyenda con Porcentajes -->
+      <div class="donut-chart-wrapper">
+        <div class="donut-svg-box">
+          <svg class="donut-svg" viewBox="0 0 100 100">
+            <!-- Background track -->
+            <circle class="donut-track" cx="50" cy="50" r="38" fill="transparent" stroke-width="12"></circle>
+            
+            <!-- Tech: 38% -> dash 90.7 -->
+            <circle cx="50" cy="50" r="38" fill="transparent" stroke="#004ac6" stroke-width="12"
+                    stroke-dasharray="90.7 148.06" stroke-dashoffset="0"></circle>
+            <!-- Ops: 26% -> dash 62.0 -->
+            <circle cx="50" cy="50" r="38" fill="transparent" stroke="#2563eb" stroke-width="12"
+                    stroke-dasharray="62.0 176.76" stroke-dashoffset="-90.7"></circle>
+            <!-- Sales: 20% -> dash 47.75 -->
+            <circle cx="50" cy="50" r="38" fill="transparent" stroke="#007d55" stroke-width="12"
+                    stroke-dasharray="47.75 191.01" stroke-dashoffset="-152.7"></circle>
+            <!-- Legal: 10% -> dash 23.87 -->
+            <circle cx="50" cy="50" r="38" fill="transparent" stroke="#565e74" stroke-width="12"
+                    stroke-dasharray="23.87 214.89" stroke-dashoffset="-200.45"></circle>
+            <!-- HR: 6% -> dash 14.32 -->
+            <circle cx="50" cy="50" r="38" fill="transparent" stroke="#10b981" stroke-width="12"
+                    stroke-dasharray="14.32 224.44" stroke-dashoffset="-224.32"></circle>
+          </svg>
+          <div class="donut-center-label">
+            <span class="donut-center-number">1,428</span>
+            <span class="donut-center-sub">TOTAL</span>
+          </div>
+        </div>
+
+        <!-- Leyenda con Desglose -->
+        <div class="donut-legend-list">
+          <div class="donut-legend-item">
+            <div class="legend-color-name">
+              <span class="legend-point-dot tech"></span>
+              <span class="legend-dept-name">Tecnología</span>
+            </div>
+            <span class="legend-dept-stats">543 <span class="legend-pct">(38%)</span></span>
+          </div>
+
+          <div class="donut-legend-item">
+            <div class="legend-color-name">
+              <span class="legend-point-dot ops"></span>
+              <span class="legend-dept-name">Operaciones</span>
+            </div>
+            <span class="legend-dept-stats">371 <span class="legend-pct">(26%)</span></span>
+          </div>
+
+          <div class="donut-legend-item">
+            <div class="legend-color-name">
+              <span class="legend-point-dot sales"></span>
+              <span class="legend-dept-name">Ventas &amp; Mktg</span>
+            </div>
+            <span class="legend-dept-stats">286 <span class="legend-pct">(20%)</span></span>
+          </div>
+
+          <div class="donut-legend-item">
+            <div class="legend-color-name">
+              <span class="legend-point-dot corp"></span>
+              <span class="legend-dept-name">Finanzas &amp; Legal</span>
+            </div>
+            <span class="legend-dept-stats">142 <span class="legend-pct">(10%)</span></span>
+          </div>
+
+          <div class="donut-legend-item">
+            <div class="legend-color-name">
+              <span class="legend-point-dot hr"></span>
+              <span class="legend-dept-name">RRHH Global</span>
+            </div>
+            <span class="legend-dept-stats">86 <span class="legend-pct">(6%)</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Footer Callout -->
+      <div class="donut-footer-callout">
+        <div class="flex-center-gap">
+          <span class="material-symbols-outlined text-primary text-[20px]">badge</span>
+          <span class="callout-label">Ratio Remoto / Híbrido:</span>
+        </div>
+        <span class="callout-val">64.5% Flex</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Row 3: Flujos Operativos (Tabla de Solicitudes y Widget de Vencimientos) -->
+  <div class="bottom-workflows-row">
+    <!-- Columna Izquierda: Últimas Solicitudes por Aprobar -->
+    <div class="table-card approvals-card">
+      <div class="table-header-bar">
+        <div class="table-titles">
+          <h3 class="table-main-title">Últimas Solicitudes por Aprobar</h3>
+          <p class="table-subtitle">Flujo transaccional pendiente de visto bueno gerencial</p>
+        </div>
+
+        <!-- Filtros / Category Tabs -->
+        <div class="category-tabs-group">
+          <button class="tab-pill-btn" [class.active]="selectedCategory() === 'all'" (click)="setCategory('all')">
+            Todas (18)
+          </button>
+          <button class="tab-pill-btn" [class.active]="selectedCategory() === 'vacations'" (click)="setCategory('vacations')">
+            Vacaciones (8)
+          </button>
+          <button class="tab-pill-btn" [class.active]="selectedCategory() === 'raises'" (click)="setCategory('raises')">
+            Aumentos (4)
+          </button>
+          <button class="tab-pill-btn" [class.active]="selectedCategory() === 'expenses'" (click)="setCategory('expenses')">
+            Gastos (6)
+          </button>
+        </div>
+      </div>
+
+      <!-- Tabla de Datos -->
+      <div class="table-responsive-box">
+        <table class="approvals-data-table">
+          <thead>
+            <tr>
+              <th>EMPLEADO</th>
+              <th>TIPO SOLICITUD</th>
+              <th>FECHAS / IMPORTE</th>
+              <th class="text-center">ESTADO</th>
+              <th class="text-right">ACCIONES RÁPIDAS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (req of filteredRequests(); track req.id) {
+              <tr class="approval-row">
+                <!-- Empleado -->
+                <td>
+                  <div class="employee-cell">
+                    <img [src]="req.avatar" class="emp-headshot" [alt]="req.name" />
+                    <div class="emp-text-meta">
+                      <strong class="emp-full-name">{{ req.name }}</strong>
+                      <span class="emp-role-title">{{ req.role }}</span>
+                    </div>
+                  </div>
+                </td>
+
+                <!-- Tipo Solicitud -->
+                <td>
+                  <div class="request-type-badge">
+                    <span class="material-symbols-outlined text-[16px]" [style.color]="req.requestIconColor">
+                      {{ req.requestIcon }}
+                    </span>
+                    <span>{{ req.requestType }}</span>
+                  </div>
+                </td>
+
+                <!-- Fechas / Importe -->
+                <td>
+                  <div class="dates-meta">
+                    <strong class="dates-main">{{ req.datesOrAmount }}</strong>
+                    <span class="dates-sub">{{ req.subtitle }}</span>
+                  </div>
+                </td>
+
+                <!-- Estado -->
+                <td class="text-center">
+                  <span class="status-badge" [class.urgent]="req.statusClass === 'urgent'" [class.in-review]="req.statusClass === 'in-review'" [class.pending]="req.statusClass === 'pending'">
+                    {{ req.status }}
+                  </span>
+                </td>
+
+                <!-- Acciones Rápidas -->
+                <td class="text-right">
+                  <div class="actions-buttons-cluster">
+                    <button type="button" class="btn-table-act check" title="Aprobar" (click)="approveRequest(req.id)">
+                      <span class="material-symbols-outlined">check</span>
+                    </button>
+                    <button type="button" class="btn-table-act cross" title="Rechazar" (click)="rejectRequest(req.id)">
+                      <span class="material-symbols-outlined">close</span>
+                    </button>
+                    <button type="button" class="btn-table-act view" title="Ver Detalle">
+                      <span class="material-symbols-outlined">visibility</span>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Paginador Footer -->
+      <div class="table-pagination-footer">
+        <span class="pagination-info">
+          Mostrando <strong>{{ filteredRequests().length }}</strong> de <strong>18</strong> solicitudes
+        </span>
+        <div class="pagination-buttons">
+          <button class="btn-page-nav" disabled>
+            <span class="material-symbols-outlined">chevron_left</span>
+          </button>
+          <span class="page-number active">1</span>
+          <button class="page-number">2</button>
+          <button class="page-number">3</button>
+          <button class="btn-page-nav">
+            <span class="material-symbols-outlined">chevron_right</span>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Columna Derecha: Próximos Vencimientos -->
+    <div class="expirations-card">
+      <div class="expirations-header">
+        <div class="expirations-title-wrap">
+          <span class="material-symbols-outlined text-primary text-[22px]">event_busy</span>
+          <h3 class="expirations-title">Próximos Vencimientos</h3>
+        </div>
+        <span class="critical-badge">3 críticos</span>
+      </div>
+      <p class="expirations-subtitle">Contratos temporales, revisiones médicas y visados</p>
+
+      <!-- Lista de Vencimientos -->
+      <div class="expirations-list">
+        @for (item of expirations; track item.id) {
+          <div class="expiration-box">
+            <div class="exp-box-top">
+              <div class="exp-title-side">
+                <span class="exp-dot" [class]="item.colorType"></span>
+                <span class="exp-name">{{ item.title }}</span>
+              </div>
+              <span class="exp-days" [class]="item.colorType">{{ item.daysRemaining }}</span>
+            </div>
+            <div class="exp-meta-row">
+              <span class="exp-person">{{ item.person }}</span>
+              <span class="exp-date">{{ item.date }}</span>
+            </div>
+            <div class="exp-progress-track">
+              <div class="exp-progress-bar" [class]="item.colorType" [style.width.%]="item.progressPercent"></div>
+            </div>
+          </div>
+        }
+      </div>
+
+      <!-- CTA Botón -->
+      <button class="btn-view-all-expirations" type="button" (click)="onViewAllRecords.emit()">
+        <span>Ver todos los contratos y vencimientos</span>
+        <span class="material-symbols-outlined">arrow_forward</span>
+      </button>
+    </div>
+  </div>
+</div>
