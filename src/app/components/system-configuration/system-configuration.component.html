@@ -1,0 +1,715 @@
+<div class="config-page">
+  <!-- Toast flotante -->
+  @if (toastMessage()) {
+    <div class="config-toast">
+      <div class="toast-icon-circle">
+        <span class="material-symbols-outlined text-[16px]">check</span>
+      </div>
+      <div class="flex flex-col">
+        <span class="toast-title">Parámetros corporativos sincronizados</span>
+        <span class="toast-desc">{{ toastMessage() }}</span>
+      </div>
+      <button type="button" class="btn-close-toast" (click)="toastMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- 1. Breadcrumb & Top Utility Info -->
+  <div class="config-top-ribbon">
+    <nav class="breadcrumb-nav">
+      <span class="breadcrumb-link flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]">home</span>
+        <span>Inicio</span>
+      </span>
+      <span class="crumb-separator">/</span>
+      <span class="breadcrumb-link text-primary font-semibold">Configuración</span>
+      <span class="crumb-separator">/</span>
+      <span class="breadcrumb-current">Parámetros Generales y Cumplimiento Normativo</span>
+    </nav>
+
+    <div class="top-system-meta font-mono">
+      <span class="version-chip">
+        <span class="green-dot animate-pulse"></span>
+        <span>Versión 4.19.2-ES Core</span>
+      </span>
+      <span class="sync-time-text">Última sync: Hoy, 09:42 CET</span>
+    </div>
+  </div>
+
+  <!-- 2. Main Header Card -->
+  <div class="config-header-card">
+    <div class="header-main-info">
+      <div class="header-icon-box">
+        <span class="material-symbols-outlined text-[24px]">tune</span>
+      </div>
+      <div>
+        <h1 class="header-h1">Configuración del Sistema y Gobernanza Corporativa</h1>
+        <p class="header-sub">
+          Ajustes de sedes, políticas de nómina, integraciones bancarias/fiscales, control de accesos RBAC y auditoría del sistema
+        </p>
+      </div>
+    </div>
+
+    <div class="header-actions">
+      <button 
+        type="button" 
+        class="btn-audit-log"
+        (click)="openAuditLog()">
+        <span class="material-symbols-outlined text-[18px] text-slate-400">history</span>
+        <span>Ver Registro de Cambios (Audit Log)</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-save-global"
+        [disabled]="isSaving()"
+        (click)="saveGlobalParameters()">
+        @if (isSaving()) {
+          <span class="material-symbols-outlined text-[18px] animate-spin">sync</span>
+          <span>Aplicando...</span>
+        } @else {
+          <span class="material-symbols-outlined text-[18px]">verified</span>
+          <span>Guardar Parámetros Globales</span>
+        }
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. Sub-navigation Tabs -->
+  <div class="tabs-scroll-bar">
+    <div class="tabs-list">
+      <button 
+        type="button" 
+        class="tab-btn"
+        [class.active]="activeTab() === 'sedes'"
+        (click)="activeTab.set('sedes')">
+        <span class="material-symbols-outlined text-[18px]">domain</span>
+        <span>Sedes y Centros de Trabajo</span>
+        <span class="tab-badge-counter font-mono">3</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn"
+        [class.active]="activeTab() === 'convenios'"
+        (click)="activeTab.set('convenios'); showToast('Visualizando reglas de convenios sectoriales y políticas de devengos')">
+        <span class="material-symbols-outlined text-[18px]">receipt_long</span>
+        <span>Convenios y Políticas de Nómina</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn"
+        [class.active]="activeTab() === 'integraciones'"
+        (click)="activeTab.set('integraciones'); showToast('Pasarelas gubernamentales AEAT, Seguridad Social y SEPA')">
+        <span class="material-symbols-outlined text-[18px]">account_balance</span>
+        <span>Integraciones Fiscales y SEPA</span>
+        <span class="tab-dot-online"></span>
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn"
+        [class.active]="activeTab() === 'rbac'"
+        (click)="activeTab.set('rbac'); showToast('Matriz de roles y privilegios RBAC')">
+        <span class="material-symbols-outlined text-[18px]">admin_panel_settings</span>
+        <span>Roles y Permisos (RBAC)</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn"
+        [class.active]="activeTab() === 'seguridad'"
+        (click)="activeTab.set('seguridad'); showToast('Políticas de seguridad FIDO2 WebAuthn y SSO')">
+        <span class="material-symbols-outlined text-[18px]">lock_reset</span>
+        <span>Seguridad y Autenticación (SSO/2FA)</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="tab-btn"
+        [class.active]="activeTab() === 'webhooks'"
+        (click)="activeTab.set('webhooks'); showToast('Endpoints de eventos y webhooks en tiempo real')">
+        <span class="material-symbols-outlined text-[18px]">webhook</span>
+        <span>Notificaciones y Webhooks</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 4. Operational Ledger Content Grid (2 Columns: 7 cols vs 5 cols) -->
+  <div class="config-main-grid">
+    <!-- LEFT COLUMN: Sedes, Políticas de Fichaje y Reglas de Nómina -->
+    <div class="col-left-rules">
+      <!-- Card: Sedes Corporativas Activas -->
+      <div class="card-box">
+        <div class="card-box-header">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[20px]">corporate_fare</span>
+            <div>
+              <h2 class="card-h2">Sedes Corporativas Activas</h2>
+              <p class="card-sub">Centros de cotización a la Seguridad Social y regímenes autonómicos</p>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            class="btn-action-small"
+            (click)="openNewLocation()">
+            <span class="material-symbols-outlined text-[16px]">add</span>
+            <span>Nueva Sede</span>
+          </button>
+        </div>
+
+        <!-- Locations List -->
+        <div class="locations-list">
+          @for (loc of locations(); track loc.id) {
+            <div class="location-item-box">
+              <div class="loc-item-top">
+                <div class="loc-badge-name">
+                  <div class="loc-square-code font-mono" [class.bg-primary]="loc.code === 'MAD'" [class.bg-secondary]="loc.code === 'BCN'" [class.bg-surface-highest]="loc.code === 'REM'">
+                    {{ loc.code }}
+                  </div>
+                  <div>
+                    <div class="flex items-center gap-2">
+                      <span class="loc-name-text">{{ loc.name }}</span>
+                      <span class="loc-tag-pill {{ loc.tagClass }}">{{ loc.tag }}</span>
+                    </div>
+                    <span class="loc-cif-ccc font-mono">CIF: {{ loc.cif }} • CCC: {{ loc.ccc }}</span>
+                  </div>
+                </div>
+
+                <div class="loc-status-menu">
+                  <span class="status-chip {{ loc.statusClass }}">
+                    <span class="status-dot bg-tertiary"></span>
+                    <span>{{ loc.status }}</span>
+                  </span>
+                  <button 
+                    type="button" 
+                    class="btn-icon-dots" 
+                    title="Opciones de sede"
+                    (click)="showToast('Detalle fiscal y centro de cotización de ' + loc.name)">
+                    <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- 3 Datos Clave de Sede -->
+              <div class="loc-data-grid">
+                <div class="data-mini-cell">
+                  <span class="data-label">{{ loc.code === 'REM' ? 'Plantilla Vinculada' : 'Plantilla Activa' }}</span>
+                  <span class="data-val font-mono">{{ loc.activeStaff }}</span>
+                </div>
+                <div class="data-mini-cell">
+                  <span class="data-label">{{ loc.code === 'REM' ? 'Calendario Asignado' : 'Calendario Laboral' }}</span>
+                  <span class="data-text-bold">{{ loc.workCalendar }}</span>
+                </div>
+                <div class="data-mini-cell">
+                  <span class="data-label">{{ loc.extraInfo ? loc.extraInfo : 'Ubicación Fiscal' }}</span>
+                  <span class="data-text-bold" [class.text-tertiary]="loc.extraInfo">{{ loc.fiscalAddress }}</span>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+
+      <!-- Card: Políticas de Fichaje y Tolerancia Horaria -->
+      <div class="card-box">
+        <div class="card-box-header">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[20px]">schedule</span>
+            <div>
+              <h2 class="card-h2">Políticas de Fichaje y Tolerancia Horaria</h2>
+              <p class="card-sub">Registro de jornada según RDL 8/2019 con validación de auditoría laboral</p>
+            </div>
+          </div>
+          <span class="font-mono text-[11px] text-slate-400 font-semibold uppercase tracking-wider">MÓDULO ITSS OK</span>
+        </div>
+
+        <div class="form-selects-grid">
+          <!-- Margen de Cortesía -->
+          <div class="select-cell-card">
+            <label class="cell-label">Margen de Cortesía Entrada/Salida</label>
+            <select class="native-config-select" [(ngModel)]="courtesyMargin">
+              <option>15 minutos de flexibilidad</option>
+              <option>10 minutos de flexibilidad</option>
+              <option>5 minutos de estricto cumplimiento</option>
+              <option>30 minutos (Horario Flotante)</option>
+            </select>
+            <span class="cell-helper">No computa penalización por retraso leve.</span>
+          </div>
+
+          <!-- Política de redondeo de pausas -->
+          <div class="select-cell-card">
+            <label class="cell-label">Redondeo en Pausas de Comida</label>
+            <select class="native-config-select" [(ngModel)]="mealRounding">
+              <option>Bloque mínimo 30 min (Convenio)</option>
+              <option>Cómputo exacto por fichaje</option>
+              <option>Bloque de 45 min garantizado</option>
+              <option>Automático 1h si jornada &gt; 6h</option>
+            </select>
+            <span class="cell-helper">Alineado al convenio de Oficinas y Despachos.</span>
+          </div>
+        </div>
+
+        <!-- Toggles de seguridad de fichaje -->
+        <div class="toggles-list">
+          <!-- Geolocalización IP -->
+          <div class="toggle-row-card">
+            <div class="flex items-center gap-3">
+              <div class="toggle-icon-wrap bg-green-light text-tertiary">
+                <span class="material-symbols-outlined text-[18px]">location_on</span>
+              </div>
+              <div>
+                <span class="toggle-title">Geovalla y Verificación IP Corporativa</span>
+                <p class="toggle-desc">Requiere estar en la subred de la oficina o geocerca autorizada</p>
+              </div>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" [(ngModel)]="geofenceEnabled"/>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+
+          <!-- Validación Biométrica / Móvil -->
+          <div class="toggle-row-card">
+            <div class="flex items-center gap-3">
+              <div class="toggle-icon-wrap bg-blue-light text-primary">
+                <span class="material-symbols-outlined text-[18px]">fingerprint</span>
+              </div>
+              <div>
+                <span class="toggle-title">Validación Biométrica (FaceID / Huella en App)</span>
+                <p class="toggle-desc">Previene suplantaciones mediante autenticación criptográfica de dispositivo</p>
+              </div>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" [(ngModel)]="biometricsEnabled"/>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Reglas de Devengos y Horas Extras -->
+      <div class="card-box">
+        <div class="card-box-header">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[20px]">calculate</span>
+            <div>
+              <h2 class="card-h2">Reglas de Devengos y Horas Extras</h2>
+              <p class="card-sub">Automatización del motor salarial y exportación contable</p>
+            </div>
+          </div>
+          <span class="font-mono text-xs text-slate-400 font-semibold">Plan General Contable 640</span>
+        </div>
+
+        <div class="toggle-row-card bg-slate-50">
+          <div>
+            <span class="toggle-title">Aprobación Automática de Horas Extras (Hasta 2h/mes)</span>
+            <p class="toggle-desc">Si se supera el umbral, requiere visto bueno de People Ops Manager</p>
+          </div>
+          <label class="switch-toggle">
+            <input type="checkbox" [(ngModel)]="autoOvertimeEnabled"/>
+            <span class="slider-toggle"></span>
+          </label>
+        </div>
+
+        <div class="multipliers-3-grid">
+          <div class="multiplier-box">
+            <span class="multiplier-label">Multiplicador Nocturno</span>
+            <div class="multiplier-val-row font-mono">
+              <span class="multiplier-number">1.25x</span>
+              <span class="material-symbols-outlined text-[18px] text-slate-400">bedtime</span>
+            </div>
+            <span class="multiplier-sub font-mono">Franja 22:00 - 06:00</span>
+          </div>
+
+          <div class="multiplier-box">
+            <span class="multiplier-label">Multiplicador Festivo</span>
+            <div class="multiplier-val-row font-mono">
+              <span class="multiplier-number">1.75x</span>
+              <span class="material-symbols-outlined text-[18px] text-slate-400">celebration</span>
+            </div>
+            <span class="multiplier-sub font-mono">Festivos según BOE/BOCM</span>
+          </div>
+
+          <div class="multiplier-box">
+            <span class="multiplier-label">Cuenta Contable (PGC)</span>
+            <div class="multiplier-val-row font-mono">
+              <span class="multiplier-number text-primary">640.002</span>
+              <span class="material-symbols-outlined text-[18px] text-slate-400">account_tree</span>
+            </div>
+            <span class="multiplier-sub font-mono">Devengos Variables</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: Conectores, RGPD y Administradores de Tenant -->
+    <div class="col-right-governance">
+      <!-- Card: Conectores e Integraciones -->
+      <div class="card-box">
+        <div class="card-box-header">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[20px]">hub</span>
+            <div>
+              <h2 class="card-h2">Conectores e Integraciones</h2>
+              <p class="card-sub">Pasarelas de comunicación administrativa y bancaria</p>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            class="btn-test-general"
+            (click)="runGeneralTest()">
+            <span>Test General</span>
+            <span class="material-symbols-outlined text-[14px]">refresh</span>
+          </button>
+        </div>
+
+        <div class="connectors-list">
+          <!-- Seguridad Social / SILTRA -->
+          <div class="connector-item-row">
+            <div class="connector-left">
+              <div class="connector-icon-box text-primary">
+                <span class="material-symbols-outlined text-[20px]">health_and_safety</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="connector-title">Seguridad Social (SILTRA / Winsuite)</span>
+                <span class="connector-sub">Ficheros AFI, FDI y CRA en tiempo real</span>
+              </div>
+            </div>
+            <div class="connector-right font-mono">
+              <span class="badge-connected">
+                <span class="dot-small bg-tertiary"></span> Conectado
+              </span>
+              <span class="test-ago-text">Test: hace 12 min</span>
+            </div>
+          </div>
+
+          <!-- Agencia Tributaria / AEAT -->
+          <div class="connector-item-row">
+            <div class="connector-left">
+              <div class="connector-icon-box text-primary">
+                <span class="material-symbols-outlined text-[20px]">assured_workload</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="connector-title">Agencia Tributaria (AEAT SII &amp; 111/190)</span>
+                <span class="connector-sub">Certificado FNMT Corporativo Válido</span>
+              </div>
+            </div>
+            <div class="connector-right font-mono">
+              <span class="badge-connected">
+                <span class="dot-small bg-tertiary"></span> Activo
+              </span>
+              <span class="test-ago-text">Caduca: 280 días</span>
+            </div>
+          </div>
+
+          <!-- Pasarela Bancaria SEPA -->
+          <div class="connector-item-row">
+            <div class="connector-left">
+              <div class="connector-icon-box text-primary">
+                <span class="material-symbols-outlined text-[20px]">credit_card</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="connector-title">Pasarela Bancaria SEPA ISO 20022</span>
+                <span class="connector-sub">Santander / BBVA Corporate XML Pain.001</span>
+              </div>
+            </div>
+            <div class="connector-right font-mono">
+              <span class="badge-online">
+                <span class="dot-small bg-primary"></span> En Línea
+              </span>
+              <span class="test-ago-text">Dual Signature OK</span>
+            </div>
+          </div>
+
+          <!-- Proveedor SSO -->
+          <div class="connector-item-row">
+            <div class="connector-left">
+              <div class="connector-icon-box text-primary">
+                <span class="material-symbols-outlined text-[20px]">shield_person</span>
+              </div>
+              <div class="flex flex-col">
+                <span class="connector-title">Proveedor SSO (Okta / Azure AD SAML)</span>
+                <span class="connector-sub">Provisionamiento SCIM automático activo</span>
+              </div>
+            </div>
+            <div class="connector-right font-mono">
+              <span class="badge-connected">
+                <span class="dot-small bg-tertiary"></span> 100% Plantilla
+              </span>
+              <span class="test-ago-text">Enforced</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Políticas de Seguridad y Privacidad (RGPD) -->
+      <div class="card-box">
+        <div class="card-box-header">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[20px]">policy</span>
+            <div>
+              <h2 class="card-h2">Políticas de Seguridad y RGPD</h2>
+              <p class="card-sub">Cumplimiento normativa UE 2016/679 y LOPDGDD</p>
+            </div>
+          </div>
+          <span class="badge-iso font-mono">ISO 27001</span>
+        </div>
+
+        <div class="rgpd-items-list">
+          <div class="rgpd-item-row">
+            <div class="flex flex-col">
+              <span class="rgpd-title">Retención de Fichajes y Logs de Presencia</span>
+              <span class="rgpd-sub">Exigencia legal Art. 34.9 Estatuto de los Trabajadores</span>
+            </div>
+            <span class="badge-number-box font-mono">4 Años</span>
+          </div>
+
+          <div class="rgpd-item-row">
+            <div class="flex flex-col">
+              <span class="rgpd-title">Cifrado de Base de Datos y Certificados</span>
+              <span class="rgpd-sub">Claves rotadas mediante KMS en hardware seguro</span>
+            </div>
+            <span class="badge-aes-box font-mono">
+              <span class="material-symbols-outlined text-[14px]">lock</span>
+              AES-256-GCM
+            </span>
+          </div>
+
+          <div class="rgpd-item-row">
+            <div class="flex flex-col">
+              <span class="rgpd-title">MFA / 2FA Obligatorio para RRHH y Dirección</span>
+              <span class="rgpd-sub">FIDO2 WebAuthn / TOTP para roles con acceso salarial</span>
+            </div>
+            <label class="switch-toggle">
+              <input type="checkbox" [(ngModel)]="mfaEnforced" disabled/>
+              <span class="slider-toggle"></span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- Card: Administradores del Tenant y Permisos -->
+      <div class="card-box">
+        <div class="card-box-header">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary text-[20px]">manage_accounts</span>
+            <div>
+              <h2 class="card-h2">Administradores del Tenant</h2>
+              <p class="card-sub">Usuarios con privilegios globales de configuración y gobernanza</p>
+            </div>
+          </div>
+
+          <button 
+            type="button" 
+            class="btn-action-small"
+            (click)="openInviteAdmin()">
+            <span class="material-symbols-outlined text-[16px]">person_add</span>
+            <span>Invitar Admin</span>
+          </button>
+        </div>
+
+        <div class="admins-list">
+          @for (admin of admins(); track admin.id) {
+            <div class="admin-item-row">
+              <div class="admin-left min-w-0">
+                @if (admin.avatar) {
+                  <img [src]="admin.avatar" [alt]="admin.name" class="admin-avatar"/>
+                } @else {
+                  <div class="admin-initials {{ admin.initialsClass }}">
+                    {{ admin.initials }}
+                  </div>
+                }
+                <div class="flex flex-col min-w-0">
+                  <div class="flex items-center gap-1.5">
+                    <span class="admin-name truncate">{{ admin.name }}</span>
+                    @if (admin.isCurrentUser) {
+                      <span class="badge-you font-mono">Tú</span>
+                    }
+                  </div>
+                  <span class="admin-email font-mono truncate">{{ admin.email }}</span>
+                </div>
+              </div>
+
+              <div class="admin-right">
+                @if (admin.isCurrentUser) {
+                  <span class="badge-superadmin font-bold">Super Admin</span>
+                } @else {
+                  <select class="select-admin-role" [(ngModel)]="admin.role">
+                    <option>Payroll Admin</option>
+                    <option>Auditor Solo Lectura</option>
+                    <option>Legal &amp; Compliance</option>
+                    <option>Super Admin</option>
+                  </select>
+                  <button 
+                    type="button" 
+                    class="btn-revoke-admin"
+                    title="Revocar acceso"
+                    (click)="removeAdmin(admin)">
+                    <span class="material-symbols-outlined text-[16px]">close</span>
+                  </button>
+                }
+              </div>
+            </div>
+          }
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Registro de Cambios (Audit Log) -->
+  @if (isAuditLogModalOpen()) {
+    <div class="modal-backdrop-config">
+      <div class="modal-dialog-config">
+        <div class="modal-header-config">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">history</span>
+            <h3 class="font-bold text-slate-900 text-sm">Registro de Cambios y Auditoría de Gobernanza (Audit Log)</h3>
+          </div>
+          <button type="button" class="btn-modal-close" (click)="closeAuditLog()">✕</button>
+        </div>
+
+        <div class="modal-body-config">
+          <div class="audit-entries-list font-mono text-xs">
+            <div class="audit-entry-card">
+              <div class="flex justify-between text-slate-400">
+                <span>Hoy, 09:42:15 CET</span>
+                <span class="text-tertiary">HASH: 9a38fc...102</span>
+              </div>
+              <span class="font-bold text-slate-800 mt-1">Elena Morales (Super Admin)</span>
+              <p class="text-slate-600 mt-0.5">Actualización de margen de cortesía de entrada a 15 minutos en todas las sedes.</p>
+            </div>
+
+            <div class="audit-entry-card">
+              <div class="flex justify-between text-slate-400">
+                <span>12 Octubre 2024, 16:30 CET</span>
+                <span class="text-tertiary">HASH: 44b1c8...881</span>
+              </div>
+              <span class="font-bold text-slate-800 mt-1">Marcos Vance (Payroll Admin)</span>
+              <p class="text-slate-600 mt-0.5">Renovación de certificado FNMT para pasarela AEAT SII y modelos tributarios.</p>
+            </div>
+
+            <div class="audit-entry-card">
+              <div class="flex justify-between text-slate-400">
+                <span>01 Octubre 2024, 08:00 CET</span>
+                <span class="text-tertiary">HASH: e109da...730</span>
+              </div>
+              <span class="font-bold text-slate-800 mt-1">Sistema Automático Core</span>
+              <p class="text-slate-600 mt-0.5">Sincronización de nuevo calendario laboral de la Comunidad de Madrid para el ejercicio 2025.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="modal-footer-config">
+          <button type="button" class="btn-action-small" (click)="showToast('Exportando log completo de auditoría en formato JSON firmado...')">
+            <span class="material-symbols-outlined text-[16px]">download</span>
+            <span>Descargar Audit Trail (JSON)</span>
+          </button>
+          <button type="button" class="btn-save-global" (click)="closeAuditLog()">Entendido</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Añadir Nueva Sede -->
+  @if (isNewLocationModalOpen()) {
+    <div class="modal-backdrop-config">
+      <div class="modal-dialog-config">
+        <div class="modal-header-config">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">add_business</span>
+            <h3 class="font-bold text-slate-900 text-sm">Incorporar Nueva Sede o Centro de Trabajo</h3>
+          </div>
+          <button type="button" class="btn-modal-close" (click)="closeNewLocation()">✕</button>
+        </div>
+
+        <div class="modal-body-config">
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Código Sede</label>
+              <input type="text" [(ngModel)]="newLocCode" class="form-input font-mono"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Nombre de la Sede</label>
+              <input type="text" [(ngModel)]="newLocName" class="form-input"/>
+            </div>
+          </div>
+
+          <div class="form-grid-2">
+            <div class="form-group">
+              <label class="form-label">Código Cuenta Cotización (CCC)</label>
+              <input type="text" [(ngModel)]="newLocCcc" class="form-input font-mono"/>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Estimación Plantilla</label>
+              <input type="text" [(ngModel)]="newLocStaff" class="form-input"/>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Calendario Laboral Asignado</label>
+            <input type="text" [(ngModel)]="newLocCalendar" class="form-input"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Ubicación Fiscal</label>
+            <input type="text" [(ngModel)]="newLocAddress" class="form-input"/>
+          </div>
+        </div>
+
+        <div class="modal-footer-config">
+          <button type="button" class="btn-cancel" (click)="closeNewLocation()">Cancelar</button>
+          <button type="button" class="btn-save-global" (click)="saveNewLocation()">Dar de Alta Sede</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Invitar Administrador -->
+  @if (isInviteAdminModalOpen()) {
+    <div class="modal-backdrop-config">
+      <div class="modal-dialog-config">
+        <div class="modal-header-config">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">person_add</span>
+            <h3 class="font-bold text-slate-900 text-sm">Invitar Administrador de Tenant</h3>
+          </div>
+          <button type="button" class="btn-modal-close" (click)="closeInviteAdmin()">✕</button>
+        </div>
+
+        <div class="modal-body-config">
+          <div class="form-group">
+            <label class="form-label">Correo Electrónico Corporativo</label>
+            <input 
+              type="email" 
+              [(ngModel)]="inviteEmail" 
+              placeholder="ejemplo.usuario@nexushr.es" 
+              class="form-input font-mono"/>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Rol y Alcance de Privilegios</label>
+            <select [(ngModel)]="inviteRole" class="form-input cursor-pointer">
+              <option>Payroll Admin</option>
+              <option>Auditor Solo Lectura</option>
+              <option>Legal &amp; Compliance</option>
+              <option>Super Admin</option>
+            </select>
+          </div>
+
+          <div class="notice-box-blue">
+            <span class="material-symbols-outlined text-[16px] text-primary">shield</span>
+            <span>El nuevo administrador requerirá autenticación obligatoria mediante MFA (FIDO2 o TOTP) al iniciar sesión.</span>
+          </div>
+        </div>
+
+        <div class="modal-footer-config">
+          <button type="button" class="btn-cancel" (click)="closeInviteAdmin()">Cancelar</button>
+          <button type="button" class="btn-save-global" (click)="sendAdminInvite()">Enviar Invitación</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

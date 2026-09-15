@@ -81,7 +81,7 @@
         </a>
 
         <!-- 9. Configuración -->
-        <a class="nav-item" (click)="goToView('normative')">
+        <a class="nav-item" [class.active]="activeView() === 'configuration'" (click)="goToView('configuration')">
           <span class="material-symbols-outlined nav-icon">settings</span>
           <span class="nav-label">Configuración</span>
         </a>
@@ -209,6 +209,13 @@
           (onOpenCalculator)="goToView('calculator')"
           (onOpenPayroll)="goToView('payroll')">
         </app-time-attendance>
+      }
+
+      <!-- VISTA: CONFIGURACIÓN DEL SISTEMA Y GOBERNANZA CORPORATIVA -->
+      @if (activeView() === 'configuration') {
+        <app-system-configuration 
+          (onOpenCalculator)="goToView('calculator')">
+        </app-system-configuration>
       }
 
       <!-- VISTA: RECURSOS HUMANOS / DIRECTORIO DE PERSONAL -->
