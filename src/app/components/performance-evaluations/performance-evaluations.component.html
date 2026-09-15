@@ -1,0 +1,705 @@
+<div class="evaluations-page">
+  <!-- Toast Notification -->
+  @if (toastMessage()) {
+    <div class="evaluations-toast">
+      <span class="material-symbols-outlined text-[18px]">info</span>
+      <span>{{ toastMessage() }}</span>
+      <button type="button" class="btn-close-toast" (click)="toastMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- 1. Breadcrumb y Encabezado de Página -->
+  <div class="evaluations-top-header">
+    <nav class="breadcrumb-nav">
+      <span class="breadcrumb-link flex items-center gap-1">
+        <span class="material-symbols-outlined text-[15px]">home</span>
+        <span>Inicio</span>
+      </span>
+      <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+      <span class="breadcrumb-link text-primary font-semibold">Evaluaciones</span>
+      <span class="material-symbols-outlined icon-crumb">chevron_right</span>
+      <span class="breadcrumb-current">Ciclo Anual de Rendimiento 2024</span>
+    </nav>
+
+    <div class="page-title-row">
+      <div class="page-title-col">
+        <div class="title-with-badge">
+          <h1 class="page-h1">Evaluación del Rendimiento, Matriz 9-Box y OKRs</h1>
+          <span class="phase-badge font-mono">FASE 3: CALIBRACIÓN ACTIVA</span>
+        </div>
+        <p class="page-sub">
+          Supervisión del ciclo corporativo de evaluación 360°, calibración de talento mediante 9-Box Grid, seguimiento de metas OKR y vinculación con planes de compensación global.
+        </p>
+      </div>
+
+      <div class="header-actions-group">
+        <button 
+          type="button" 
+          class="btn-secondary"
+          (click)="exportMatrix()">
+          <span class="material-symbols-outlined text-[18px] text-outline">table_view</span>
+          <span>Exportar Matriz de Talento (XLSX)</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="btn-primary"
+          (click)="startCalibrationRound()">
+          <span class="material-symbols-outlined text-[18px]">group_add</span>
+          <span>+ Iniciar Ronda de Calibración</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Fila Superior de KPIs (4 Cards) -->
+  <section class="kpi-metrics-row">
+    <!-- KPI 1 -->
+    <div class="kpi-box">
+      <div class="kpi-top">
+        <span class="kpi-tag">Progreso del Ciclo 2024</span>
+        <span class="kpi-icon-pill bg-low text-primary">
+          <span class="material-symbols-outlined text-[18px]">fact_check</span>
+        </span>
+      </div>
+      <div class="kpi-number-row">
+        <span class="kpi-main-number font-mono">84.5%</span>
+        <span class="kpi-delta font-mono text-tertiary">
+          <span class="material-symbols-outlined text-[14px]">arrow_upward</span> +6.2% vs semana ant.
+        </span>
+      </div>
+      <div class="kpi-track-group">
+        <div class="kpi-track-bar">
+          <div class="kpi-track-fill bg-primary-container" style="width: 84.5%;"></div>
+        </div>
+        <span class="kpi-sub-text font-mono">1,206 de 1,428 completadas (Auto + Manager)</span>
+      </div>
+    </div>
+
+    <!-- KPI 2 -->
+    <div class="kpi-box">
+      <div class="kpi-top">
+        <span class="kpi-tag">Puntuación Media Global</span>
+        <span class="kpi-icon-pill bg-low text-primary">
+          <span class="material-symbols-outlined text-[18px]">star</span>
+        </span>
+      </div>
+      <div class="kpi-number-row">
+        <span class="kpi-main-number font-mono">3.82</span>
+        <span class="kpi-denom font-mono">/ 5.0</span>
+        <span class="kpi-yoy-badge font-mono">+0.14 YoY</span>
+      </div>
+      <div class="kpi-curve-group">
+        <svg class="curve-svg text-primary" fill="none" viewBox="0 0 100 20">
+          <path d="M0 18 Q30 18, 45 10 T50 3 T55 10 Q70 18, 100 18" fill="none" opacity="0.6" stroke="currentColor" stroke-width="2"></path>
+          <circle cx="53" cy="5" fill="#2563eb" r="2.5"></circle>
+        </svg>
+        <span class="kpi-sub-text truncate">Campana normalizada (σ = 0.48)</span>
+      </div>
+    </div>
+
+    <!-- KPI 3 -->
+    <div class="kpi-box">
+      <div class="kpi-top">
+        <span class="kpi-tag">Alto Rendimiento / Key Talent</span>
+        <span class="kpi-icon-pill bg-low text-tertiary">
+          <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+        </span>
+      </div>
+      <div class="kpi-number-row">
+        <span class="kpi-main-number font-mono">18.2%</span>
+        <span class="kpi-denom font-mono">(260 personas)</span>
+      </div>
+      <div class="kpi-target-row">
+        <span class="high-pot-badge">
+          <span class="dot-green"></span> High Potential
+        </span>
+        <span class="kpi-sub-text font-mono">Target corp: 15-20%</span>
+      </div>
+    </div>
+
+    <!-- KPI 4 -->
+    <div class="kpi-box">
+      <div class="kpi-top">
+        <span class="kpi-tag">Planes de Desarrollo (PDI)</span>
+        <span class="kpi-icon-pill bg-low text-primary">
+          <span class="material-symbols-outlined text-[18px]">school</span>
+        </span>
+      </div>
+      <div class="kpi-number-row">
+        <span class="kpi-main-number font-mono">94%</span>
+        <span class="kpi-denom font-mono text-primary font-semibold">1,134 activos</span>
+      </div>
+      <div class="kpi-okr-note">
+        <span class="material-symbols-outlined text-[16px] text-tertiary">check_circle</span>
+        <span>Objetivos formativos OKR vinculados</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Barra de Filtros y Navegación Secundaria de Vistas -->
+  <section class="controls-filter-bar">
+    <div class="filters-flex">
+      <!-- Filtro Ciclo -->
+      <div class="filter-pill-select">
+        <span class="material-symbols-outlined text-outline text-[18px] mr-1">calendar_month</span>
+        <span class="filter-label-tag">Ciclo:</span>
+        <select class="native-select-clean" [(ngModel)]="selectedCycle">
+          <option>Q3/Q4 2024 - Cierre Anual</option>
+          <option>Mid-Year 2024 (H1)</option>
+          <option>Ciclo Anual 2023</option>
+        </select>
+      </div>
+
+      <!-- Filtro Depto -->
+      <div class="filter-pill-select">
+        <span class="filter-label-tag">Depto:</span>
+        <select class="native-select-clean" [(ngModel)]="selectedDept">
+          <option value="all">Todos los departamentos (9)</option>
+          <option value="eng">Ingeniería &amp; Producto</option>
+          <option value="sales">Ventas &amp; Revenue Global</option>
+          <option value="ops">Operaciones &amp; Soporte</option>
+          <option value="fin">Finanzas &amp; Legal</option>
+        </select>
+      </div>
+
+      <!-- Filtro Sede -->
+      <div class="filter-pill-select">
+        <span class="filter-label-tag">Sede:</span>
+        <select class="native-select-clean" [(ngModel)]="selectedLocation">
+          <option value="all">Todas las sedes (Global)</option>
+          <option value="madrid">Madrid HQ</option>
+          <option value="bcn">Barcelona Hub</option>
+          <option value="london">Londres (UK)</option>
+          <option value="cdmx">México CDMX</option>
+        </select>
+      </div>
+
+      <!-- Filtro Banda -->
+      <div class="filter-pill-select hidden-mobile">
+        <span class="filter-label-tag">Banda:</span>
+        <select class="native-select-clean">
+          <option>Todas (L1 a L8)</option>
+          <option>L6 - L8 (Leadership / VP)</option>
+          <option>L4 - L5 (Senior / Leads)</option>
+          <option>L1 - L3 (Specialist / Entry)</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- Segmented Control de Vistas -->
+    <div class="segmented-views-box">
+      <button 
+        type="button" 
+        class="seg-btn"
+        [class.active]="activeViewMode() === 'grid'"
+        (click)="activeViewMode.set('grid')">
+        <span class="material-symbols-outlined text-[18px]">grid_view</span>
+        <span>Matriz 9-Box de Talento</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="seg-btn"
+        [class.active]="activeViewMode() === 'okrs'"
+        (click)="activeViewMode.set('okrs')">
+        <span class="material-symbols-outlined text-[18px]">track_changes</span>
+        <span>Listado por Objetivos / OKRs</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="seg-btn"
+        [class.active]="activeViewMode() === 'committee'"
+        (click)="activeViewMode.set('committee')">
+        <span class="material-symbols-outlined text-[18px]">how_to_reg</span>
+        <span>Calibración de Comité</span>
+      </button>
+    </div>
+  </section>
+
+  <!-- 4. BLOQUE 1: Matriz 9-Box Grid y Panel de Cuadrante Activo -->
+  <section class="nine-box-layout">
+    <!-- Panel de la Matriz 9-Box (8 Columnas) -->
+    <div class="matrix-canvas-card">
+      <div class="matrix-header-row">
+        <div>
+          <h2 class="matrix-h2">
+            <span>Matriz 9-Box Grid de Calibración</span>
+            <span class="material-symbols-outlined text-outline text-[18px]" title="Metodología McKinsey / GE de talento cruzando desempeño actual con potencial a 24 meses">info</span>
+          </h2>
+          <p class="matrix-sub">Distribución de 1,428 colaboradores ponderados por comités de calibración.</p>
+        </div>
+        <div class="matrix-legend-row">
+          <span class="legend-chip font-mono">
+            <span class="legend-dot bg-tertiary"></span> Alto Valor
+          </span>
+          <span class="legend-chip font-mono">
+            <span class="legend-dot bg-primary-container"></span> Sólido / Núcleo
+          </span>
+          <span class="legend-chip font-mono">
+            <span class="legend-dot bg-error"></span> Alerta PIP
+          </span>
+        </div>
+      </div>
+
+      <!-- Canvas Gráfico 9-Box -->
+      <div class="matrix-body-flex">
+        <!-- Eje Y: Potencial -->
+        <div class="y-axis-col">
+          <div class="y-axis-top font-mono">
+            <span class="material-symbols-outlined text-[16px]">expand_less</span>
+            <span class="vertical-text">Alto</span>
+          </div>
+          <div class="y-axis-center font-mono">
+            <span class="vertical-text text-on-surface font-bold">Potencial de Crecimiento</span>
+          </div>
+          <div class="y-axis-bottom font-mono">
+            <span class="vertical-text">Bajo</span>
+            <span class="material-symbols-outlined text-[16px]">expand_more</span>
+          </div>
+        </div>
+
+        <!-- Cuadrícula 3x3 -->
+        <div class="grid-3x3-container">
+          <!-- Fila 1: Potencial ALTO -->
+          <div class="grid-row-3">
+            <!-- Cuadrante: Enigma -->
+            <div 
+              class="quadrant-card"
+              [class.quadrant-active]="selectedQuadrantKey() === 'enigma'"
+              (click)="selectQuadrant('enigma')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-surface-lowest">Enigma</span>
+                <span class="quad-count font-mono">30</span>
+              </div>
+              <div>
+                <div class="quad-title">Talento Desalineado</div>
+                <div class="quad-sub">Alto potencial, barrera operativa</div>
+              </div>
+              <div class="quad-bar">
+                <div class="quad-bar-fill bg-secondary" style="width: 2.1%;"></div>
+              </div>
+            </div>
+
+            <!-- Cuadrante: Estrella en Crecimiento -->
+            <div 
+              class="quadrant-card"
+              [class.quadrant-active]="selectedQuadrantKey() === 'growth_star'"
+              (click)="selectQuadrant('growth_star')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-primary-fixed text-primary">Futuro Pilar</span>
+                <span class="quad-count font-mono text-primary">142</span>
+              </div>
+              <div>
+                <div class="quad-title">Estrella en Crecimiento</div>
+                <div class="quad-sub">Aceleración y coaching directivo</div>
+              </div>
+              <div class="quad-bar">
+                <div class="quad-bar-fill bg-primary" style="width: 9.9%;"></div>
+              </div>
+            </div>
+
+            <!-- Cuadrante: Top Talent (Activo por defecto) -->
+            <div 
+              class="quadrant-card top-talent-theme"
+              [class.quadrant-active]="selectedQuadrantKey() === 'top_talent'"
+              (click)="selectQuadrant('top_talent')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-tertiary-fixed text-on-tertiary-fixed font-bold">Top Talent ★</span>
+                <span class="quad-count font-mono text-on-tertiary-container bg-tertiary-pill">88</span>
+              </div>
+              <div>
+                <div class="quad-title font-bold text-on-tertiary">Futuros Líderes</div>
+                <div class="quad-sub text-on-tertiary-container">Sucesión inmediata &amp; retención clave</div>
+              </div>
+              <div class="quad-bar bg-tertiary-bar">
+                <div class="quad-bar-fill bg-tertiary-fixed" style="width: 100%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila 2: Potencial MEDIO -->
+          <div class="grid-row-3">
+            <!-- Cuadrante: Dilema -->
+            <div 
+              class="quadrant-card"
+              [class.quadrant-active]="selectedQuadrantKey() === 'dilemma'"
+              (click)="selectQuadrant('dilemma')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-surface-lowest">Dilema</span>
+                <span class="quad-count font-mono">85</span>
+              </div>
+              <div>
+                <div class="quad-title">Necesita Apoyo / Reenfoque</div>
+                <div class="quad-sub">Revisar fit de puesto y metas</div>
+              </div>
+              <div class="quad-bar">
+                <div class="quad-bar-fill bg-secondary" style="width: 5.9%;"></div>
+              </div>
+            </div>
+
+            <!-- Cuadrante: Profesional Sólido -->
+            <div 
+              class="quadrant-card"
+              [class.quadrant-active]="selectedQuadrantKey() === 'solid_pro'"
+              (click)="selectQuadrant('solid_pro')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-surface-container">Núcleo</span>
+                <span class="quad-count font-mono text-primary">480</span>
+              </div>
+              <div>
+                <div class="quad-title">Profesional Sólido</div>
+                <div class="quad-sub">Espina dorsal de la organización</div>
+              </div>
+              <div class="quad-bar">
+                <div class="quad-bar-fill bg-primary-container" style="width: 33.6%;"></div>
+              </div>
+            </div>
+
+            <!-- Cuadrante: Especialista Clave -->
+            <div 
+              class="quadrant-card"
+              [class.quadrant-active]="selectedQuadrantKey() === 'high_performer'"
+              (click)="selectQuadrant('high_performer')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-primary-fixed text-primary">High Performer</span>
+                <span class="quad-count font-mono text-primary">215</span>
+              </div>
+              <div>
+                <div class="quad-title">Especialista Clave</div>
+                <div class="quad-sub">Alta productividad, expandir impacto</div>
+              </div>
+              <div class="quad-bar">
+                <div class="quad-bar-fill bg-primary-container" style="width: 15.0%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Fila 3: Potencial BAJO -->
+          <div class="grid-row-3">
+            <!-- Cuadrante: Riesgo PIP -->
+            <div 
+              class="quadrant-card pip-risk-theme"
+              [class.quadrant-active]="selectedQuadrantKey() === 'pip_alert'"
+              (click)="selectQuadrant('pip_alert')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-error text-on-error font-bold">Riesgo PIP</span>
+                <span class="quad-count font-mono text-error">38</span>
+              </div>
+              <div>
+                <div class="quad-title">Bajo Rendimiento Crítico</div>
+                <div class="quad-sub text-error">Plan de mejora a 60 días urgente</div>
+              </div>
+              <div class="quad-bar bg-error-container">
+                <div class="quad-bar-fill bg-error" style="width: 2.6%;"></div>
+              </div>
+            </div>
+
+            <!-- Cuadrante: Efectivo / Cumplidor -->
+            <div 
+              class="quadrant-card"
+              [class.quadrant-active]="selectedQuadrantKey() === 'effective'"
+              (click)="selectQuadrant('effective')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-surface-lowest">Cumplidor</span>
+                <span class="quad-count font-mono">140</span>
+              </div>
+              <div>
+                <div class="quad-title">Efectivo / Cumplidor</div>
+                <div class="quad-sub">Estable en funciones actuales</div>
+              </div>
+              <div class="quad-bar">
+                <div class="quad-bar-fill bg-secondary" style="width: 9.8%;"></div>
+              </div>
+            </div>
+
+            <!-- Cuadrante: Experto Confiable -->
+            <div 
+              class="quadrant-card"
+              [class.quadrant-active]="selectedQuadrantKey() === 'tech_expert'"
+              (click)="selectQuadrant('tech_expert')">
+              <div class="quad-card-top">
+                <span class="quad-badge bg-surface-container">Especialista</span>
+                <span class="quad-count font-mono">190</span>
+              </div>
+              <div>
+                <div class="quad-title">Experto Confiable</div>
+                <div class="quad-sub">Maestría técnica sin ambición directiva</div>
+              </div>
+              <div class="quad-bar">
+                <div class="quad-bar-fill bg-primary-container" style="width: 13.3%;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Eje X: Desempeño -->
+          <div class="x-axis-grid font-mono">
+            <div class="x-axis-step">
+              <span>Bajo Desempeño (&lt; 3.0)</span>
+            </div>
+            <div class="x-axis-step text-on-surface font-bold flex items-center justify-center gap-1">
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+              <span>Desempeño Observado (OKRs + Rating)</span>
+              <span class="material-symbols-outlined text-[14px]">arrow_forward</span>
+            </div>
+            <div class="x-axis-step text-primary font-bold">
+              <span>Alto Desempeño (&gt; 4.2)</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Panel Lateral Inspector de Cuadrante Seleccionado (4 Columnas) -->
+    <div class="quadrant-inspector-card">
+      <div class="inspector-top">
+        <div class="inspector-header">
+          <div class="inspector-title-group">
+            <span class="dot-green-large"></span>
+            <h3 class="inspector-title">Cuadrante Seleccionado</h3>
+          </div>
+          <span class="inspector-count-badge font-mono">
+            {{ activeQuadrant().count }} Colaboradores
+          </span>
+        </div>
+
+        <div class="inspector-detail-box">
+          <div class="detail-name-row">
+            <span class="detail-name">{{ activeQuadrant().name }}</span>
+            <span class="detail-level-tag">{{ activeQuadrant().levelBadge }}</span>
+          </div>
+          <p class="detail-desc">{{ activeQuadrant().summary }}</p>
+
+          <div class="detail-stats-grid font-mono">
+            <div class="detail-stat-card">
+              <span class="stat-label">Prom. Desempeño</span>
+              <span class="stat-value text-primary font-bold">{{ activeQuadrant().avgScore }}</span>
+            </div>
+            <div class="detail-stat-card">
+              <span class="stat-label">Cumplimiento OKRs</span>
+              <span class="stat-value text-tertiary font-bold">{{ activeQuadrant().okrScore }}%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Muestra de Colaboradores en este cuadrante -->
+        <div class="sample-talents-group">
+          <div class="sample-title-row">
+            <span class="sample-title">Talentos Destacados (Muestra)</span>
+            <button 
+              type="button" 
+              class="btn-view-all-talents"
+              (click)="showToast('Filtrando los ' + activeQuadrant().count + ' colaboradores en la tabla')">
+              Ver los {{ activeQuadrant().count }}
+            </button>
+          </div>
+
+          <div class="sample-cards-list">
+            @for (talent of activeQuadrant().sampleTalents; track talent.name) {
+              <div class="sample-talent-item">
+                <div class="talent-avatar-col">
+                  <img [src]="talent.avatar" [alt]="talent.name" class="talent-avatar"/>
+                  <div class="talent-text-col">
+                    <span class="talent-name">{{ talent.name }}</span>
+                    <span class="talent-role truncate">{{ talent.role }}</span>
+                  </div>
+                </div>
+                <div class="talent-scores font-mono">
+                  <span class="score-main">{{ talent.score }}</span>
+                  <span class="score-okr">{{ talent.okr }}</span>
+                </div>
+              </div>
+            }
+          </div>
+        </div>
+      </div>
+
+      <div class="inspector-actions">
+        <button 
+          type="button" 
+          class="btn-succession-pool"
+          (click)="addToSuccessionPool()">
+          <span class="material-symbols-outlined text-[18px]">workspace_premium</span>
+          <span>Añadir Grupo a Pool de Sucesión Directiva</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. BLOQUE 2: Detalle y Seguimiento de Objetivos OKRs de Equipo / Calibración -->
+  <section class="calibration-table-card">
+    <div class="table-header-row">
+      <div>
+        <h2 class="table-h2">
+          <span>Registro de Calibración de Talento y Metas OKR</span>
+          <span class="committee-badge font-mono">Comité Activo</span>
+        </h2>
+        <p class="table-sub">
+          Resolución de calibraciones pendientes y vinculación directa con recomendaciones salariales y promociones.
+        </p>
+      </div>
+
+      <div class="table-search-tools">
+        <div class="search-mini-box">
+          <span class="material-symbols-outlined search-icon-mini">search</span>
+          <input 
+            type="text" 
+            class="input-search-mini" 
+            placeholder="Filtrar en esta vista..."
+            [(ngModel)]="searchQuery"/>
+        </div>
+        <button 
+          type="button" 
+          class="btn-tool-clean"
+          (click)="showToast('Configuración de columnas personalizada')">
+          <span class="material-symbols-outlined text-[16px] text-outline">tune</span>
+          <span>Columnas</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Tabla de Datos con Calibrated Density -->
+    <div class="table-responsive">
+      <table class="calibration-table">
+        <thead>
+          <tr>
+            <th class="th-cb">
+              <input type="checkbox" class="cb-input"/>
+            </th>
+            <th>Colaborador / Posición</th>
+            <th>Manager Directo</th>
+            <th>Estado Evaluación</th>
+            <th class="text-right">Rating 360°</th>
+            <th>Potencial</th>
+            <th>Cuadrante 9-Box</th>
+            <th>Cumplimiento OKRs</th>
+            <th>Acción Recomendada</th>
+            <th class="text-right">Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (row of calibrationRows; track row.id) {
+            <tr class="cal-row">
+              <td class="td-cb">
+                <input type="checkbox" class="cb-input"/>
+              </td>
+              <td>
+                <div class="emp-table-cell">
+                  <img [src]="row.avatar" [alt]="row.employeeName" class="cal-avatar"/>
+                  <div class="emp-title-col">
+                    <span class="cal-emp-name">{{ row.employeeName }}</span>
+                    <span class="cal-emp-role">{{ row.role }}</span>
+                  </div>
+                </div>
+              </td>
+              <td class="cal-manager-text">{{ row.managerName }}</td>
+              <td>
+                <div class="eval-status-cell">
+                  <div class="status-indicator-inline">
+                    <span 
+                      class="status-dot-sm"
+                      [class.bg-tertiary]="row.evalStatusType === 'ok'"
+                      [class.bg-primary]="row.evalStatusType === 'calibrating'"
+                      [class.bg-outline]="row.evalStatusType === 'pending'"
+                      [class.bg-error]="row.evalStatusType === 'review'">
+                    </span>
+                    <span 
+                      class="status-label-text"
+                      [class.text-tertiary]="row.evalStatusType === 'ok'"
+                      [class.text-primary]="row.evalStatusType === 'calibrating'"
+                      [class.text-outline]="row.evalStatusType === 'pending'"
+                      [class.text-error]="row.evalStatusType === 'review'">
+                      {{ row.evalStatus }}
+                    </span>
+                  </div>
+                  <span class="eval-sub-text font-mono">{{ row.evalSub }}</span>
+                </div>
+              </td>
+              <td class="text-right font-mono font-bold" [class.text-primary]="row.ratingScore >= 4.5" [class.text-error]="row.ratingScore < 3.0">
+                {{ row.ratingScore }} <span class="denom-text font-normal">/ 5.0</span>
+              </td>
+              <td>
+                <span 
+                  class="potential-pill"
+                  [class.pill-high]="row.potential === 'Alto'"
+                  [class.pill-med]="row.potential === 'Medio'"
+                  [class.pill-low]="row.potential === 'Bajo'">
+                  {{ row.potential }}
+                </span>
+              </td>
+              <td>
+                <span class="quad-cell-badge {{ row.quadrantClass }}">
+                  @if (row.quadrantName === 'Top Talent') {
+                    <span class="material-symbols-outlined text-[12px]">star</span>
+                  } @else if (row.quadrantName === 'Plan PIP') {
+                    <span class="material-symbols-outlined text-[12px]">warning</span>
+                  }
+                  {{ row.quadrantName }}
+                </span>
+              </td>
+              <td>
+                <div class="okr-progress-cell font-mono">
+                  <div class="okr-top-row">
+                    <span class="okr-pct font-bold" [class.text-tertiary]="row.okrPct >= 100" [class.text-primary]="row.okrPct >= 75 && row.okrPct < 100" [class.text-error]="row.okrPct < 75">
+                      {{ row.okrPct }}%
+                    </span>
+                    <span class="okr-krs">{{ row.okrKrs }}</span>
+                  </div>
+                  <div class="okr-bar-track">
+                    <div class="okr-bar-fill {{ row.okrColor }}" [style.width.%]="row.okrPct > 100 ? 100 : row.okrPct"></div>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="action-pill {{ row.actionClass }}">
+                  {{ row.recommendedAction }}
+                </span>
+              </td>
+              <td class="text-right">
+                <button 
+                  type="button" 
+                  class="btn-row-action" 
+                  title="Opciones para {{ row.employeeName }}"
+                  (click)="showToast('Expediente y calibración 360 abierta para ' + row.employeeName)">
+                  <span class="material-symbols-outlined text-[18px]">more_vert</span>
+                </button>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Paginador y Footer de Tabla -->
+    <div class="table-footer-bar font-mono">
+      <div class="footer-left">
+        <span>Mostrando 1 a 5 de 1,428 colaboradores</span>
+        <span>•</span>
+        <div class="rows-select-flex">
+          <span>Ver</span>
+          <select class="rows-select">
+            <option>10</option>
+            <option>25</option>
+            <option>50</option>
+            <option>100</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="footer-right">
+        <button type="button" class="btn-page-box" disabled>
+          <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+        </button>
+        <button type="button" class="btn-page-box active">1</button>
+        <button type="button" class="btn-page-box">2</button>
+        <button type="button" class="btn-page-box">3</button>
+        <span class="dots-text">...</span>
+        <button type="button" class="btn-page-box">286</button>
+        <button type="button" class="btn-page-box">
+          <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+        </button>
+      </div>
+    </div>
+  </section>
+</div>

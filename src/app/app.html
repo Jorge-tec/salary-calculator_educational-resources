@@ -69,7 +69,7 @@
         </a>
 
         <!-- 7. Evaluaciones -->
-        <a class="nav-item" (click)="goToView('dashboard')">
+        <a class="nav-item" [class.active]="activeView() === 'evaluations'" (click)="goToView('evaluations')">
           <span class="material-symbols-outlined nav-icon">trending_up</span>
           <span class="nav-label">Evaluaciones</span>
         </a>
@@ -188,12 +188,19 @@
         </app-executive-dashboard>
       }
 
-      <!-- VISTA: GESTIÓN DOCUMENTAL Y CONTRATOS (Vista Solicitada) -->
+      <!-- VISTA: GESTIÓN DOCUMENTAL Y CONTRATOS -->
       @if (activeView() === 'documents') {
         <app-documents-contracts 
           (onOpenCalculator)="goToView('calculator')"
           (onOpenSavedRecords)="goToView('records')">
         </app-documents-contracts>
+      }
+
+      <!-- VISTA: EVALUACIONES DEL RENDIMIENTO, MATRIZ 9-BOX Y OKRS -->
+      @if (activeView() === 'evaluations') {
+        <app-performance-evaluations 
+          (onOpenCalculator)="goToView('calculator')">
+        </app-performance-evaluations>
       }
 
       <!-- VISTA: RECURSOS HUMANOS / DIRECTORIO DE PERSONAL -->

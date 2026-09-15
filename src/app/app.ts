@@ -13,6 +13,7 @@ import { VacationsCalendarComponent } from './components/vacations-calendar/vaca
 import { PayrollProcessingComponent } from './components/payroll-processing/payroll-processing.component';
 import { EmployeeDirectoryComponent, DirectoryEmployee } from './components/employee-directory/employee-directory.component';
 import { DocumentsContractsComponent } from './components/documents-contracts/documents-contracts.component';
+import { PerformanceEvaluationsComponent } from './components/performance-evaluations/performance-evaluations.component';
 
 @Component({
   selector: 'app-root',
@@ -29,7 +30,8 @@ import { DocumentsContractsComponent } from './components/documents-contracts/do
     VacationsCalendarComponent,
     PayrollProcessingComponent,
     EmployeeDirectoryComponent,
-    DocumentsContractsComponent
+    DocumentsContractsComponent,
+    PerformanceEvaluationsComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -38,7 +40,7 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents'>('documents');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations'>('evaluations');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
@@ -52,7 +54,7 @@ export class App {
     this.sidebarCollapsed.update(v => !v);
   }
 
-  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents'): void {
+  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations'): void {
     this.activeView.set(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }
