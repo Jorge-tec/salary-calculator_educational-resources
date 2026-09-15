@@ -1,0 +1,695 @@
+<div class="attendance-page">
+  <!-- Toast Notification -->
+  @if (toastMessage()) {
+    <div class="attendance-toast">
+      <span class="material-symbols-outlined text-[18px]">verified</span>
+      <span>{{ toastMessage() }}</span>
+      <button type="button" class="btn-close-toast" (click)="toastMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- 1. Top Action & Navigation Context -->
+  <div class="attendance-header-section">
+    <div class="header-left-col">
+      <!-- Breadcrumbs -->
+      <nav class="breadcrumb-nav">
+        <span class="breadcrumb-item cursor-pointer flex items-center gap-1">
+          <span class="material-symbols-outlined text-[15px]">home</span>
+          <span>Inicio</span>
+        </span>
+        <span class="crumb-separator">/</span>
+        <span class="breadcrumb-item text-primary font-semibold">Tiempo y Asistencia</span>
+        <span class="crumb-separator">/</span>
+        <span class="breadcrumb-current">Registro y Auditoría de Fichajes</span>
+      </nav>
+
+      <!-- Titular con insignia normativa -->
+      <div class="title-with-pill">
+        <h1 class="page-title-h1">Control Horario, Jornada Laboral y Fichajes</h1>
+        <span class="normative-compliance-pill">
+          <span class="pulse-dot"></span>
+          <span>RD-Ley 8/2019 • Cumplimiento 100%</span>
+        </span>
+      </div>
+
+      <p class="page-desc">
+        Registro normativo en tiempo real conforme a legislación laboral vigente. Supervisión de puntualidad, control de pausas efectivas, auditoría de geolocalización y aprobación directa de horas extraordinarias.
+      </p>
+    </div>
+
+    <!-- Acciones superiores -->
+    <div class="header-actions-col">
+      <button 
+        type="button" 
+        class="btn-export-pdf"
+        (click)="exportOfficialPdf()">
+        <span class="material-symbols-outlined text-primary text-[18px]">picture_as_pdf</span>
+        <span>Exportar Registro Legal (PDF Oficial)</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-regularize-main"
+        (click)="openManualRegularization()">
+        <span class="material-symbols-outlined text-[18px]">add_alarm</span>
+        <span>+ Regularizar Fichaje Manual</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 2. Metric Summary Cards (Live KPIs) -->
+  <section class="kpi-grid-4">
+    <!-- KPI 1 -->
+    <div class="kpi-attendance-card">
+      <div class="kpi-card-header">
+        <div class="kpi-text-meta">
+          <span class="kpi-label-text">Empleados Fichados Hoy</span>
+          <div class="kpi-numbers-row">
+            <span class="kpi-big-num font-mono">1,184</span>
+            <span class="kpi-denom-num font-mono">/ 1,420</span>
+          </div>
+        </div>
+        <div class="kpi-icon-square bg-blue-light text-primary">
+          <span class="material-symbols-outlined text-[22px]">badge</span>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <div class="kpi-chip-green">
+          <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+          <span>83.4% Conectados</span>
+        </div>
+        <span class="kpi-sub-text">Presencial + Remoto</span>
+      </div>
+    </div>
+
+    <!-- KPI 2 -->
+    <div class="kpi-attendance-card">
+      <div class="kpi-card-header">
+        <div class="kpi-text-meta">
+          <span class="kpi-label-text">Jornada Media Cumplida</span>
+          <div class="kpi-numbers-row">
+            <span class="kpi-big-num font-mono">7h 48m</span>
+            <span class="kpi-denom-num font-mono">/ 8h 00m</span>
+          </div>
+        </div>
+        <div class="kpi-icon-square bg-blue-light text-primary">
+          <span class="material-symbols-outlined text-[22px]">timelapse</span>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <div class="kpi-track-wrap">
+          <div class="kpi-track-bar">
+            <div class="kpi-track-fill bg-primary" style="width: 97.5%;"></div>
+          </div>
+        </div>
+        <span class="kpi-sub-text font-mono font-semibold text-on-surface">97.5% Obj.</span>
+      </div>
+    </div>
+
+    <!-- KPI 3 -->
+    <div class="kpi-attendance-card">
+      <div class="kpi-card-header">
+        <div class="kpi-text-meta">
+          <span class="kpi-label-text">Anomalías / Pendientes</span>
+          <div class="kpi-numbers-row">
+            <span class="kpi-big-num font-mono text-error">14</span>
+            <span class="kpi-denom-num">incidencias</span>
+          </div>
+        </div>
+        <div class="kpi-icon-square bg-error-light text-error">
+          <span class="material-symbols-outlined text-[22px]">warning</span>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <div class="kpi-chip-red">
+          <span class="red-ping-dot"></span>
+          <span>9 Olvidos • 5 Pausas</span>
+        </div>
+        <a class="kpi-action-link" (click)="selectedStatus = 'anomaly'">Revisar todas</a>
+      </div>
+    </div>
+
+    <!-- KPI 4 -->
+    <div class="kpi-attendance-card">
+      <div class="kpi-card-header">
+        <div class="kpi-text-meta">
+          <span class="kpi-label-text">Bolsa Horas Extras (Octubre)</span>
+          <div class="kpi-numbers-row">
+            <span class="kpi-big-num font-mono">342.5h</span>
+            <span class="kpi-denom-num">acumuladas</span>
+          </div>
+        </div>
+        <div class="kpi-icon-square bg-purple-light text-secondary">
+          <span class="material-symbols-outlined text-[22px]">more_time</span>
+        </div>
+      </div>
+      <div class="kpi-card-footer">
+        <div class="kpi-chip-blue">
+          <span class="material-symbols-outlined text-[14px]">trending_up</span>
+          <span>+8.4% vs Septiembre</span>
+        </div>
+        <span class="kpi-sub-text font-mono">42 solicitantes</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 3. Live Workforce Status Ledger Bar -->
+  <section class="workforce-distribution-card">
+    <div class="distribution-header">
+      <div class="dist-left-info">
+        <span class="green-live-pulse"></span>
+        <span class="dist-title">Distribución de Plantilla en Vivo</span>
+        <span class="dist-updated-text">• Actualizado a las 14:32 CEST</span>
+      </div>
+      <div class="dist-capacity-tag font-mono">
+        <span>Capacidad total: 1,420 efectivos</span>
+      </div>
+    </div>
+
+    <!-- Barra segmentada cromática -->
+    <div class="segmented-progress-track">
+      <div class="seg-fill bg-primary-container" style="width: 59.3%" title="Presencial: 842"></div>
+      <div class="seg-fill bg-tertiary-container" style="width: 24.1%" title="Teletrabajo: 342"></div>
+      <div class="seg-fill bg-surface-container-highest" style="width: 10.0%" title="Vacaciones/Permiso: 142"></div>
+      <div class="seg-fill bg-secondary-fixed-dim" style="width: 4.1%" title="Bajas: 58"></div>
+      <div class="seg-fill bg-outline" style="width: 2.5%" title="Turno tarde: 36"></div>
+    </div>
+
+    <!-- Etiquetas de leyenda -->
+    <div class="distribution-legend-grid font-mono">
+      <div class="legend-item">
+        <span class="dot-legend bg-primary-container"></span>
+        <span class="legend-label text-slate-800 font-semibold">842 Presencial Oficina</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot-legend bg-tertiary-container"></span>
+        <span class="legend-label text-slate-800 font-semibold">342 Teletrabajo GPS OK</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot-legend bg-surface-container-highest"></span>
+        <span class="legend-label text-slate-500">142 Vacaciones / Permiso</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot-legend bg-secondary-fixed-dim"></span>
+        <span class="legend-label text-slate-500">58 Bajas Médicas</span>
+      </div>
+      <div class="legend-item">
+        <span class="dot-legend bg-outline"></span>
+        <span class="legend-label text-slate-500">36 Turno Tarde / Pendiente</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Filters and Operational Date Ribbon -->
+  <section class="filters-ribbon-card">
+    <!-- Date Picker Navigation -->
+    <div class="date-navigator-box">
+      <button 
+        type="button" 
+        class="btn-date-nav" 
+        title="Día Anterior"
+        (click)="showToast('Visualizando registros del Miércoles, 23 de Octubre 2024')">
+        <span class="material-symbols-outlined text-[18px]">chevron_left</span>
+      </button>
+
+      <div class="current-date-pill">
+        <span class="material-symbols-outlined text-primary text-[18px]">event</span>
+        <span class="date-display-text">{{ selectedDateText() }}</span>
+      </div>
+
+      <button 
+        type="button" 
+        class="btn-date-nav" 
+        title="Día Siguiente"
+        (click)="showToast('Visualizando registros del Viernes, 25 de Octubre 2024')">
+        <span class="material-symbols-outlined text-[18px]">chevron_right</span>
+      </button>
+
+      <button 
+        type="button" 
+        class="btn-date-today"
+        (click)="selectedDateText.set('Jueves, 24 de Octubre 2024'); showToast('Restablecido a fecha actual (Hoy)')">
+        Hoy
+      </button>
+    </div>
+
+    <!-- Quick Search & Selectors -->
+    <div class="selectors-flex-wrap">
+      <!-- Quick Employee Search -->
+      <div class="search-input-group">
+        <span class="material-symbols-outlined search-icon">search</span>
+        <input 
+          type="text" 
+          [(ngModel)]="searchQuery"
+          class="input-search-control" 
+          placeholder="Buscar por colaborador o ID..."/>
+      </div>
+
+      <!-- Department Filter -->
+      <div class="select-pill-wrapper">
+        <span class="material-symbols-outlined select-icon">domain</span>
+        <select class="native-filter-select" [(ngModel)]="selectedDept">
+          <option value="all">Departamento: Todos</option>
+          <option value="tech">Ingeniería &amp; Tech</option>
+          <option value="ops">Operaciones &amp; Legal</option>
+          <option value="logistics">Logística &amp; Almacén</option>
+          <option value="support">Atención al Cliente</option>
+        </select>
+      </div>
+
+      <!-- Shift Filter -->
+      <div class="select-pill-wrapper">
+        <span class="material-symbols-outlined select-icon">schedule</span>
+        <select class="native-filter-select" [(ngModel)]="selectedShift">
+          <option value="all">Turno: Todos</option>
+          <option value="morning">Mañana (08:00 - 17:00)</option>
+          <option value="flexible">Flexible / Remoto</option>
+          <option value="night">Noche / Continuo</option>
+        </select>
+      </div>
+
+      <!-- Status Filter -->
+      <div class="select-pill-wrapper">
+        <span class="material-symbols-outlined select-icon">filter_alt</span>
+        <select class="native-filter-select" [(ngModel)]="selectedStatus">
+          <option value="all">Estado: Todos</option>
+          <option value="ok">Fichaje Correcto</option>
+          <option value="anomaly">Anomalía Detectada</option>
+          <option value="overtime">Con Horas Extra</option>
+          <option value="missing">Sin Registro</option>
+        </select>
+      </div>
+
+      <!-- View Display Modes -->
+      <div class="view-mode-toggle">
+        <button type="button" class="btn-toggle-view active" title="Vista Tabla Compacta">
+          <span class="material-symbols-outlined text-[18px]">table_rows</span>
+        </button>
+        <button 
+          type="button" 
+          class="btn-toggle-view" 
+          title="Vista Cronológica"
+          (click)="showToast('Cambiando a vista de línea temporal y franjas horarias')">
+          <span class="material-symbols-outlined text-[18px]">view_timeline</span>
+        </button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 5. Main Enterprise Ledger Table -->
+  <section class="ledger-table-card">
+    <div class="table-scroll-container">
+      <table class="ledger-table">
+        <thead>
+          <tr class="ledger-th-row">
+            <th class="th-cb">
+              <input 
+                type="checkbox" 
+                class="cb-control"
+                [checked]="selectAllRows"
+                (change)="toggleSelectAll()"/>
+            </th>
+            <th>Colaborador / ID</th>
+            <th>Sede / Modalidad</th>
+            <th class="text-right">Entrada</th>
+            <th class="text-right">Pausa Comida</th>
+            <th class="text-right">Salida</th>
+            <th class="text-right">H. Efectivas</th>
+            <th class="text-right">Balance</th>
+            <th class="text-right">Horas Extra</th>
+            <th class="text-center">Estado Auditoría</th>
+            <th class="text-right pr-4">Acciones</th>
+          </tr>
+        </thead>
+        <tbody class="ledger-tbody">
+          @for (row of filteredRecords(); track row.id) {
+            <tr class="ledger-row" [class.highlight-row]="row.statusType === 'overtime'" [class.error-row]="row.statusType === 'missing'">
+              <td class="td-cb">
+                <input 
+                  type="checkbox" 
+                  class="cb-control"
+                  [(ngModel)]="row.selected"/>
+              </td>
+              <td>
+                <div class="collaborator-profile-cell">
+                  <img [src]="row.avatar" [alt]="row.name" class="avatar-img"/>
+                  <div class="profile-info-col">
+                    <span class="collaborator-name">{{ row.name }}</span>
+                    <span class="collaborator-meta font-mono">{{ row.empCode }} • {{ row.role }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <div class="location-cell">
+                  @if (row.isRemote) {
+                    <span class="material-symbols-outlined text-tertiary text-[16px]">home_pin</span>
+                    <span class="loc-text text-tertiary font-semibold">{{ row.location }}</span>
+                  } @else {
+                    <span class="material-symbols-outlined text-primary text-[16px]">
+                      {{ row.location.includes('Logístico') ? 'warehouse' : 'apartment' }}
+                    </span>
+                    <span class="loc-text">{{ row.location }}</span>
+                  }
+                </div>
+              </td>
+              <td class="text-right font-mono font-medium" [class.text-error]="row.checkIn === '--:--'">
+                {{ row.checkIn }}
+                @if (row.checkInSub) {
+                  <span class="text-[10px] text-error">{{ row.checkInSub }}</span>
+                }
+              </td>
+              <td class="text-right font-mono" [class.text-error]="row.lunchAlert" [class.font-bold]="row.lunchAlert">
+                {{ row.lunchBreak }}
+              </td>
+              <td class="text-right font-mono text-slate-500">
+                {{ row.checkOut }}
+              </td>
+              <td class="text-right font-mono font-bold" [class.text-primary]="row.isHoursPrimary" [class.text-error]="row.isHoursError">
+                {{ row.effectiveHours }}
+              </td>
+              <td class="text-right font-mono font-semibold" [class.text-tertiary]="row.balanceType === 'pos'" [class.text-error]="row.balanceType === 'neg'">
+                {{ row.balance }}
+              </td>
+              <td class="text-right font-mono" [class.text-primary]="row.statusType === 'overtime'" [class.font-bold]="row.statusType === 'overtime'">
+                {{ row.overtimeHours }}
+              </td>
+              <td class="text-center">
+                @if (row.statusType === 'ok') {
+                  <span class="status-pill status-pill-green">
+                    <span class="dot-indicator bg-tertiary"></span>
+                    <span>{{ row.statusText }}</span>
+                  </span>
+                } @else if (row.statusType === 'overtime') {
+                  <span class="status-pill status-pill-blue">
+                    <span class="material-symbols-outlined text-[12px]">alarm_add</span>
+                    <span>{{ row.statusText }}</span>
+                  </span>
+                } @else if (row.statusType === 'exceeded') {
+                  <span class="status-pill status-pill-red-light">
+                    <span class="material-symbols-outlined text-[12px]">schedule</span>
+                    <span>{{ row.statusText }}</span>
+                  </span>
+                } @else if (row.statusType === 'compensable') {
+                  <span class="status-pill status-pill-gray">
+                    <span class="dot-indicator bg-slate-400"></span>
+                    <span>{{ row.statusText }}</span>
+                  </span>
+                } @else if (row.statusType === 'missing') {
+                  <span class="status-pill status-pill-red-bold">
+                    <span class="material-symbols-outlined text-[12px]">error</span>
+                    <span>{{ row.statusText }}</span>
+                  </span>
+                }
+              </td>
+              <td class="text-right pr-4">
+                <div class="row-actions-flex">
+                  @if (row.statusType === 'overtime') {
+                    <button 
+                      type="button" 
+                      class="btn-row-validate"
+                      (click)="validateRow(row)">
+                      Validar
+                    </button>
+                  } @else if (row.statusType === 'exceeded') {
+                    <button 
+                      type="button" 
+                      class="btn-row-correct"
+                      (click)="correctRow(row)">
+                      Corregir
+                    </button>
+                  } @else if (row.statusType === 'missing') {
+                    <button 
+                      type="button" 
+                      class="btn-row-impute"
+                      (click)="imputeRow(row)">
+                      Imputar Fichaje
+                    </button>
+                  }
+
+                  @if (row.isRemote) {
+                    <button 
+                      type="button" 
+                      class="btn-icon-action" 
+                      title="Comprobar IP y Cifrado TLS"
+                      (click)="showToast('Conexión remota cifrada TLS 1.3 • IP: 185.193.12.8 • Geo: Madrid')">
+                      <span class="material-symbols-outlined text-[18px]">verified_user</span>
+                    </button>
+                  } @else if (row.statusType !== 'missing') {
+                    <button 
+                      type="button" 
+                      class="btn-icon-action" 
+                      title="Ver Detalle Geolocalizado"
+                      (click)="showToast('Fichaje por torno biométrico NFC verificado')">
+                      <span class="material-symbols-outlined text-[18px]">location_on</span>
+                    </button>
+                  }
+
+                  <button 
+                    type="button" 
+                    class="btn-icon-action" 
+                    title="Opciones adicionales"
+                    (click)="showToast('Expediente y trazabilidad horaria abierta para ' + row.name)">
+                    <span class="material-symbols-outlined text-[18px]">
+                      {{ row.statusType === 'missing' ? 'phone' : 'more_vert' }}
+                    </span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Table Ledger Pagination & Regulatory Footer -->
+    <div class="table-regulatory-footer">
+      <div class="footer-left-info">
+        <span class="text-slate-600">
+          Mostrando <strong class="text-slate-900">1 - {{ filteredRecords().length }}</strong> de <strong class="text-slate-900">1,420</strong> registros auditados
+        </span>
+        <div class="blockchain-verified-chip font-mono">
+          <span class="material-symbols-outlined text-[16px] text-tertiary">lock</span>
+          <span>Cadena de bloques inmutable (Hash SHA-256 verificado)</span>
+        </div>
+      </div>
+
+      <div class="footer-pagination-group font-mono">
+        <button type="button" class="btn-page-step" disabled>Anterior</button>
+        <button type="button" class="btn-page-num active">1</button>
+        <button type="button" class="btn-page-num">2</button>
+        <button type="button" class="btn-page-num">3</button>
+        <span class="pagination-ellipsis">...</span>
+        <button type="button" class="btn-page-num">237</button>
+        <button type="button" class="btn-page-step">Siguiente</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6. Bottom Secondary Section: Horas Extraordinarias Pendientes & Auditoría ITSS -->
+  <section class="bottom-split-grid">
+    <!-- Overtime Approval Pipeline (Cols 8) -->
+    <div class="overtime-pipeline-card">
+      <div class="pipeline-header">
+        <div>
+          <div class="pipeline-title-row">
+            <span class="material-symbols-outlined text-primary text-[20px]">payments</span>
+            <h2 class="pipeline-h2">Horas Extraordinarias Pendientes de Validación para Nómina (Octubre)</h2>
+          </div>
+          <p class="pipeline-sub">
+            Solicitudes computadas por el sistema sujetas a validación de Recursos Humanos antes del devengo en nómina mensual.
+          </p>
+        </div>
+        <span class="overtime-count-badge font-mono">
+          {{ pendingOvertimeCount() }} pendientes
+        </span>
+      </div>
+
+      <!-- Overtime Requests List -->
+      <div class="overtime-requests-list">
+        @for (req of overtimeRequests(); track req.id) {
+          <div class="overtime-item-row" [class.item-approved]="req.status === 'approved'" [class.item-compensated]="req.status === 'compensated'">
+            <div class="item-left-profile">
+              <div class="avatar-initials-badge">
+                {{ req.initials }}
+              </div>
+              <div class="item-info-col">
+                <div class="item-emp-name-row">
+                  <span class="emp-name-bold">{{ req.name }}</span>
+                  <span class="emp-dept-tag font-mono">• {{ req.department }}</span>
+                </div>
+                <div class="item-reason-row">
+                  <span class="material-symbols-outlined text-[14px] text-slate-400">{{ req.icon }}</span>
+                  <span class="reason-text">Motivo: <strong>{{ req.reason }}</strong></span>
+                </div>
+              </div>
+            </div>
+
+            <div class="item-right-actions">
+              <div class="money-col font-mono">
+                <span class="amount-val">{{ req.amountText }}</span>
+                <span class="tariff-lbl">{{ req.tariffLabel }}</span>
+              </div>
+
+              @if (req.status === 'pending') {
+                <div class="buttons-pair">
+                  <button 
+                    type="button" 
+                    class="btn-compensate"
+                    (click)="compensateRest(req)">
+                    Compensar Descanso
+                  </button>
+                  <button 
+                    type="button" 
+                    class="btn-approve-ot"
+                    (click)="approveOvertime(req)">
+                    Aprobar Nómina
+                  </button>
+                </div>
+              } @else if (req.status === 'approved') {
+                <span class="approved-tag">
+                  <span class="material-symbols-outlined text-[14px]">check</span>
+                  Aprobado Nómina
+                </span>
+              } @else {
+                <span class="compensated-tag">
+                  <span class="material-symbols-outlined text-[14px]">beach_access</span>
+                  Descanso Asignado
+                </span>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    </div>
+
+    <!-- Legal Compliance & Geo Audit Snapshot (Cols 4) -->
+    <div class="legal-compliance-col">
+      <!-- ITSS Legal Compliance Summary Box -->
+      <div class="itss-box-card">
+        <div class="itss-header">
+          <span class="material-symbols-outlined text-tertiary text-[20px]">gavel</span>
+          <h3 class="itss-h3">Auditoría Legal ITSS</h3>
+        </div>
+        <p class="itss-desc">
+          Estado de conservación de los registros obligatorios durante los últimos 4 años requeridos por la Inspección de Trabajo y Seguridad Social.
+        </p>
+
+        <div class="itss-metrics-box">
+          <div class="itss-period-row">
+            <span class="text-xs font-semibold text-slate-800">Periodo 2020 - 2024</span>
+            <span class="text-xs font-bold text-tertiary font-mono">100% Blindado</span>
+          </div>
+          <div class="itss-progress-bar">
+            <div class="itss-fill bg-tertiary" style="width: 100%;"></div>
+          </div>
+          <div class="itss-sub-stats font-mono">
+            <span>Firmas digitales: 894,120</span>
+            <span>Sin tachaduras</span>
+          </div>
+        </div>
+
+        <div class="itss-actions-row">
+          <span class="cloud-mirror-text">
+            <span class="material-symbols-outlined text-[16px] text-tertiary">cloud_done</span>
+            <span>Copia espejo en nube segura</span>
+          </span>
+          <button 
+            type="button" 
+            class="btn-link-download"
+            (click)="downloadItssCertificate()">
+            Descargar Certificado
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Integration Gradient Panel -->
+      <div class="payroll-integration-banner">
+        <div class="banner-top-row">
+          <div class="flex flex-col">
+            <span class="banner-label-tag font-mono">Integración Nómina Global</span>
+            <h4 class="banner-title">Cierre de Fichajes Octubre</h4>
+          </div>
+          <span class="material-symbols-outlined text-[28px] opacity-90">sync_alt</span>
+        </div>
+
+        <p class="banner-text">
+          El ciclo de facturación y pre-nómina cierra automáticamente en <strong>6 días (31 de Octubre a las 23:59)</strong>. Se transferirán 342.5 horas aprobadas directamente a nómina.
+        </p>
+
+        <div class="banner-actions-row">
+          <button 
+            type="button" 
+            class="btn-banner-sync"
+            (click)="syncWithPayroll()">
+            Sincronizar con Nómina
+          </button>
+          <button 
+            type="button" 
+            class="btn-banner-simulate"
+            (click)="simulateOvertimeLiquidation()">
+            Simular Pre-cálculo
+          </button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Modal de Regularización Rápida de Fichaje -->
+  @if (isManualRegularizationModalOpen()) {
+    <div class="modal-backdrop-fichaje">
+      <div class="modal-dialog-fichaje">
+        <div class="modal-header-fichaje">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">add_alarm</span>
+            <h3 class="font-bold text-slate-900 text-sm">Regularización Manual de Jornada</h3>
+          </div>
+          <button type="button" class="btn-modal-close" (click)="closeManualRegularization()">✕</button>
+        </div>
+
+        <div class="modal-body-fichaje">
+          <div class="form-field-group">
+            <label class="form-field-label">Colaborador / Expediente</label>
+            <input type="text" [(ngModel)]="manualEmpName" class="form-field-input" readonly/>
+          </div>
+
+          <div class="form-field-grid-2">
+            <div class="form-field-group">
+              <label class="form-field-label">Fecha del Fichaje</label>
+              <input type="date" [(ngModel)]="manualDate" class="form-field-input"/>
+            </div>
+            <div class="form-field-group">
+              <label class="form-field-label">Hora Entrada</label>
+              <input type="time" [(ngModel)]="manualCheckIn" class="form-field-input"/>
+            </div>
+          </div>
+
+          <div class="form-field-grid-2">
+            <div class="form-field-group">
+              <label class="form-field-label">Hora Salida</label>
+              <input type="time" [(ngModel)]="manualCheckOut" class="form-field-input"/>
+            </div>
+            <div class="form-field-group">
+              <label class="form-field-label">Pausa Comida Estimada</label>
+              <input type="text" value="1h 00m" class="form-field-input" readonly/>
+            </div>
+          </div>
+
+          <div class="form-field-group">
+            <label class="form-field-label">Motivo Justificativo (Trazabilidad ITSS)</label>
+            <textarea [(ngModel)]="manualReason" rows="2" class="form-field-input"></textarea>
+          </div>
+
+          <div class="legal-disclaimer-note">
+            <span class="material-symbols-outlined text-[16px] text-primary">info</span>
+            <span>Esta regularización generará una entrada auditable firmada con hash SHA-256 conforme al Art. 34.9 del Estatuto de los Trabajadores.</span>
+          </div>
+        </div>
+
+        <div class="modal-footer-fichaje">
+          <button type="button" class="btn-cancel" (click)="closeManualRegularization()">Cancelar</button>
+          <button type="button" class="btn-confirm-save" (click)="saveManualRegularization()">Confirmar e Imputar</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

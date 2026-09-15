@@ -14,6 +14,7 @@ import { PayrollProcessingComponent } from './components/payroll-processing/payr
 import { EmployeeDirectoryComponent, DirectoryEmployee } from './components/employee-directory/employee-directory.component';
 import { DocumentsContractsComponent } from './components/documents-contracts/documents-contracts.component';
 import { PerformanceEvaluationsComponent } from './components/performance-evaluations/performance-evaluations.component';
+import { TimeAttendanceComponent } from './components/time-attendance/time-attendance.component';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,8 @@ import { PerformanceEvaluationsComponent } from './components/performance-evalua
     PayrollProcessingComponent,
     EmployeeDirectoryComponent,
     DocumentsContractsComponent,
-    PerformanceEvaluationsComponent
+    PerformanceEvaluationsComponent,
+    TimeAttendanceComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -40,7 +42,7 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations'>('evaluations');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance'>('attendance');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
@@ -54,7 +56,7 @@ export class App {
     this.sidebarCollapsed.update(v => !v);
   }
 
-  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations'): void {
+  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance'): void {
     this.activeView.set(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

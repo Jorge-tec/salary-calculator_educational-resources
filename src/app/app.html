@@ -51,7 +51,7 @@
         </a>
 
         <!-- 4. Tiempo y Asistencia -->
-        <a class="nav-item" (click)="goToView('dashboard')">
+        <a class="nav-item" [class.active]="activeView() === 'attendance'" (click)="goToView('attendance')">
           <span class="material-symbols-outlined nav-icon">schedule</span>
           <span class="nav-label">Tiempo y Asistencia</span>
         </a>
@@ -201,6 +201,14 @@
         <app-performance-evaluations 
           (onOpenCalculator)="goToView('calculator')">
         </app-performance-evaluations>
+      }
+
+      <!-- VISTA: CONTROL HORARIO, JORNADA LABORAL Y FICHAJES -->
+      @if (activeView() === 'attendance') {
+        <app-time-attendance 
+          (onOpenCalculator)="goToView('calculator')"
+          (onOpenPayroll)="goToView('payroll')">
+        </app-time-attendance>
       }
 
       <!-- VISTA: RECURSOS HUMANOS / DIRECTORIO DE PERSONAL -->
