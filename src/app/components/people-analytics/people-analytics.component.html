@@ -1,0 +1,776 @@
+<div class="analytics-page">
+  <!-- Toast flotante -->
+  @if (toastMessage()) {
+    <div class="analytics-toast">
+      <span class="material-symbols-outlined text-[18px]">insights</span>
+      <span>{{ toastMessage() }}</span>
+      <button type="button" class="btn-close-toast" (click)="toastMessage.set(null)">✕</button>
+    </div>
+  }
+
+  <!-- 1. Breadcrumb & Top Bar -->
+  <div class="analytics-top-ribbon">
+    <nav class="breadcrumb-nav">
+      <span class="breadcrumb-link flex items-center gap-1">
+        <span class="material-symbols-outlined text-[16px]">home</span>
+        <span>Inicio</span>
+      </span>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="breadcrumb-link">Reportes y Analítica</span>
+      <span class="material-symbols-outlined text-[14px]">chevron_right</span>
+      <span class="breadcrumb-current">People Analytics &amp; Inteligencia de Negocio</span>
+    </nav>
+
+    <div class="top-status-group font-mono">
+      <div class="status-live-pill">
+        <span class="dot-live-green animate-pulse"></span>
+        <span>Cálculo en Vivo (ETL 10:42 UTC)</span>
+      </div>
+      <div class="status-security-pill">
+        <span class="material-symbols-outlined text-[15px] text-slate-500">verified_user</span>
+        <span>Cumplimiento RGPD / ISO 27001</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- 2. Header & Executive Controls -->
+  <div class="analytics-header-card">
+    <div class="header-titles">
+      <div class="title-row">
+        <h1 class="header-h1">People Analytics &amp; Inteligencia de Capital Humano</h1>
+        <span class="badge-bi-version font-mono">BI V4.8</span>
+      </div>
+      <p class="header-sub">
+        Métricas estratégicas de rotación, equidad salarial, diversidad y proyecciones de headcount para comités de dirección y órganos de gobierno.
+      </p>
+    </div>
+
+    <div class="header-controls-wrap">
+      <!-- Range Filter Selector -->
+      <div class="range-selector-box font-mono">
+        <button 
+          type="button" 
+          class="range-btn" 
+          [class.active]="activePeriod() === 'q3q4'"
+          (click)="activePeriod.set('q3q4')">
+          Q3/Q4 2024 (Acum.)
+        </button>
+        <button 
+          type="button" 
+          class="range-btn" 
+          [class.active]="activePeriod() === 'fiscal'"
+          (click)="activePeriod.set('fiscal')">
+          Año Fiscal 2024
+        </button>
+        <button 
+          type="button" 
+          class="range-icon-btn" 
+          title="Filtro de fecha personalizado"
+          (click)="showToast('Seleccionando rango temporal personalizado')">
+          <span class="material-symbols-outlined text-[16px]">calendar_month</span>
+        </button>
+      </div>
+
+      <!-- Secondary Action -->
+      <button 
+        type="button" 
+        class="btn-schedule"
+        (click)="openScheduleModal()">
+        <span class="material-symbols-outlined text-[18px] text-slate-500">schedule_send</span>
+        <span>Programar Envío Automático</span>
+      </button>
+
+      <!-- Primary Action -->
+      <button 
+        type="button" 
+        class="btn-export-exec"
+        (click)="exportExecutiveReport()">
+        <span class="material-symbols-outlined text-[18px]">ios_share</span>
+        <span>+ Exportar Informe Ejecutivo (PDF/BI)</span>
+      </button>
+    </div>
+  </div>
+
+  <!-- 3. 4 KPI Analytical Cards -->
+  <section class="kpis-grid-4">
+    <!-- KPI 1: Turnover -->
+    <div class="kpi-box-analytics">
+      <div class="kpi-top-row">
+        <span class="kpi-label font-mono">Tasa Rotación Voluntaria</span>
+        <span class="kpi-tag-green font-mono">
+          <span class="material-symbols-outlined text-[14px]">trending_down</span>
+          -0.4% YoY
+        </span>
+      </div>
+      <div class="kpi-mid-row">
+        <span class="kpi-big-val font-mono">2.1%</span>
+        <!-- Inline Sparkline Trend -->
+        <div class="sparkline-wrap">
+          <svg class="w-full h-full text-emerald-600 overflow-visible" fill="none" viewBox="0 0 96 32">
+            <path d="M0 8 L16 12 L32 10 L48 18 L64 14 L80 24 L96 28" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5"></path>
+            <circle cx="96" cy="28" fill="currentColor" r="3.5"></circle>
+          </svg>
+        </div>
+      </div>
+      <div class="kpi-bottom-row font-mono">
+        <span class="kpi-sub-text">Benchmark Sectorial: <strong class="text-slate-900 font-semibold">4.5%</strong></span>
+        <span class="optimo-tag">
+          <span class="material-symbols-outlined text-[14px]">verified</span>
+          Óptimo
+        </span>
+      </div>
+    </div>
+
+    <!-- KPI 2: Gender Pay Gap -->
+    <div class="kpi-box-analytics">
+      <div class="kpi-top-row">
+        <span class="kpi-label font-mono">Brecha Salarial No Ajustada</span>
+        <span class="kpi-tag-green font-mono">
+          <span class="material-symbols-outlined text-[14px]">check</span>
+          Cumple Ley
+        </span>
+      </div>
+      <div class="kpi-mid-row">
+        <span class="kpi-big-val font-mono">1.2%</span>
+        <div class="gauge-wrap">
+          <div class="gauge-track">
+            <div class="gauge-fill bg-primary" style="width: 24%"></div>
+          </div>
+        </div>
+      </div>
+      <div class="kpi-bottom-row font-mono">
+        <span class="kpi-sub-text">Obj. Corporativo: &lt;2.0%</span>
+        <span class="audit-pwc-text">Auditado PwC</span>
+      </div>
+    </div>
+
+    <!-- KPI 3: Cost per Hire -->
+    <div class="kpi-box-analytics">
+      <div class="kpi-top-row">
+        <span class="kpi-label font-mono">Coste Medio Contratación</span>
+        <span class="kpi-tag-green font-mono">
+          <span class="material-symbols-outlined text-[14px]">trending_down</span>
+          -12% vs 2023
+        </span>
+      </div>
+      <div class="kpi-mid-row">
+        <span class="kpi-big-val font-mono">2.840 €</span>
+        <span class="kpi-denom font-mono">/ contratación</span>
+      </div>
+      <div class="kpi-bottom-row font-mono">
+        <span class="kpi-sub-text">Tiempo Cobertura Promedio</span>
+        <span class="text-primary font-bold">24 días</span>
+      </div>
+    </div>
+
+    <!-- KPI 4: eNPS & Pulse -->
+    <div class="kpi-box-analytics">
+      <div class="kpi-top-row">
+        <span class="kpi-label font-mono">Índice Clima &amp; eNPS</span>
+        <span class="kpi-tag-blue font-mono">
+          <span class="material-symbols-outlined text-[14px]">arrow_upward</span>
+          +6 pts Q2
+        </span>
+      </div>
+      <div class="kpi-mid-row">
+        <span class="kpi-big-val font-mono">+68</span>
+        <div class="flex items-center gap-1">
+          <span class="material-symbols-outlined text-[18px] text-emerald-600">sentiment_very_satisfied</span>
+          <span class="text-xs font-bold text-emerald-600">Excelente</span>
+        </div>
+      </div>
+      <div class="kpi-bottom-row font-mono">
+        <span class="kpi-sub-text">Participación en Encuesta</span>
+        <span class="font-bold text-slate-800">89% (1.420 resp.)</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- 4. Main Analytics Intelligence Section: 2 Columns (8 / 4) -->
+  <div class="analytics-two-col-grid">
+    <!-- LEFT COLUMN: 8 Columns -->
+    <div class="col-main-analytics">
+      <!-- Evolution & Projections Chart -->
+      <div class="card-analytics">
+        <div class="chart-header-row">
+          <div>
+            <h2 class="chart-h2">Evolución y Proyección: Contrataciones vs. Bajas</h2>
+            <p class="chart-sub">Histórico acumulado de los últimos 12 meses con modelo predictivo Q1 2025</p>
+          </div>
+          <div class="chart-legend-flex font-mono">
+            <div class="legend-chip">
+              <span class="w-3 h-3 rounded-xs bg-primary"></span>
+              <span>Altas Netas</span>
+            </div>
+            <div class="legend-chip">
+              <span class="w-3 h-3 rounded-xs bg-surface-highest"></span>
+              <span>Bajas Voluntarias</span>
+            </div>
+            <div class="legend-chip text-emerald-600 font-semibold">
+              <span class="w-3 h-1 bg-emerald-500 rounded-full"></span>
+              <span>Retención (97.9%)</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Bar Graph -->
+        <div class="chart-canvas-area">
+          <div class="grid-guidelines">
+            <div class="guideline"></div>
+            <div class="guideline"></div>
+            <div class="guideline"></div>
+            <div class="guideline"></div>
+          </div>
+
+          <!-- 12 Months Grid -->
+          <div class="bars-month-grid font-mono">
+            <!-- Ene -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 60%"></div>
+                <div class="bar-secondary" style="height: 18%"></div>
+              </div>
+              <span class="month-lbl">Ene</span>
+            </div>
+            <!-- Feb -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 68%"></div>
+                <div class="bar-secondary" style="height: 12%"></div>
+              </div>
+              <span class="month-lbl">Feb</span>
+            </div>
+            <!-- Mar -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 75%"></div>
+                <div class="bar-secondary" style="height: 22%"></div>
+              </div>
+              <span class="month-lbl">Mar</span>
+            </div>
+            <!-- Abr -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 82%"></div>
+                <div class="bar-secondary" style="height: 15%"></div>
+              </div>
+              <span class="month-lbl">Abr</span>
+            </div>
+            <!-- May -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 55%"></div>
+                <div class="bar-secondary" style="height: 20%"></div>
+              </div>
+              <span class="month-lbl">May</span>
+            </div>
+            <!-- Jun -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 90%"></div>
+                <div class="bar-secondary" style="height: 14%"></div>
+              </div>
+              <span class="month-lbl">Jun</span>
+            </div>
+            <!-- Jul -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 64%"></div>
+                <div class="bar-secondary" style="height: 25%"></div>
+              </div>
+              <span class="month-lbl">Jul</span>
+            </div>
+            <!-- Ago -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 40%"></div>
+                <div class="bar-secondary" style="height: 10%"></div>
+              </div>
+              <span class="month-lbl">Ago</span>
+            </div>
+            <!-- Sep -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 95%"></div>
+                <div class="bar-secondary" style="height: 16%"></div>
+              </div>
+              <span class="month-lbl">Sep</span>
+            </div>
+            <!-- Oct -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary" style="height: 84%"></div>
+                <div class="bar-secondary" style="height: 18%"></div>
+              </div>
+              <span class="month-lbl">Oct</span>
+            </div>
+            <!-- Nov* -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary opacity-80" style="height: 70%"></div>
+                <div class="bar-secondary opacity-80" style="height: 15%"></div>
+              </div>
+              <span class="month-lbl text-primary font-bold">Nov*</span>
+            </div>
+            <!-- Dic* -->
+            <div class="month-bar-col">
+              <div class="bar-pair">
+                <div class="bar-primary opacity-80" style="height: 60%"></div>
+                <div class="bar-secondary opacity-80" style="height: 12%"></div>
+              </div>
+              <span class="month-lbl text-primary font-bold">Dic*</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Summary Footer in Card -->
+        <div class="chart-summary-bar font-mono">
+          <div class="flex items-center gap-2">
+            <span class="font-semibold text-slate-700">Crecimiento Neto YTD:</span>
+            <span class="text-emerald-700 font-bold text-sm">+184 Empleados (+14.2%)</span>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="text-slate-500">Tasa de retención anualizada proyectada:</span>
+            <span class="font-bold text-slate-900">97.9%</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Equity and Salary Bands Table -->
+      <div class="card-analytics">
+        <div class="chart-header-row">
+          <div>
+            <h2 class="chart-h2">Análisis de Equidad y Masa Salarial por Bandas y Departamentos</h2>
+            <p class="chart-sub">Distribución por percentiles (P25, P50 Mediana, P75) y ratio de paridad retributiva</p>
+          </div>
+          <span class="badge-areas font-mono">4 Áreas Auditadas</span>
+        </div>
+
+        <div class="table-responsive-clean">
+          <table class="equity-table">
+            <thead>
+              <tr class="font-mono">
+                <th>Departamento</th>
+                <th class="text-right">Headcount</th>
+                <th class="text-right">Percentil 25</th>
+                <th class="text-right">Mediana (P50)</th>
+                <th class="text-right">Percentil 75</th>
+                <th class="text-right">Masa Salarial</th>
+                <th class="text-right pr-3">Equidad Paritaria</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (row of equityRows(); track row.department) {
+                <tr class="equity-row font-mono">
+                  <td class="font-sans">
+                    <div class="flex items-center gap-2">
+                      <span class="w-2.5 h-2.5 rounded-full {{ row.dotColor }}"></span>
+                      <span class="font-semibold text-slate-900 text-xs">{{ row.department }}</span>
+                    </div>
+                  </td>
+                  <td class="text-right text-slate-600">{{ row.headcount }}</td>
+                  <td class="text-right text-slate-400">{{ row.p25 }}</td>
+                  <td class="text-right font-bold text-slate-900">{{ row.p50 }}</td>
+                  <td class="text-right text-slate-400">{{ row.p75 }}</td>
+                  <td class="text-right font-bold text-slate-900">{{ row.totalPayroll }}</td>
+                  <td class="text-right pr-3">
+                    <span class="badge-parity">
+                      <span class="dot-small bg-tertiary"></span>
+                      {{ row.parityRatio }}
+                    </span>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN: 4 Columns (Diversity, Leadership & Seniority) -->
+    <div class="col-side-analytics">
+      <!-- Diversity & Demographics Tile -->
+      <div class="card-analytics">
+        <div class="flex items-center justify-between">
+          <h2 class="chart-h2">Pirámide y Diversidad</h2>
+          <span class="material-symbols-outlined text-slate-400 text-[20px]">pie_chart</span>
+        </div>
+
+        <!-- Donut Chart -->
+        <div class="donut-chart-flex">
+          <div class="donut-svg-wrap">
+            <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+              <!-- Base Circle -->
+              <circle class="text-slate-100" cx="18" cy="18" fill="none" r="15.915" stroke="currentColor" stroke-width="3.5"></circle>
+              <!-- Female: 52% -->
+              <circle class="text-primary" cx="18" cy="18" fill="none" r="15.915" stroke="currentColor" stroke-dasharray="52 48" stroke-dashoffset="0" stroke-width="3.5"></circle>
+              <!-- Male: 48% -->
+              <circle class="text-secondary" cx="18" cy="18" fill="none" r="15.915" stroke="currentColor" stroke-dasharray="48 52" stroke-dashoffset="-52" stroke-width="3.5"></circle>
+            </svg>
+            <div class="donut-center-text font-mono">
+              <span class="text-base font-bold text-slate-900 leading-tight">1.339</span>
+              <span class="text-[9px] text-slate-400 uppercase font-semibold">Total FTE</span>
+            </div>
+          </div>
+
+          <div class="diversity-legend-col font-mono text-xs">
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-primary"></span>
+              <span class="font-semibold text-slate-800">Mujeres: 52%</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-secondary"></span>
+              <span class="font-semibold text-slate-800">Hombres: 48%</span>
+            </div>
+            <div class="flex items-center gap-2">
+              <span class="w-2.5 h-2.5 rounded-full bg-tertiary"></span>
+              <span class="font-semibold text-tertiary">No Binario / Otro: &lt;1%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Highlight Metric: Women in Leadership -->
+        <div class="leadership-progress-card font-mono">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-semibold text-slate-800 font-sans">Mujeres en Órganos de Dirección</span>
+            <span class="text-xs text-primary font-bold">44.5%</span>
+          </div>
+          <div class="leadership-track">
+            <div class="leadership-fill bg-primary" style="width: 44.5%"></div>
+          </div>
+          <div class="flex justify-between text-[11px] text-slate-500">
+            <span>Ley Paridad 40%</span>
+            <span class="text-emerald-700 font-bold">Superado +4.5%</span>
+          </div>
+        </div>
+
+        <!-- Age cohorts distribution -->
+        <div class="age-cohorts-section font-mono">
+          <span class="text-[10px] text-slate-400 uppercase tracking-wider font-bold">Distribución por Rango de Edad</span>
+          <div class="flex flex-col gap-2 mt-1">
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-700 font-sans">&lt; 30 años (Gen Z / Juniors)</span>
+                <span class="font-bold text-slate-900">28%</span>
+              </div>
+              <div class="cohort-track">
+                <div class="cohort-fill bg-primary" style="width: 28%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-700 font-sans">30 - 45 años (Mid-Senior)</span>
+                <span class="font-bold text-slate-900">54%</span>
+              </div>
+              <div class="cohort-track">
+                <div class="cohort-fill bg-primary-container" style="width: 54%"></div>
+              </div>
+            </div>
+
+            <div>
+              <div class="flex justify-between text-xs mb-1">
+                <span class="text-slate-700 font-sans">&gt; 45 años (Directivos / Seniors)</span>
+                <span class="font-bold text-slate-900">18%</span>
+              </div>
+              <div class="cohort-track">
+                <div class="cohort-fill bg-secondary" style="width: 18%"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Seniority Distribution Card -->
+      <div class="card-analytics">
+        <div class="flex items-center justify-between">
+          <h2 class="chart-h2">Distribución por Antigüedad</h2>
+          <span class="material-symbols-outlined text-slate-400 text-[20px]">cloud_upload</span>
+        </div>
+
+        <!-- Stacked Bar Representation -->
+        <div class="seniority-stacked-bar">
+          <div class="bg-primary h-full" style="width: 18%" title="< 1 año: 18%"></div>
+          <div class="bg-primary-container h-full" style="width: 42%" title="1-3 años: 42%"></div>
+          <div class="bg-surface-highest h-full" style="width: 26%" title="3-5 años: 26%"></div>
+          <div class="bg-secondary h-full" style="width: 14%" title="> 5 años: 14%"></div>
+        </div>
+
+        <!-- Breakdown list -->
+        <div class="seniority-grid font-mono">
+          <div class="seniority-cell">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="w-2 h-2 rounded-full bg-primary"></span>
+              <span class="text-slate-400 text-[11px]">&lt; 1 año</span>
+            </div>
+            <span class="text-sm font-bold text-slate-900">18%</span>
+            <span class="text-[10px] text-slate-400">Onboarding activo</span>
+          </div>
+
+          <div class="seniority-cell">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="w-2 h-2 rounded-full bg-primary-container"></span>
+              <span class="text-slate-400 text-[11px]">1 - 3 años</span>
+            </div>
+            <span class="text-sm font-bold text-slate-900">42%</span>
+            <span class="text-[10px] text-slate-400">Consolidación</span>
+          </div>
+
+          <div class="seniority-cell">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="w-2 h-2 rounded-full bg-surface-highest"></span>
+              <span class="text-slate-400 text-[11px]">3 - 5 años</span>
+            </div>
+            <span class="text-sm font-bold text-slate-900">26%</span>
+            <span class="text-[10px] text-slate-400">Madurez / Liderazgo</span>
+          </div>
+
+          <div class="seniority-cell">
+            <div class="flex items-center gap-1.5 mb-0.5">
+              <span class="w-2 h-2 rounded-full bg-secondary"></span>
+              <span class="text-slate-400 text-[11px]">&gt; 5 años</span>
+            </div>
+            <span class="text-sm font-bold text-slate-900">14%</span>
+            <span class="text-[10px] text-slate-400">Fidelidad nuclear</span>
+          </div>
+        </div>
+
+        <!-- Insight callout -->
+        <div class="insight-pill-box">
+          <span class="material-symbols-outlined text-emerald-600 text-[18px]">lightbulb</span>
+          <span class="text-xs text-slate-600">El 68% de la plantilla supera los 2 años de compromiso institucional continuado.</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 5. Bottom Section: Predefined Reports & Official Regulatory Exports -->
+  <section class="card-analytics mb-6">
+    <div class="chart-header-row">
+      <div>
+        <h2 class="chart-h2">Informes Predefinidos y Descargas Disponibles</h2>
+        <p class="chart-sub">Archivos oficiales listos para auditorías laborales, comisiones paritarias e inspecciones de trabajo</p>
+      </div>
+
+      <div class="flex items-center gap-2">
+        <button 
+          type="button" 
+          class="btn-filter-clean"
+          (click)="showToast('Filtrando informes por marco normativo Real Decreto / Directiva UE')">
+          <span class="material-symbols-outlined text-[16px]">filter_list</span>
+          <span>Filtrar por Normativa</span>
+        </button>
+
+        <button 
+          type="button" 
+          class="btn-filter-clean"
+          (click)="regenerateAllReports()">
+          <span class="material-symbols-outlined text-[16px]">sync</span>
+          <span>Regenerar Todos</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Regulatory Table -->
+    <div class="table-responsive-clean">
+      <table class="reports-table">
+        <thead>
+          <tr class="font-mono">
+            <th>Documento / Informe</th>
+            <th>Marco Legal &amp; Alcance</th>
+            <th>Periodicidad</th>
+            <th>Estado de Validación</th>
+            <th>Última Actualización</th>
+            <th class="text-right pr-3">Acciones de Descarga</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (rep of reports(); track rep.id) {
+            <tr class="report-row">
+              <td>
+                <div class="report-title-cell">
+                  <span class="material-symbols-outlined text-primary text-[20px]">{{ rep.icon }}</span>
+                  <div class="flex flex-col">
+                    <span class="rep-title font-semibold text-slate-900 text-xs">{{ rep.title }}</span>
+                    <span class="rep-sub text-[11px] text-slate-400">{{ rep.subtitle }}</span>
+                  </div>
+                </div>
+              </td>
+              <td>
+                <span class="font-mono text-xs font-semibold text-slate-600">{{ rep.framework }}</span>
+              </td>
+              <td>
+                <span class="font-mono text-xs text-slate-500">{{ rep.frequency }}</span>
+              </td>
+              <td>
+                @if (rep.statusType === 'ok') {
+                  <span class="badge-status-green font-mono">
+                    <span class="dot-small bg-tertiary"></span>
+                    {{ rep.statusBadge }}
+                  </span>
+                } @else if (rep.statusType === 'pwc') {
+                  <span class="badge-status-green font-mono">
+                    <span class="dot-small bg-tertiary"></span>
+                    {{ rep.statusBadge }}
+                  </span>
+                } @else if (rep.statusType === 'closed') {
+                  <span class="badge-status-gray font-mono">
+                    <span class="dot-small bg-slate-400"></span>
+                    {{ rep.statusBadge }}
+                  </span>
+                } @else if (rep.statusType === 'error') {
+                  <span class="badge-status-red font-mono">
+                    <span class="dot-small bg-red-600"></span>
+                    {{ rep.statusBadge }}
+                  </span>
+                }
+              </td>
+              <td class="font-mono text-xs text-slate-500">{{ rep.lastUpdated }}</td>
+              <td class="text-right pr-3 font-mono">
+                @if (rep.downloadType === 'dual') {
+                  <div class="flex items-center justify-end gap-1.5">
+                    <button 
+                      type="button" 
+                      class="btn-dl-chip" 
+                      title="Descargar XLSX"
+                      (click)="downloadReport(rep, 'xlsx')">
+                      <span class="material-symbols-outlined text-[16px] text-emerald-600">description</span>
+                      <span>XLSX</span>
+                    </button>
+                    <button 
+                      type="button" 
+                      class="btn-dl-chip" 
+                      title="Descargar PDF"
+                      (click)="downloadReport(rep, 'pdf')">
+                      <span class="material-symbols-outlined text-[16px] text-red-600">picture_as_pdf</span>
+                      <span>PDF</span>
+                    </button>
+                  </div>
+                } @else if (rep.downloadType === 'pdf_only') {
+                  <div class="flex items-center justify-end">
+                    <button 
+                      type="button" 
+                      class="btn-dl-chip"
+                      (click)="downloadReport(rep, 'pdf')">
+                      <span class="material-symbols-outlined text-[16px] text-red-600">picture_as_pdf</span>
+                      <span>Descargar PDF Oficial</span>
+                    </button>
+                  </div>
+                } @else if (rep.downloadType === 'action') {
+                  <div class="flex items-center justify-end">
+                    <button 
+                      type="button" 
+                      class="btn-view-matrix"
+                      (click)="openRiskModal()">
+                      <span class="material-symbols-outlined text-[16px]">visibility</span>
+                      <span>Ver Matriz de Retención</span>
+                    </button>
+                  </div>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- Modal: Programar Envío Automático -->
+  @if (isScheduleModalOpen()) {
+    <div class="modal-backdrop-analytics">
+      <div class="modal-dialog-analytics">
+        <div class="modal-header-analytics">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-primary">schedule_send</span>
+            <h3 class="font-bold text-slate-900 text-sm">Programar Envío Recurrente de People Analytics</h3>
+          </div>
+          <button type="button" class="btn-modal-close" (click)="closeScheduleModal()">✕</button>
+        </div>
+
+        <div class="modal-body-analytics">
+          <div class="form-group-ana">
+            <label class="form-lbl">Periodicidad de Distribución</label>
+            <select class="form-ctl" [(ngModel)]="scheduleFrequency">
+              <option>Mensual (primer lunes de mes)</option>
+              <option>Semanal (lunes 08:00 CET)</option>
+              <option>Trimestral (cierre Q1, Q2, Q3, Q4)</option>
+            </select>
+          </div>
+
+          <div class="form-group-ana">
+            <label class="form-lbl">Destinatarios (Comité de Dirección / RRHH)</label>
+            <input type="text" [(ngModel)]="scheduleRecipients" class="form-ctl font-mono"/>
+          </div>
+
+          <div class="form-group-ana">
+            <label class="form-lbl">Formato Adjunto</label>
+            <select class="form-ctl" [(ngModel)]="scheduleFormat">
+              <option>PDF Ejecutivo + Resumen BI</option>
+              <option>Informe Excel Consolidado</option>
+              <option>Enlace Seguro PowerBI Embedded</option>
+            </select>
+          </div>
+
+          <div class="notice-box-analytics">
+            <span class="material-symbols-outlined text-[16px] text-primary">lock</span>
+            <span>Los informes distribuidos incluyen marca de agua digital e ID de trazabilidad confidencial.</span>
+          </div>
+        </div>
+
+        <div class="modal-footer-analytics">
+          <button type="button" class="btn-cancel" (click)="closeScheduleModal()">Cancelar</button>
+          <button type="button" class="btn-confirm-ana" (click)="saveSchedule()">Guardar Programación</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- Modal: Matriz de Retención y Fuga de Talento -->
+  @if (isRiskModalOpen()) {
+    <div class="modal-backdrop-analytics">
+      <div class="modal-dialog-analytics max-w-xl">
+        <div class="modal-header-analytics">
+          <div class="flex items-center gap-2">
+            <span class="material-symbols-outlined text-red-600">psychology</span>
+            <h3 class="font-bold text-slate-900 text-sm">Mapa de Riesgo de Fuga de Talento Clave (Predictivo AI)</h3>
+          </div>
+          <button type="button" class="btn-modal-close" (click)="closeRiskModal()">✕</button>
+        </div>
+
+        <div class="modal-body-analytics">
+          <p class="text-xs text-slate-600">
+            El motor de People Analytics ha detectado <strong>14 alertas de riesgo de rotación no deseada</strong> en perfiles críticos (L5-L7) por desalineación salarial de mercado o estancamiento de seniority.
+          </p>
+
+          <div class="risk-alerts-preview font-mono text-xs">
+            <div class="risk-pill-card">
+              <div class="flex justify-between">
+                <span class="font-bold text-slate-900">Ingeniería &amp; Tech</span>
+                <span class="text-red-600 font-bold">6 alertas altas</span>
+              </div>
+              <span class="text-slate-500 text-[11px]">Senior Backend &amp; Cloud Architects con gap >15% vs benchmark</span>
+            </div>
+
+            <div class="risk-pill-card">
+              <div class="flex justify-between">
+                <span class="font-bold text-slate-900">Ventas &amp; Enterprise</span>
+                <span class="text-amber-600 font-bold">5 alertas medias</span>
+              </div>
+              <span class="text-slate-500 text-[11px]">Account Executives con cumplimiento OKR >110% sin ajuste LTI</span>
+            </div>
+          </div>
+
+          <div class="notice-box-analytics">
+            <span class="material-symbols-outlined text-[16px] text-primary">grid_view</span>
+            <span>Puedes calibrar y mitigar estas alertas directamente en la <strong>Matriz 9-Box Grid de Calibración</strong>.</span>
+          </div>
+        </div>
+
+        <div class="modal-footer-analytics">
+          <button type="button" class="btn-cancel" (click)="closeRiskModal()">Cerrar</button>
+          <button type="button" class="btn-confirm-ana" (click)="goTo9BoxGrid()">Ir a Matriz 9-Box</button>
+        </div>
+      </div>
+    </div>
+  }
+</div>

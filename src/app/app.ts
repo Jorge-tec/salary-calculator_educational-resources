@@ -16,6 +16,7 @@ import { DocumentsContractsComponent } from './components/documents-contracts/do
 import { PerformanceEvaluationsComponent } from './components/performance-evaluations/performance-evaluations.component';
 import { TimeAttendanceComponent } from './components/time-attendance/time-attendance.component';
 import { SystemConfigurationComponent } from './components/system-configuration/system-configuration.component';
+import { PeopleAnalyticsComponent } from './components/people-analytics/people-analytics.component';
 
 @Component({
   selector: 'app-root',
@@ -35,7 +36,8 @@ import { SystemConfigurationComponent } from './components/system-configuration/
     DocumentsContractsComponent,
     PerformanceEvaluationsComponent,
     TimeAttendanceComponent,
-    SystemConfigurationComponent
+    SystemConfigurationComponent,
+    PeopleAnalyticsComponent
   ],
   templateUrl: './app.html',
   styleUrl: './app.css'
@@ -44,7 +46,7 @@ export class App {
   readonly currentLiquidation = signal<LiquidationResult | null>(null);
   readonly editingInput = signal<LiquidationFormInput | null>(null);
   readonly printLiquidation = signal<LiquidationResult | null>(null);
-  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance' | 'configuration'>('configuration');
+  readonly activeView = signal<'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance' | 'configuration' | 'analytics'>('analytics');
   readonly toastMessage = signal<string | null>(null);
   readonly sidebarCollapsed = signal<boolean>(false);
   readonly requestedPreset = signal<string | null>(null);
@@ -58,7 +60,7 @@ export class App {
     this.sidebarCollapsed.update(v => !v);
   }
 
-  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance' | 'configuration'): void {
+  goToView(view: 'dashboard' | 'calculator' | 'records' | 'normative' | 'vacations' | 'payroll' | 'directory' | 'documents' | 'evaluations' | 'attendance' | 'configuration' | 'analytics'): void {
     this.activeView.set(view);
     window.scrollTo({ top: 0, behavior: 'smooth' });
   }

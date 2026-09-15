@@ -75,7 +75,7 @@
         </a>
 
         <!-- 8. Reportes y Analítica -->
-        <a class="nav-item" [class.active]="activeView() === 'normative'" (click)="goToView('normative')">
+        <a class="nav-item" [class.active]="activeView() === 'analytics'" (click)="goToView('analytics')">
           <span class="material-symbols-outlined nav-icon">bar_chart</span>
           <span class="nav-label">Reportes y Analítica</span>
         </a>
@@ -216,6 +216,14 @@
         <app-system-configuration 
           (onOpenCalculator)="goToView('calculator')">
         </app-system-configuration>
+      }
+
+      <!-- VISTA: PEOPLE ANALYTICS E INTELIGENCIA DE NEGOCIO (9.code.html) -->
+      @if (activeView() === 'analytics') {
+        <app-people-analytics 
+          (onOpenCalculator)="goToView('calculator')"
+          (onOpenEvaluations)="goToView('evaluations')">
+        </app-people-analytics>
       }
 
       <!-- VISTA: RECURSOS HUMANOS / DIRECTORIO DE PERSONAL -->
